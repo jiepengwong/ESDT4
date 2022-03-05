@@ -35,7 +35,6 @@ app.get("/add-order",(req,res)=>{
         ],
         totalprice: 123,
         buyerid: "buyerid1",
-        sellerid: "sellerid1"
     })
 
     // Save to the mongodb
