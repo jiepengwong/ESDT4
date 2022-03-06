@@ -30,7 +30,7 @@ app.get("/add-order",(req,res)=>{
     // Testing out the mongoose model
     const order = new Order({
         ordersummary:[
-            {"test1": 21233,"sellerid": "lol1"},
+            {"test1": 2123123012233,"sellerid": "lol1"},
             {"test2": 12,"sellerid":"lol2"}
         ],
         totalprice: 123,
