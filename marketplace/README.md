@@ -1,8 +1,16 @@
 # marketplace
 
+## Team mates
+Yu Xiang, Yu Xuan, Wei Ting, Min Jay, Jie Peng, Kathy
+
+## Project Desc
+MarketPlace microservice application 
+
+## How to start
+
 ## Project setup
 ```
-npm install
+npm i (to retrive mode_modules)
 ```
 
 ### Compiles and hot-reloads for development
