@@ -36,12 +36,12 @@ const port = 5000;
 
 // Buyer places an offer, keys in the relevant data from the UI side and sends it to the server
 // /offer/createoffer
-app.post("/offer/createoffer",  (req, res) => {
+app.post("/offer/buyer/createoffer",  (req, res) => {
   // From the front-end side of things
 
   // Create a new instance at the database side
-
-  if (req.body) {
+  // We dont want to create an instance where by 
+  if (req.body && req.body.buyerid != req.body.sellerid)  {
     console.log(req.body);
     const postreq = req.body;
     const newOffer = new Offer({
@@ -60,9 +60,10 @@ app.post("/offer/createoffer",  (req, res) => {
 
         // Edit code here in the future to get back the order id (postreq._id)
         res.send(`Your order id is : ${result._id}`);
+
       })
       .catch((err) => {
-        res.status(400).json({"Error": "Offer not placed"});
+        res.status(400).json({"Error": "Offer not placed, invalid field perhaps? Check through "});
 
         // console.log(err.msg)
       });
@@ -73,10 +74,11 @@ app.post("/offer/createoffer",  (req, res) => {
 
 
 // Buyer see offers with a status of "Pending"
-app.get("/offer/:buyerid",  (req, res) => {
+app.get("/offer/buyer/view/:buyerid",  (req, res) => {
     const buyerid = req.params
     console.log(buyerid)
     // Async
+    // Grabs the relevant orders which are status of pending
     Offer.find({buyerid: buyerid.buyerid, offerstatus: "Pending"})
     .then((result)=>{
         console.log(result)
@@ -89,15 +91,117 @@ app.get("/offer/:buyerid",  (req, res) => {
 
         }
         else{
-            res.json({"Error": "You havent placed any offers yet!"})
+            res.json({"Error": "You Don't have any offers yet!"})
         }
 
 
     })
+    // Catch error activated, because unable to find the order
     .catch((error)=>{
-        res.status(404).send(error.msg)
+        res.status(404)
+        console.log(error)
     })
 })
+
+// Sellers see all the relevant offers
+app.get("/offer/seller/:sellerid",  (req, res) => {
+    const sellerid = req.params
+    console.log(sellerid)
+    // Async
+    // Grabs the relevant orders which are status of pending
+    // We want to find offers that are not created by the seller as well
+    // Buyerid cannot be equals to the sellerid
+    // Usage of mongodb queries (Stackoverflow)
+    Offer.find({sellerid: sellerid.sellerid, offerstatus: "Pending"}).where("buyerid").ne(sellerid.sellerid)
+    .then((result)=>{
+
+        console.log(result)
+        console.log(result)
+        if (result.length > 0) {
+
+            console.log(result)
+            res.json(result)
+            // Returns a json file, which is to be interpreted at the front-end side
+
+        }
+        else{
+            res.json({"Error": "You Don't have any offers yet!"})
+        }
+
+        
+
+
+        })
+
+    // Catch error activated, because unable to find the order
+    .catch((error)=>{
+        res.status(404)
+        console.log(error)
+    })
+})
+
+// Sellers accept the offer
+app.put("/offer/seller/accept/:offerid",  (req, res) => {
+    const offerid = req.params;
+    var itemid = "";
+    var sellerid = "";
+    console.log(offerid)
+    // Get the orderID from the frontend, get the itemid, we need this to retrieve the relevant orders 
+    Offer.find({_id: offerid.offerid})
+    .then((result)=>{
+        // console.log(result)
+        itemid = result[0].itemid;
+        sellerid = result[0].sellerid;
+    })
+    .catch((error)=>{
+        console.log(error)
+    })
+    
+
+
+
+    Offer.findByIdAndUpdate(offerid.offerid, {offerstatus: "Accepted"})
+    .then((result)=>{
+        console.log(result)
+
+        // Reject all other offers, but at the same time invoke the notification service? TBC
+        // Find sellerid that list itemid and offerstatus is pending
+        Offer.find({sellerid: sellerid, itemid: itemid, offerstatus: "Pending"}).where("buyerid").ne(sellerid.sellerid)
+        .then((result)=>{
+            console.log("i AM EXECUTED HERE")
+            console.log(result)
+
+            // Update the offerstatus to rejected
+            if (result.length > 0) {
+                result.forEach(element => {
+                    Offer.findByIdAndDelete(element._id)
+                    .then((result)=>{
+                        console.log(result)
+                    })
+                    .catch((error)=>{
+                        console.log(error)
+                    })
+                });
+            }
+            else{
+                console.log("No offers to reject")
+            }
+
+        })
+
+
+
+    })
+
+    .catch((error)=>{
+        console.log(error)
+        res.json({"Error": "Unable to update failed, does the offer exist?"})
+
+    })
+
+})
+
+
 
 
 
