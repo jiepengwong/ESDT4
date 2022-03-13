@@ -4,18 +4,18 @@ from flask_cors import CORS
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/book'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/item'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 CORS(app)
 
-class item(db.Model):
+class Item(db.Model):
     __tablename__ = 'item'
 
-    ItemID = db.Column(db.Integer, primary_key=True, nullable=False)
+    ItemID = db.Column(db.String(10), primary_key=True, nullable=False)
     ItemName = db.Column(db.String(64), nullable=False)
-    Seller_ID = db.Column(db.Integer, nullable=False)
+    Seller_ID = db.Column(db.String(10), nullable=False)
     ItemDesc = db.Column(db.String(64), nullable=False)
     Category = db.Column(db.String(64), nullable=False)
     Price = db.Column(db.Integer, nullable=False)
@@ -42,7 +42,7 @@ class item(db.Model):
 # GET: item list
 @app.route("/item")
 def get_all():
-    itemlist = item.query.all()
+    itemlist = Item.query.all()
     if len(itemlist):
         return jsonify(
             {
@@ -62,7 +62,7 @@ def get_all():
 # GET: particular item
 @app.route('/item/<string:ItemID>')
 def searchItemID(ItemID):
-    item =item.query.filter_by(ItemID=ItemID).first()
+    item = Item.query.filter_by(ItemID=ItemID).first()
     if item:
         return jsonify(
             {
@@ -80,7 +80,7 @@ def searchItemID(ItemID):
 # POST: create new item
 @app.route("/item/<string:ItemID>", methods=['POST'])
 def createItem(ItemID):
-    if (item.query.filter_by(ItemID=ItemID).first()):
+    if (Item.query.filter_by(ItemID=ItemID).first()):
         return jsonify(
             {
                 "code": 400,
@@ -92,7 +92,7 @@ def createItem(ItemID):
         ), 400
 
     data = request.get_json()
-    item = item(item, **data)
+    item = Item(item, **data)
 
     try:
         db.session.add(item)
@@ -118,7 +118,7 @@ def createItem(ItemID):
     # DELETE: delete item
 @app.route("/item/<string:ItemID>", methods=['Delete'])
 def deleteItem(ItemID):
-    if (item.query.filter_by(ItemID=ItemID).first()):
+    if (Item.query.filter_by(ItemID=ItemID).first()):
         return jsonify(
             {
                 "code": 400,
@@ -130,7 +130,7 @@ def deleteItem(ItemID):
         ), 400
 
     data = request.get_json()
-    item = item(item, **data)
+    item = Item(item, **data)
 
     try:
         db.session.delete(item)
@@ -156,7 +156,7 @@ def deleteItem(ItemID):
 # PUT: edit item
 @app.route("/item/<string:ItemID>", methods=['PUT'])
 def editItem(ItemID):
-    if (item.query.filter_by(ItemID=ItemID).first()):
+    if (Item.query.filter_by(ItemID=ItemID).first()):
         return jsonify(
             {
                 "code": 400,
@@ -168,7 +168,7 @@ def editItem(ItemID):
         ), 400
 
     data = request.get_json()
-    item = item.filter_by(item, **data)
+    item = Item.filter_by(item, **data)
 
     try:
         db.session.commit()

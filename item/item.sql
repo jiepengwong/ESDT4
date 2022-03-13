@@ -32,9 +32,9 @@ USE `item`;
 
 DROP TABLE IF EXISTS `item`;
 CREATE TABLE IF NOT EXISTS `Item` (
-  `ItemID` int(10) NOT NULL,
+  `ItemID` varchar(10) NOT NULL,
   `ItemName` varchar(64) NOT NULL,
-  `Seller_ID` int(15) NOT NULL,
+  `Seller_ID` varchar(10) NOT NULL,
   `ItemDesc` varchar(64) NOT NULL,
   `Category` varchar(64) NOT NULL,
   `Price` decimal(10,2) NOT NULL,
@@ -48,7 +48,12 @@ CREATE TABLE IF NOT EXISTS `Item` (
 --
 
 INSERT INTO `Item` (`ItemID`, `ItemName`, `Seller_ID`, `ItemDesc`, `Category`, `Price`, `ItemStatus`) VALUES
-('0000000001', 'Test item 1', '0000000001', 2, 'This is Test item 1', 'Test item 1 is great', 5.50);
+('1234567891', 'Test item 1', '9234567891', 'This is Test item 1', 'Test', 5.50, 'Open'),
+('1234567892', 'Test item 2', '9234567892', 'This is Test item 2', 'Test', 7.50, 'Close'),
+('1234567893', 'Test item 3', '9234567893', 'This is Test item 3', 'Test', 9.50, 'Pending'),
+('1234567894', 'Test item 4', '9234567894', 'This is Test item 4', 'Test', 15.50, 'Open'),
+('1234567895', 'Test item 5', '9234567895', 'This is Test item 5', 'Test', 17.50, 'Close'),
+('1234567896', 'Test item 6', '9234567896', 'This is Test item 6', 'Test', 19.50, 'Pending');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
