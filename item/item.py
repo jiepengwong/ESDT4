@@ -155,7 +155,7 @@ def updateItem(ItemID):
                 "data": item.json(),
                 "message": "Item has been successfully updated."
             }
-        ), 400
+        ), 200
 
     return jsonify(
         {
