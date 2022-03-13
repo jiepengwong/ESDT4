@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const Offer = require("./models/offerSchema");
 const bodyParser = require("body-parser");
+const { OrderedBulkOperation } = require("mongodb");
 
 const app = express();
 
@@ -47,12 +48,12 @@ app.get("/delete", (req,res) =>{
 
 app.post("/offer/buyer/createoffer",  (req, res) => {
   // From the front-end side of things
+    const postreq = req.body;
 
   // Create a new instance at the database side
   // We dont want to create an instance where by 
   if (req.body && req.body.buyerid != req.body.sellerid)  {
     console.log(req.body);
-    const postreq = req.body;
     const newOffer = new Offer({
       price: postreq.price,
       itemname: postreq.itemname,
@@ -67,7 +68,7 @@ app.post("/offer/buyer/createoffer",  (req, res) => {
       .then((result) => {
         if (result) {
           console.log("Offer already exists, please update offer instead");
-          res.json({"Error": "Offer already exists, edit the offer instead!"});
+          res.status(400).json({"Error": "Offer already exists, edit the offer instead!"});
         } else {
 
             // Async funnction
@@ -76,11 +77,11 @@ app.post("/offer/buyer/createoffer",  (req, res) => {
             res.status(200)
 
             // Edit code here in the future to get back the order id (postreq._id)
-            res.send(`Your order id is : ${result._id}`);
+            res.json({"Success" : `Your order id is : ${result._id}`});
 
           })
           .catch((err) => {
-            res.status(400).json("{Error: Offer not placed, invalid field perhaps? Check through }");
+            res.status(400).json({"Error": `${err}`});
 
             // console.log(err.msg)
                 });
@@ -91,6 +92,18 @@ app.post("/offer/buyer/createoffer",  (req, res) => {
           })
 
         }
+
+      else{
+        if (postreq.buyerid == postreq.sellerid) {
+        res.status(400).json({"Error": "Buyer cannot be the seller"});
+      }
+
+      else {
+        res.status(400).json({"Error": "Invalid field?"});
+
+
+      }
+    }
 
   
 });
@@ -112,19 +125,20 @@ app.get("/offer/buyer/view/:buyerid",  (req, res) => {
         if (result.length > 0) {
 
             console.log(result)
-            res.json(result)
+            res.status(200).json(result)
             // Returns a json file, which is to be interpreted at the front-end side
 
         }
-        else{
-            res.json({"Error": "You Don't have any offers yet!"})
+        else if (result.length == 0) {
+            res.status(400).json({"Error": "This buyerid does not exist at all"})
         }
 
 
     })
-    // Catch error activated, because unable to find the order
+    // Catch error activated, because unable to find the order, weird because catch only works for string
+    // Error handling solved for now 13/3/2022
     .catch((error)=>{
-        res.status(404)
+        res.status(400).json({"Error": "This buyerid does not exist at all, buyerid in URL is a string"})
         console.log(error)
     })
 })
@@ -146,7 +160,7 @@ app.put("/offer/buyer/edit/:offerid", (req,res) =>{
               res.json({"Success": "Offer updated"})
             }
             else{
-              res.json({"Error": "Offer not updated, did you key in correctly?"})
+              res.status(400).json({"Error": "Offer not updated, did you key in correctly?"})
 
             }
         }
@@ -159,6 +173,35 @@ app.put("/offer/buyer/edit/:offerid", (req,res) =>{
         res.status(404)
         console.log(error)
     })
+})
+
+
+// Buyer to delete its offer listing, providing if it is still pending
+app.delete("/offer/buyer/delete/:offerid", (req,res) =>{
+  const offerid= req.params
+  const postreq = req.body
+  Offer.deleteOne({offerid: offerid.offerid, offerstatus: "Pending"})
+  .then((result)=>{
+    // If successful
+    // Check of deletedcount is 1, if it is status 200, else 400
+    console.log(result)
+    if (result.deletedCount == 1){
+      console.log(result)
+      res.status(200).send({"Success": "Offer deleted!"})
+    }
+    else{
+      
+      res.status(400).send({"Error": "Offer not deleted, unable to delete,offerid does not exist OR status might have changed"})
+
+    }
+  
+  })
+  .catch((error)=>{
+    // If error
+    // Not really sure in what circumstances it would be different here
+    res.status(400).send({"Error": "Offer not deleted, unable to delete, offerstatus might be pending already be accepted or rejected"})
+  })
+ 
 })
 
 // Sellers see all the relevant offers
@@ -182,9 +225,27 @@ app.get("/offer/seller/:sellerid",  (req, res) => {
             // Returns a json file, which is to be interpreted at the front-end side
 
         }
-        else{
-            res.json({"Error": "Seller doesn't exists OR You Don't have any offers yet!"})
+        else if (result.length == 0) {
+
+
+       
+          // Check for existance of sellerid in the database
+          Offer.exists({sellerid: sellerid.sellerid})
+          .then((result)=>{
+            if (result){
+              res.json({"Error": "You have no existing offers yet!"})
+            }
+            else{
+              res.json({"Error": "There is no such sellerid in the database"})
+            }
+          })
+          .catch((error)=>{
+            res.json({"Error": `${error}`})
+          })
+
         }
+        // Note to self if things doesn't make sense
+        // Sellerid and buyerid will be in the offer, hence we can say that there is no such sellerid, ALTHOUGH there exists the profile ID, so logic is fine here
 
         
 
@@ -192,6 +253,7 @@ app.get("/offer/seller/:sellerid",  (req, res) => {
         })
 
     // Catch error activated, because unable to find the offer
+    // Error activated if it is not a string 
     .catch((error)=>{
         res.status(404)
         res.json({"Error": `${error.reason}`})
@@ -219,7 +281,7 @@ app.put("/offer/seller/accept/:offerid",  (req, res) => {
     })
     
 
-
+    // Update the offer status to "Accepted", FOR THAT particular ORDERID
 
     Offer.findByIdAndUpdate(offerid.offerid, {offerstatus: "Accepted"})
     .then((result)=>{
@@ -244,6 +306,9 @@ app.put("/offer/seller/accept/:offerid",  (req, res) => {
 
         // })
 
+        // Update the other offers to offerstatus: "Rejected"
+        // Search for sellerid listing itemid, since itemid is unique, with the offerstatus of Pending
+
         Offer.updateMany({sellerid: sellerid, itemid: itemid, offerstatus: "Pending"}, {offerstatus: "Rejected"})
         .then((result)=>{
 
@@ -253,7 +318,7 @@ app.put("/offer/seller/accept/:offerid",  (req, res) => {
             console.log(`Offer ${result._id} has been rejected`)
           }
 
-          res.json("Successfully updated all the other sellers to rejected")
+          res.json({"Success":"Successfully updated all the other sellers to rejected"})
 
         })
         .catch((error)=>{
