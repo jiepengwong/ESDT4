@@ -142,17 +142,17 @@ def deleteItem(ItemID):
 @app.route("/item/<string:ItemID>", methods=['PUT'])
 def updateItem(ItemID):
     if (Item.query.filter_by(ItemID=ItemID).first()):
+        db.session.delete(Item.query.filter_by(ItemID=ItemID).first())
+        db.session.commit()
+
         data = request.get_json()
         item = Item(ItemID, **data)
-
         db.session.add(item)
         db.session.commit()
         return jsonify(
             {
                 "code": 200,
-                "data": {
-                    "ItemID": ItemID
-                },
+                "data": item.json(),
                 "message": "Item has been successfully updated."
             }
         ), 400
