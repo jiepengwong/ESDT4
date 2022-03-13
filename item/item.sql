@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `Item` (
 -- Dumping data for table `item`
 --
 
-INSERT INTO `Item` (`ItemID`, `ItemName`, `UserID_Seller`, `QtyAvail`, `ItemDesc`, `Reviews`, `Price`) VALUES
+INSERT INTO `Item` (`ItemID`, `ItemName`, `Seller_ID`, `ItemDesc`, `Category`, `Price`, `ItemStatus`) VALUES
 ('0000000001', 'Test item 1', '0000000001', 2, 'This is Test item 1', 'Test item 1 is great', 5.50);
 COMMIT;
 
