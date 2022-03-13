@@ -49,7 +49,8 @@ def get_all():
                 "code": 200,
                 "data": {
                     "item": [item.json() for item in itemlist]
-                }
+                },
+                'message': 'All listed items have been successfully retreived.'
             }
         )
     return jsonify(
@@ -67,13 +68,14 @@ def searchItemID(ItemID):
         return jsonify(
             {
                 'code': 200,
-                'data': item.json()
+                'data': item.json(),
+                'message': 'Item has been successfully retreived.'
             }
         )
     return jsonify(
         {
             'code': 404,
-            'message': 'Item is not found.'
+            'message': 'Item not found (Invalid ItemID). Please enter a valid ItemID.'
         }
     ), 404
 
@@ -115,80 +117,52 @@ def createItem(ItemID):
         }
     ), 201
 
-    # DELETE: delete item
-@app.route("/item/<string:ItemID>", methods=['Delete'])
+# DELETE: delete item
+@app.route("/item/<string:ItemID>", methods=['DELETE'])
 def deleteItem(ItemID):
-    if (Item.query.filter_by(ItemID=ItemID).first()):
-        return jsonify(
-            {
-                "code": 400,
-                "data": {
-                    "ItemID": ItemID
-                },
-                "message": "An error occurred while deleting the item. Please try again."
-            }
-        ), 400
-
-    data = request.get_json()
-    item = Item(ItemID, **data)
-
-    try:
+    item = Item.query.filter_by(ItemID=ItemID).first()
+    if (item):
         db.session.delete(item)
         db.session.commit()
-    except:
         return jsonify(
             {
-                "code": 500,
-                "data": {
-                    "ItemID": ItemID
-                },
-                "message": "An error occurred while deleting the item. Please try again."
+                'code': 200,
+                'message': 'Item has been deleted.'
             }
-        ), 500
+        )
 
     return jsonify(
         {
-            "code": 201,
-            "data": item.json()
+            'code': 404,
+            'message': 'An error occurred while deleting the item. Please try again.'
         }
-    ), 201
+    ), 404
 
-# PUT: edit item
+# PUT: update existing item
 @app.route("/item/<string:ItemID>", methods=['PUT'])
-def editItem(ItemID):
+def updateItem(ItemID):
     if (Item.query.filter_by(ItemID=ItemID).first()):
+        data = request.get_json()
+        item = Item(ItemID, **data)
+
+        db.session.add(item)
+        db.session.commit()
         return jsonify(
             {
-                "code": 400,
+                "code": 200,
                 "data": {
                     "ItemID": ItemID
                 },
-                "message": "An error occurred while editing the item details. Please try again."
+                "message": "Item has been successfully updated."
             }
         ), 400
 
-    data = request.get_json()
-    item = Item.filter_by(ItemID, **data)
-
-    try:
-        db.session.commit()
-    except:
-        return jsonify(
-            {
-                "code": 500,
-                "data": {
-                    "ItemID": ItemID
-                },
-                "message": "An error occurred while editing the item details. Please try again."
-            }
-        ), 500
-
     return jsonify(
         {
-            "code": 201,
-            "data": item.json()
+            'code': 404,
+            'message': 'An error occurred while updating the item. Please try again.'
         }
-    ), 201
+    ), 404
 
 
 if __name__ == '__main__':
