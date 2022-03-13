@@ -36,6 +36,15 @@ const port = 5000;
 
 // Buyer places an offer, keys in the relevant data from the UI side and sends it to the server
 // /offer/createoffer
+
+// Test to wipe the database
+app.get("/delete", (req,res) =>{
+  Offer.deleteMany({}, function(err){
+    if(err) console.log(err);
+    else console.log("Offers deleted");
+  });
+})
+
 app.post("/offer/buyer/createoffer",  (req, res) => {
   // From the front-end side of things
 
@@ -53,24 +62,41 @@ app.post("/offer/buyer/createoffer",  (req, res) => {
     });
 
     // Save the new instance to the database
-    // Async funnction
-    newOffer.save()
+    // Check if the offer is already in the database, if it is update offer instead of creating a new one
+    Offer.findOne({ itemid: postreq.itemid, buyerid: postreq.buyerid })
       .then((result) => {
-        res.status(200)
+        if (result) {
+          console.log("Offer already exists, please update offer instead");
+          res.json({"Error": "Offer already exists, edit the offer instead!"});
+        } else {
 
-        // Edit code here in the future to get back the order id (postreq._id)
-        res.send(`Your order id is : ${result._id}`);
+            // Async funnction
+          newOffer.save()
+          .then((result) => {
+            res.status(200)
 
-      })
-      .catch((err) => {
-        res.status(400).json({"Error": "Offer not placed, invalid field perhaps? Check through "});
+            // Edit code here in the future to get back the order id (postreq._id)
+            res.send(`Your order id is : ${result._id}`);
 
-        // console.log(err.msg)
-      });
-  } else {
-    res.status(500).send("Check your network connection");
-  }
+          })
+          .catch((err) => {
+            res.status(400).json("{Error: Offer not placed, invalid field perhaps? Check through }");
+
+            // console.log(err.msg)
+                });
+
+
+            // res.status(500).json("{Error: Network error}");
+            } 
+          })
+
+        }
+
+  
 });
+
+
+
 
 
 // Buyer see offers with a status of "Pending"
@@ -103,6 +129,38 @@ app.get("/offer/buyer/view/:buyerid",  (req, res) => {
     })
 })
 
+
+
+// Buyer to update the offer via "Edit" button or smgth, to edit the price
+app.put("/offer/buyer/edit/:offerid", (req,res) =>{
+    const offerid= req.params
+    const postreq = req.body
+    console.log(postreq)
+    // Only works for offerstatus = "Pending"
+    Offer.findOneAndUpdate({offerid: offerid.offerid, offerstatus: "Pending"}, {price: postreq.price})
+    .then((result)=>{
+        console.log(result)
+        if (result) {
+            console.log(result)
+            if (result.price == postreq.price){
+              res.json({"Success": "Offer updated"})
+            }
+            else{
+              res.json({"Error": "Offer not updated, did you key in correctly?"})
+
+            }
+        }
+        else{
+            res.json({"Error": "Offer not updated, wrong field?"})
+        }
+    })
+    // Catch error activated, because unable to find the order
+    .catch((error)=>{
+        res.status(404)
+        console.log(error)
+    })
+})
+
 // Sellers see all the relevant offers
 app.get("/offer/seller/:sellerid",  (req, res) => {
     const sellerid = req.params
@@ -125,7 +183,7 @@ app.get("/offer/seller/:sellerid",  (req, res) => {
 
         }
         else{
-            res.json({"Error": "You Don't have any offers yet!"})
+            res.json({"Error": "Seller doesn't exists OR You Don't have any offers yet!"})
         }
 
         
@@ -133,9 +191,10 @@ app.get("/offer/seller/:sellerid",  (req, res) => {
 
         })
 
-    // Catch error activated, because unable to find the order
+    // Catch error activated, because unable to find the offer
     .catch((error)=>{
         res.status(404)
+        res.json({"Error": `${error.reason}`})
         console.log(error)
     })
 })
@@ -155,6 +214,8 @@ app.put("/offer/seller/accept/:offerid",  (req, res) => {
     })
     .catch((error)=>{
         console.log(error)
+        res.json({"Error": "Unable to update failed, does the offer exist?"})
+
     })
     
 
@@ -162,44 +223,59 @@ app.put("/offer/seller/accept/:offerid",  (req, res) => {
 
     Offer.findByIdAndUpdate(offerid.offerid, {offerstatus: "Accepted"})
     .then((result)=>{
-        console.log(result)
+        console.log(`Offer ${offerid.offerid} has been accepted by seller ${sellerid}`)
 
-        // Reject all other offers, but at the same time invoke the notification service? TBC
-        // Find sellerid that list itemid and offerstatus is pending
-        Offer.find({sellerid: sellerid, itemid: itemid, offerstatus: "Pending"}).where("buyerid").ne(sellerid.sellerid)
+        // // Reject all other offers, by setting the status to updated+, but at the same time invoke the notification service? TBC
+        // // Find the orders at which sellerid is the same  and the same itemid and offerstatus is pending
+        // Offer.find({sellerid: sellerid, itemid: itemid, offerstatus: "Pending"}).where("buyerid").ne(sellerid.sellerid)
+        // .then((result)=>{
+        //     console.log("i AM EXECUTED HERE")
+        //     console.log(result)
+
+        //     // Update the offerstatus to rejected
+        //     if (result.length > 0) {
+        //         Offer.updateMany({ name: 'Jon Snow' }, {
+        //           title: 'King in the North'
+        //         });
+        //       }
+        //       else{
+        //           console.log("No offers to reject")
+        //       }
+
+        // })
+
+        Offer.updateMany({sellerid: sellerid, itemid: itemid, offerstatus: "Pending"}, {offerstatus: "Rejected"})
         .then((result)=>{
-            console.log("i AM EXECUTED HERE")
-            console.log(result)
 
-            // Update the offerstatus to rejected
-            if (result.length > 0) {
-                result.forEach(element => {
-                    Offer.findByIdAndDelete(element._id)
-                    .then((result)=>{
-                        console.log(result)
-                    })
-                    .catch((error)=>{
-                        console.log(error)
-                    })
-                });
-            }
-            else{
-                console.log("No offers to reject")
-            }
+          console.log(result)
+
+          for (var i = 0; i < result.n; i++) {
+            console.log(`Offer ${result._id} has been rejected`)
+          }
+
+          res.json("Successfully updated all the other sellers to rejected")
 
         })
+        .catch((error)=>{
+          console.log(error)
+
+          res.json("{Error: Unable to update}")
+
+        })
+        
+        });
+
+        
+      })
+      
+      // .catch((error)=>{
+      //     console.log(error)
+      //     res.json({"Error": "Unable to update failed, does the offer exist?"})
+  
+      // })
 
 
 
-    })
-
-    .catch((error)=>{
-        console.log(error)
-        res.json({"Error": "Unable to update failed, does the offer exist?"})
-
-    })
-
-})
 
 
 
@@ -260,3 +336,7 @@ app.put("/offer/seller/accept/:offerid",  (req, res) => {
 // app.get('/order', (req, res) => {
 //     res.send('Hello World!')
 //   })
+ // Update the offer
+//  Offer.findOneAndUpdate(
+//   { itemid: postreq.itemid, buyerid: postreq.buyerid },
+//   { $set: { price: postreq.price } },
