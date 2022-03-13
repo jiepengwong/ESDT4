@@ -19,10 +19,10 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `Item`
+-- Database: `item`
 --
-CREATE DATABASE IF NOT EXISTS `Item` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
-USE `Item`;
+CREATE DATABASE IF NOT EXISTS `item` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `item`;
 
 -- --------------------------------------------------------
 
@@ -30,21 +30,21 @@ USE `Item`;
 -- Table structure for table `Item`
 --
 
-DROP TABLE IF EXISTS `Item`;
+DROP TABLE IF EXISTS `item`;
 CREATE TABLE IF NOT EXISTS `Item` (
   `ItemID` int(10) NOT NULL,
   `ItemName` varchar(64) NOT NULL,
-  `UserID_Seller` int(15) NOT NULL,
-  `QtyAvail` int(5) NOT NULL,
-  `ItemDesc` varchar(64)decimal(10,2) NOT NULL,
-  `Reviews` varchar(255) DEFAULT NULL,
+  `Seller_ID` int(15) NOT NULL,
+  `ItemDesc` varchar(64) NOT NULL,
+  `Category` varchar(64) NOT NULL,
   `Price` decimal(10,2) NOT NULL,
+  `ItemStatus` varchar(64) DEFAULT NULL,
 
   PRIMARY KEY (`ItemID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `Item`
+-- Dumping data for table `item`
 --
 
 INSERT INTO `Item` (`ItemID`, `ItemName`, `UserID_Seller`, `QtyAvail`, `ItemDesc`, `Reviews`, `Price`) VALUES
