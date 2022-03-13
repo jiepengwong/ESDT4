@@ -87,12 +87,12 @@ def createItem(ItemID):
                 "data": {
                     "ItemID": ItemID
                 },
-                "message": "An error occurred while listing the item. Please try again."
+                "message": "Item already exist and an error occurred while listing the item. Please try again."
             }
         ), 400
 
     data = request.get_json()
-    item = Item(item, **data)
+    item = Item(ItemID, **data)
 
     try:
         db.session.add(item)
@@ -130,7 +130,7 @@ def deleteItem(ItemID):
         ), 400
 
     data = request.get_json()
-    item = Item(item, **data)
+    item = Item(ItemID, **data)
 
     try:
         db.session.delete(item)
@@ -168,7 +168,7 @@ def editItem(ItemID):
         ), 400
 
     data = request.get_json()
-    item = Item.filter_by(item, **data)
+    item = Item.filter_by(ItemID, **data)
 
     try:
         db.session.commit()
