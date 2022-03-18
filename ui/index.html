@@ -41,7 +41,7 @@
                     <th>ItemDesc</th>
                     <th>Category</th>
                     <th>Price</th>
-                    <th>ItemStatus</th>
+                    <th>Item</th>
                 </tr>
             </thead>
         <tbody id="itemTable"></tbody>
@@ -75,12 +75,20 @@
             );
             const result = await response.json();
                 if (response.status === 200) {
-                    
+
                 // success case
-                var items = result.data.item; //the array is in items within data of the returned result
-                // for loop to setup all table rows with obtained items data
+                var items = result.data.item; 
+                // finding all available items {status = open} to be shown on UI
+                var itemsOpen = [];
+                for (let i = 0; i < items.length; i++) {
+                    const element = items[i];
+                    if (element.ItemStatus == "Open") {
+                        itemsOpen.push(element)
+                    }
+                }
+                // console.log(itemsOpen)
                 var rows = "";
-                for (const item of items) {
+                for (const item of itemsOpen) {
                     eachRow =
                             "<td>" + item.ItemID + "</td>" +
                             "<td>" + item.ItemName + "</td>" +
