@@ -26,6 +26,13 @@
                         </div>
                         <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
                         <p class="mt-5 mb-3 text-muted">&copy; Henesys MarketPlace 2022</p>
+
+                        <button id="authorize_button" style="display: none;">Authorize</button>
+
+                        <div class="oauth-btns">
+                        or signin with
+                        <button expand="block" @click="googleAuth"><ion-icon slot="start" :icon="logoGoogle" />Google</button>
+                        </div>
                     </form>
                 </main>
             </div>
