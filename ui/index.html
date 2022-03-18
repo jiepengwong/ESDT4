@@ -46,7 +46,7 @@
             </thead>
         <tbody id="itemTable"></tbody>
         </table>
-        <a id="addItemBtn" class="btn btn-primary" href="add-item.html">Add an item</a>
+        <!-- <a id="addItemBtn" class="btn btn-primary" href="add-item.html">Add an item</a> -->
     </div>
 
     <script>
@@ -63,10 +63,10 @@
 
     // anonymous async function 
     // - using await requires the function that calls it to be async
-    $(async() => {           
+    $(async() => {
         // Change serviceURL to your own
-        // var serviceURL = "http://127.0.0.1:5000/item";
-        var serviceURL = "http://192.168.1.5:5000/item";
+        var serviceURL = "http://127.0.0.1:5000/item";
+        // var serviceURL = "http://192.168.1.5:5000/item";
 
         try {
             const response =
