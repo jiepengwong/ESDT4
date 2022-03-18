@@ -45,7 +45,7 @@ def find_by_profile_ID(profile_ID):
     })
 
 # We need to update profile/rating/:id, this is to update the profile ratings of the user
-@app.route("")
+@app.route("/profile/rating/<")
 
 
 # We need to post /profile/register/, this is to register new user everytime they login with google 
