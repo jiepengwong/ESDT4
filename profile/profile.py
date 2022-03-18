@@ -1,3 +1,4 @@
+import json
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
@@ -44,7 +45,7 @@ def find_by_profile_ID(profile_ID):
     })
 
 # We need to update profile/rating/:id, this is to update the profile ratings of the user
-
+@app.route("")
 
 
 # We need to post /profile/register/, this is to register new user everytime they login with google 
@@ -59,5 +60,27 @@ def create_account(Profile_Id):
             "message": "User has already registered"
         }), 400
     
+    data = request.get_json()
+    profile = Profile(Profile_Id, **data)
+
+    try:
+        db.session.add(profile)
+        db.session.commit()
+    
+    except:
+        return jsonify({
+            "code":500,
+            "data":{
+                "userId": Profile_Id
+            },
+            "message": "An error occured creating a new account"
+        }), 500
+    
+    return jsonify({
+        "code":201,
+        "data":profile.json()
+    })
+
+
 if __name__ == "__main__":
     app.run(port=5000, debug = True)
