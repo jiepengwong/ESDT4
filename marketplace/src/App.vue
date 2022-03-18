@@ -1,14 +1,32 @@
+// If I didnt login, re-route to Log In vue.
 <template>
+  <div>
+      <Navbar />
 
+      <router-view/>
+
+  </div>
 <!-- this is where the application is gonna live -->
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/catalogue">Catalogue</router-link> |
-    <router-link to="/confirmation">Confirmation</router-link>
-  </nav>
-  <router-view/>
 
 </template>
+
+<script>
+  // Importing NavBar 
+  import Navbar from "@/components/Navbar.vue";
+
+
+  export default {
+  name: "App",
+  components: {
+    Navbar,
+  },
+  computed: {
+
+  },
+};
+  
+</script>
+
 
 <style>
 #app {
