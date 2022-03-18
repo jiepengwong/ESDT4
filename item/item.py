@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+import secrets
 
 
 app = Flask(__name__)
@@ -80,8 +81,9 @@ def searchItemID(ItemID):
     ), 404
 
 # POST: create new item
-@app.route("/item/<string:ItemID>", methods=['POST'])
-def createItem(ItemID):
+@app.route("/item", methods=['POST'])
+def createItem():
+    ItemID = secrets.token_urlsafe(22)
     if (Item.query.filter_by(ItemID=ItemID).first()):
         return jsonify(
             {
