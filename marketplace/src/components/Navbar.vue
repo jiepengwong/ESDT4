@@ -48,7 +48,7 @@ export default{
     data() {
         return {
             links: [
-                { path: '/', text: 'Catalogue' },
+                { path: '/catalogue', text: 'Catalogue'},
                 { path: '/login', text: 'Login' },
                   ],
 

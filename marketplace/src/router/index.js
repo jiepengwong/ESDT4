@@ -6,12 +6,22 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 const routes = [
 
   {
-    path: '/',
+    path: '/catalogue',
     name: 'catalogue',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/CatalogueViewCopy.vue')
+  }, 
+
+  {
+    path: '/catalogue/item/:id',
+    name: 'CatalogueItemDetails',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../components/CataloguePageComponent/CatalogueItemDetails.vue'),
+    props: true
   }, 
   
   {

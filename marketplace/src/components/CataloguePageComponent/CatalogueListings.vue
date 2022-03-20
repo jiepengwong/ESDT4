@@ -41,14 +41,16 @@
 
             <div class="row" >
                 <div v-for="post in posts" :key="post" class="col-sm-3 p-2">
-
-                    <div class="card">
+                    <!-- Search for items with item status that is open -->
+                    <div class="card" v-if="post.ItemStatus == 'Open'">
                         <img :src="image" class="card-img-top" alt="testing1">
                         <div class="card-body">
                             <h5 class="card-title">{{post.ItemName}}</h5>
                             <h6 class="card-title">{{post.Price}}</h6>
                             <p class="card-text">{{post.ItemDesc}}</p>
-                            <a href="#" class="btn btn-primary">View item details</a>
+                            <a :href="`catalogue/item/${post.ItemID}`" class="btn btn-primary">View item details</a>
+                            <!-- Pass the itemID into the href -->
+                            
                         </div>
                     </div>
 

@@ -1,12 +1,12 @@
 <template>
   <div class="catalogue">
     <!-- This would contain the filter component -->
-    <CatalogueLanding :filterPosts="filterPosts" :search="search"/>
+    <CatalogueLanding @search="listenFromChildLanding" @filterByCatName ="listenFromChildLanding"/>
 
     <div>
     <CatalogueListings :posts="results"/>
 
-    <!-- {{results}} -->
+    {{results}}
 
     </div>
 
@@ -52,7 +52,7 @@ import CatalogueListings from '../components/CataloguePageComponent/CatalogueLis
         if (categoryName !== "All"){
 
           this.results = this.results.filter((result) => {
-            console.log(result.Category)
+            // console.log(result.Category)
             return result.Category === categoryName;
           })
         }
@@ -71,7 +71,22 @@ import CatalogueListings from '../components/CataloguePageComponent/CatalogueLis
 
       resetPosts(){
         this.results = this.unfilteredResult
-      }
+      },
+
+      listenFromChildLanding(term,str){
+        console.log("hi i am listening from child")
+        console.log(term)
+        console.log(str)
+
+        if (str == "search"){
+          this.result = this.search(term)
+        }
+        else if (str == "catname"){
+          console.log(term)
+          console.log(str)
+          this.result = this.filterPosts(term)
+        }
+      },
 
       
   
