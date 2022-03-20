@@ -1,4 +1,5 @@
 <template>
+
     <div class="sellerView">
     <h1>This is the Seller's View</h1>
 
