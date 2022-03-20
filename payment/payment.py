@@ -1,8 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-import secrets;
-#import uuid;
+import secrets
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/payment'
@@ -54,6 +53,7 @@ def getdetails():
         }
     ), 404
 
+
 #create unique ID for payment transaction
 @app.route("/payment", methods=['POST'])
 def createPayment():
@@ -85,7 +85,6 @@ def createPayment():
                 "message": "An error occurred while listing the item. Please try again."
             }
         ), 500
-
     return jsonify(
         {
             "code": 201,
