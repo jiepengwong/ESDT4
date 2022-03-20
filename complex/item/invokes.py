@@ -12,7 +12,7 @@ def invoke_http(url, method='GET', json=None, **kwargs):
        return: the JSON reply content from the http service if the call succeeds;
             otherwise, return a JSON object with a "code" name-value pair.
     """
-    code = 200
+    code = 200 # default
     result = {}
 
     try:
@@ -21,7 +21,7 @@ def invoke_http(url, method='GET', json=None, **kwargs):
         else:
             raise Exception("HTTP method {} unsupported.".format(method))
     except Exception as e:
-        code = 500
+        code = 500 # error
         result = {"code": code, "message": "invocation of service fails: " + url + ". " + str(e)}
     if code not in range(200,300):
         return result # stops here 

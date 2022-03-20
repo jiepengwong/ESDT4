@@ -1,7 +1,7 @@
 # invoke item microservice to get ONE item
 from invokes import invoke_http
 
-# TBC - hardcoded for now
+# TBC - hardcoded for now - need to fetch
 ItemId = 1234567891
 
 get_result = invoke_http(

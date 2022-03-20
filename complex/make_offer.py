@@ -10,18 +10,18 @@ app = Flask(__name__)
 CORS(app)
 
 # make sure the following microservices are running:
-# offer_URL = "http://localhost:5000/offer"
+create_offer_URL = "http://localhost:5000/offer/buyer/createoffer"
 item_URL = "http://localhost:5000/item" # need to change port for multiple URLs (?)
 # error_URL = "http://localhost:5004/error"
 # notificatio_URL = "http://localhost:5004/notification" # requires AMQP
 
-
+@app.route("/")
 @app.route("/make_offer", methods=['POST'])
 def make_offer():
     # Simple check of input format and data of the request are JSON
     if request.is_json:
         try:
-            offer = request.get_json()
+            offer = request.get_json() 
             print("\nReceived an offer in JSON:", offer)
 
             # do the actual work
@@ -48,19 +48,24 @@ def make_offer():
     }), 400
 
 
-def processMakeOffer(offer):
+def processMakeOffer(offer): # process the json code 
 
     # TBC on the logical flow
 
-    # 1. Send the offer info {items}
-    # Invoke the offer microservice
-    # print('\n-----Invoking offer microservice-----')
-    # offer_result = invoke_http(offer_URL, method='POST', json=offer)
-    # print('offer_result:', offer_result)
+    # 1. Get information of items requested in offer (GET one item)
+    # Invoke the item microservice
+    # print('\n-----Invoking item microservice-----')
+    # item_result = invoke_http(item_URL, method='GET', json=offer)
+    # print('item_result:', item_result)
 
-    # 2. Record new offer (if we are doing an activity log microservice)
-    # record the activity log anyway
-    # print('\n\n-----Invoking activity_log microservice-----')
+    # Send new offer request (POST offer)
+    # print('\n\n-----Invoking offer microservice-----')
+    # offer_result = invoke_http(create_offer_URL, method="POST", json=item_result)
+    # print("\nnew order created:", offer_result)
+
+    # 2. Record new offer in notification (if AMQP to notification)
+    # log information for notification
+    # print('\n\n-----Invoking notification microservice-----')
     # invoke_http(activity_log_URL, method="POST", json=offer_result)
     # print("\nOffer sent to activity log.\n")
     # - reply from the invocation is not used;
@@ -92,15 +97,17 @@ def processMakeOffer(offer):
     # print("notification_result:", notification_result, '\n')
 
 
-    # 7. Return created offer, notification of result
-    # return {
-    #     "code": 201,
-    #     "data": {
-    #         "offer_result": offer_result,
-    #         "notification_result": notification_result
-    #     }
-    # }
-    return {} # to remove
+    # 7. Return created offer + notification of result
+    return {
+        "code": 201,
+        # "data": {
+        #     "offer_result": offer_result,
+        #     "notification_result": notification_result
+        # }
+    }
+
+    # Invoke Payment Mircoservice module
+    # return {} # to remove
 
 
 # Execute this program if it is run as a main script (not by 'import')

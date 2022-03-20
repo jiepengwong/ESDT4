@@ -52,7 +52,9 @@ def processAcceptOffer(offer):
 
     # TBC on the logical flow
 
-    # 1. Send the offer info {items}
+    # 0. Get items based on offer (unless filtered once clicked)
+
+    # 1. Send the accepted offer info {items} ?
     # Invoke the offer microservice
     # print('\n-----Invoking offer microservice-----')
     # offer_result = invoke_http(offer_URL, method='POST', json=offer)
