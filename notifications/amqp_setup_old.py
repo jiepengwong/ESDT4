@@ -1,6 +1,13 @@
 import pika
 from os import environ
 
+#prolly need to add in environ for more scalablit
+
+#How notification is sent --> notification microservice will have its own DB with the standardised messages that will be sent. When buyer press on "Make an Offer"button, the notification microservice will send a message to the seller's queue. The seller will have to open the queue and listen to the message  and then send back message to the buyer's queue via a button. The buyer will have to open the queue and listen to the message and then send the message to the seller's queue. (Qns: Will we then need two queue? One for buyer and one for user? Or will we just have one queue for both? ) 
+
+#Notifications will be routing to the Order microservice - need to include a message field in for the messages that will be sent to the order microservice.
+
+
 hostname = environ.get('rabbit_host') or 'localhost'
 port = environ.get('rabbit_port') or 5672
 # connect to the broker and set up a communication channel in the connection
@@ -12,25 +19,30 @@ connection = pika.BlockingConnection(
 
 channel = connection.channel()
 
-exchangename="notify_error_topic"
+exchangename="notify_topic"
 exchangetype="topic"
 channel.exchange_declare(exchange=exchangename, exchange_type=exchangetype, durable=True)
 
+############# notify accept queue ############################	
 
-# ############# notify queue ############################    
+queue_name = 'NotifyAccept'
+channel.queue_declare(queue=queue_name, durable=True) 
 
-queue_name = 'Notify'
-channel.queue_declare(queue=queue_name, durable=True)
-routing_key = 'notify.*' 
+routing_key = 'notify.accept'
+# bind Notify queue
 channel.queue_bind(exchange=exchangename, queue=queue_name, routing_key=routing_key)
+    # bind the queue to the exchange via the key
+    # any routing_key with 'notify.accept' will be matched
 
-############### error queue ############################
+############# notify reject queue ############################	
 
-queue_name = 'Error'
+
+queue_name ='NotifyReject'
 channel.queue_declare(queue=queue_name, durable=True)
-routing_key = 'error.*'
-channel.queue_bind(exchange=exchangename, queue=queue_name, routing_key=routing_key)
 
+routing_key = 'notify.reject'
+# bind Notify queue
+channel.queue_bind(exchange=exchangename, queue=queue_name, routing_key=routing_key)
 
 
 """
@@ -62,10 +74,3 @@ def is_connection_open(connection):
         print("AMQP Error:", e)
         print("...creating a new connection.")
         return False
-
-
-
-
-
-
-
