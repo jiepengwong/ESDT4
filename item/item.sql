@@ -32,7 +32,7 @@ USE `item`;
 
 DROP TABLE IF EXISTS `item`;
 CREATE TABLE IF NOT EXISTS `Item` (
-  `ItemID` varchar(10) NOT NULL,
+  `ItemID` varchar(64) NOT NULL,
   `ItemName` varchar(64) NOT NULL,
   `Seller_ID` varchar(10) NOT NULL,
   `ItemDesc` varchar(64) NOT NULL,
