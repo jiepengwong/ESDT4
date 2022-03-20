@@ -56,7 +56,7 @@ def getdetails():
 
 #create unique ID for payment transaction
 @app.route("/payment", methods=['POST'])
-def createItem():
+def createPayment():
     payment_id = secrets.token_urlsafe(22)
     if (Payment.query.filter_by(payment_id=payment_id).first()):
         return jsonify(
