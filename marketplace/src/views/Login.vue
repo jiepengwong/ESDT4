@@ -12,6 +12,7 @@
                 <h2>Welcome to Henesys Market Place!</h2>
                 
             </div>
+            <hr>
 
             <div style="margin-top:30px"></div>
             
@@ -33,7 +34,9 @@
                 <div> Hello {{name}} </div>
                 <div>{{id}} </div>
                 <div> {{email}}</div>
-                <div> Am I signed in?  {{isSignedIn}} </div>
+                <div> Am I signed in?  {{isSignedIn}} 
+                </div>
+                <div>{{testing}}</div>
 </template>
 
 <script>
@@ -52,28 +55,33 @@
                 databaseSign: null,
                 registered: null,
                 GoogleUser: null,
-            }
+            } 
         },
     methods: {
-            googleAuth() {
-                let gapi = window.gapi;
-                let clientId ="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com";
-                let apiKey ="AIzaSyC0WtHoYqLnGKgaqLWX6RGkiL0X2C7dll8";
-                let secretClientId = "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";
-                let discoveryDocs =["https://www.googleapis.com/discovery/v1/apis/oauth2/v2/rest"];
-                let scope ="https://www.googleapis.com/auth/userinfo.profile";
-                gapi.load("client:auth2", () => {
+        googleAuth() {
+            let gapi = window.gapi;
+            let clientId ="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com";
+            let apiKey ="AIzaSyC0WtHoYqLnGKgaqLWX6RGkiL0X2C7dll8";
+            let secretClientId = "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";
+            let discoveryDocs =["https://www.googleapis.com/discovery/v1/apis/oauth2/v2/rest"];
+            let scope ="https://www.googleapis.com/auth/userinfo.profile";
+
+             gapi.load("client:auth2", () => {
                     gapi.client.init({
                     apiKey,
                     clientId,
                     discoveryDocs,
                     scope,
                     secretClientId,
-                    }).then(() => {
-                    if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
+                    })
+                    .then(() => {
+                        gapi.auth2.getAuthInstance().signIn().then(() => {
+                        this.googleUserProfile = gapi.auth2.getAuthInstance().currentUser.get()});
+
                         this.googleUserProfile = gapi.auth2.getAuthInstance().currentUser.get();
                         // gapi.auth2.getAuthInstance() returns a GoogleAuth Object#########################################################
                         this.GoogleAuth = gapi.auth2.getAuthInstance();
+                        
 
                         // There are many functions in Google OAuth. #######################################################################
                         // console.log("This is Google Auth")
@@ -81,6 +89,8 @@
                         // console.log(GoogleAuth.signOut)
                         // console.log(GoogleAuth.isSignedIn.get())
                         var GoogleUser = this.GoogleAuth.currentUser.get();
+
+                        
 
                         // GoogleAuth.currentUser.get() ==> google user. ###################################################################
                         // This will give me the getId() portion, but do not use this for your backend. Instead call out. ##################
@@ -94,6 +104,8 @@
                         this.name = BasicProfile.getName();
                         this.email = BasicProfile.getEmail();
                         this.isSignedIn = GoogleUser.isSignedIn();
+
+
                         // Retrieving all the necessary information 
 
                         // Connecting to Profile Microservice : 
@@ -134,6 +146,12 @@
                                     "ratings": null
                             })
                             console.log(jsondata)
+                            console.log(typeof jsondata)
+                            // Json Data ia String now
+                            localStorage.login = jsondata
+
+                            localStorage.iwanthisid = this.id
+
 
                             if (this.registered==false){
                                 fetch(registered_url,{
@@ -154,77 +172,38 @@
                             
 
                         }
-                        // this.loginApiCall(this.googleUserProfile);
-                        alert("You are logged In");
+                    })
+             })
 
-                    } else {
-                        gapi.auth2.getAuthInstance().signIn().then(() => {
-                        this.googleUserProfile = gapi.auth2.getAuthInstance().currentUser.get();
-                        // this.loginApiCall(this.googleUserProfile);
-                        console.log("NOT logged in...");
-                        }).catch(err => {
-                        alert(`Google auth error: ${err}`);
-                        });
-                    }
-                    })
-                    .catch((err) => {
-                    alert("Helllo" + err);
-                    console.log(err);
-                    })
-                });
-            },
-            signOut() {
-                let gapi = window.gapi;
-                let clientId ="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com";
-                let apiKey ="AIzaSyC0WtHoYqLnGKgaqLWX6RGkiL0X2C7dll8";
-                let secretClientId = "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";
-                let discoveryDocs =["https://www.googleapis.com/discovery/v1/apis/oauth2/v2/rest"];
-                let scope ="https://www.googleapis.com/auth/userinfo.profile";
-                gapi.load("client:auth2", () => {
-                    gapi.client.init({
+        },
+        signOut() {
+            let gapi = window.gapi;
+            let clientId ="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com";
+            let apiKey ="AIzaSyC0WtHoYqLnGKgaqLWX6RGkiL0X2C7dll8";
+            let secretClientId = "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";
+            let discoveryDocs =["https://www.googleapis.com/discovery/v1/apis/oauth2/v2/rest"];
+            let scope ="https://www.googleapis.com/auth/userinfo.profile";
+
+            gapi.load("client:auth2", () => {
+                gapi.client.init({
                     apiKey,
                     clientId,
                     discoveryDocs,
                     scope,
-                    secretClientId,
-                    }).then(() => {
+                    secretClientId,})
+
+                    .then(() => {
                         var GoogleAuthObj = gapi.auth2.getAuthInstance();
                         this.GoogleAuth = GoogleAuthObj.signOut();
                         this.isSignedIn = false;
                     })
-                    
-                    alert("You have been logged out!")
-                });
-
-                    
-                
-            }
+            })
+            localStorage.login = ""
+            alert("You have been logged out!")
+        }
 
 
-            // loginApiCall(data) {
-            // // API call to handle googleUserProfile data
-            // // then redirect to home/profile page
-            // console.log("googleUserProfile", data);
-            // // this.$router.push("/HomeView");
-            // },
-
-            // Doesnt seeem to need a official Token yet !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            // officialToken(token){
-            //     console.log(token)
-            //     console.log("Official Token is ran")
-            //     var specialUrl = "https://oauth2.googleapis.com/tokeninfo?id_token=" + String(token);
-            //     console.log(specialUrl)
-            //     specialUrl = encodeURI(specialUrl)
-
-            //     axios.get(specialUrl)
-            //     .then(response=>{
-            //         console.log(response.data)
-            //     })
-            //     .catch(error => {
-            //         console.log(error)
-            //     })
-            // }
-        },
+    }
     })
 </script>
 

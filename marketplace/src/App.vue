@@ -3,7 +3,8 @@
   <div>
       <Navbar />
 
-      <router-view/>
+      <router-view />
+      {{isSignedIn}}
 
   </div>
 <!-- this is where the application is gonna live -->
@@ -20,9 +21,16 @@
   components: {
     Navbar,
   },
+  data() {
+    return{
+      login: localStorage.login
+    }
+  },
+
   computed: {
 
   },
+
 };
   
 </script>

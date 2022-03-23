@@ -19,6 +19,8 @@
         </td>
       </tr>
     </table>
+    {{login}}
+    {{id}}
   </div>
 </template>
 
@@ -52,7 +54,9 @@
           }
         ],
         quantity: [1,2,3,4,5,6,7,8,9,10],
-        selected: 0
+        selected: 0,
+        login: localStorage.login,
+        id: localStorage.iwanthisid
 
         }
     },
