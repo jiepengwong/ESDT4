@@ -32,12 +32,13 @@ USE `notifications`;
 
 DROP TABLE IF EXISTS `notifications`;
 CREATE TABLE IF NOT EXISTS `notifications` (
+  ` ` varchar(64) NOT NULL,
   `Seller_ID` varchar(10) NOT NULL,
   `Buyer_ID` varchar(10) NOT NULL,
   `Status` varchar(10) DEFAULT NULL,
   `Message` varchar(85) DEFAULT NULL,
   `DateTimeSQL` datetime NOT NULL,
-  PRIMARY KEY (Seller_ID, Buyer_ID, DateTimeSQL) );
+  PRIMARY KEY (Notification_ID)) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --   constraint comment_pk primary key(user_id, electronic_item, date_time),
 
@@ -46,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `notifications` (
 -- Dumping data for table `notifications`
 --
 
-INSERT INTO `notifications` (`Seller_ID`, `Buyer_ID`, `Status`, `Message`, `DateTimeSQL`) VALUES
+INSERT INTO `notifications` ( `Notification_ID`, `Seller_ID`, `Buyer_ID`, `Status`, `Message`, `DateTimeSQL`) VALUES
 (123456, '6544321', 'NEW', 'FALALALLAL', '2020-06-12 02:14:55');
 
 -- --------------------------------------------------------
