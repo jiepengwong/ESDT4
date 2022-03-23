@@ -11,9 +11,9 @@ CORS(app)
 
 # make sure the following microservices are running:
 create_offer_URL = "http://localhost:5000/offer/buyer/createoffer"
-item_URL = "http://localhost:5000/item" # need to change port for multiple URLs (?)
-# error_URL = "http://localhost:5004/error"
-# notificatio_URL = "http://localhost:5004/notification" # requires AMQP
+# item_URL = "http://localhost:5000/item" 
+# error_URL = "http://localhost:5004/error"# need to change port for multiple URLs (?)
+# notification_URL = "http://localhost:5004/notification" # requires AMQP
 
 @app.route("/")
 @app.route("/make_offer", methods=['POST'])
@@ -24,10 +24,11 @@ def make_offer():
             offer = request.get_json() 
             print("\nReceived an offer in JSON:", offer)
 
-            # do the actual work
-            # 1. Send offer info {offer details}
+            # # do the actual work
+            # # 1. Send offer info {offer details}
             result = processMakeOffer(offer)
             return jsonify(result), result["code"]
+
 
         except Exception as e:
             # Unexpected error in code
@@ -47,21 +48,30 @@ def make_offer():
         "message": "Invalid JSON input: " + str(request.get_data())
     }), 400
 
+# #JSON input here should be in this format:
+    # {
+        # "price": 6000,
+        # "itemname": "iphonepromax232323",
+        # "itemid": "21",
+        # "buyerid": 123,
+        # "sellerid": 2323,
+        # "offerstatus": "Pending"
+    # }
 
-def processMakeOffer(offer): # process the json code 
+def processMakeOffer(offer): # process the json input of /make_offer
 
     # TBC on the logical flow
 
-    # 1. Get information of items requested in offer (GET one item)
+    # 1. (REMOVED as this is the json input) Get information of items requested in offer (GET one item)
     # Invoke the item microservice
     # print('\n-----Invoking item microservice-----')
     # item_result = invoke_http(item_URL, method='GET', json=offer)
     # print('item_result:', item_result)
 
-    # Send new offer request (POST offer)
-    # print('\n\n-----Invoking offer microservice-----')
-    # offer_result = invoke_http(create_offer_URL, method="POST", json=item_result)
-    # print("\nnew order created:", offer_result)
+    # 2. Send new offer request (POST offer)
+    print('\n\n-----Invoking offer microservice-----')
+    offer_result = invoke_http(create_offer_URL, method="POST", json=offer)
+    print("\nnew order created:", offer_result)
 
     # 2. Record new offer in notification (if AMQP to notification)
     # log information for notification
