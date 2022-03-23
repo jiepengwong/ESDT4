@@ -50,6 +50,7 @@ export default{
             links: [
                 { path: '/catalogue', text: 'Catalogue'},
                 { path: '/login', text: 'Login' },
+                { path: '/payment', text: 'Payment' },
                   ],
 
             query: ""
