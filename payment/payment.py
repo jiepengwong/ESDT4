@@ -41,22 +41,8 @@ class Payment(db.Model):
                 "payment_status": self.payment_status}
 
 #GET sellerid, buyerid, price from "Accept Offer" microservice
-
-
-#step 1: get seller id, buyer id, price
-#step 2: auto create random payment id then go to external API
-
-#fields: sellerid, buyerid, price, paymentid, paymentstatus
-#db = SQLAlchemy(app)
-'''
-class payment():
-    buyer_id = '12345678'
-    seller_id = '87654321'
-    payment_id = '21436587'
-    payment_status = False
-'''
 @app.route("/payment")
-def getdetails(): #get sellerid, buyerid, price from accept offer microservice
+def getdetails(): 
     #pass   
 
     payments = Payment.query.all() 
