@@ -9,8 +9,20 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav">
-        <li class="nav-item">
+
+      <div class="col-4">
+              <input type="name" class="form-control mr-sm-1" placeholder="Search" aria-label="Search" v-model="query">
+      </div>
+
+      <div class="row mx-1">
+        
+        <div class="col-3 mx-1">
+            <button class="btn btn-outline-success" type="submit" v-on:click="search()">Search</button>
+        </div>
+
+        <div class="col-2">
+          <ul class="navbar-nav">
+        <li class="nav-item" v-for="link in links" :key="link">
           <a class="nav-link">
               <router-link to="/catalogue">Catalogue</router-link>
             </a>
@@ -29,6 +41,12 @@
                         SignOut
         </button>
       </ul>
+        </div>
+      </div>
+
+      
+
+      
     </div>
   </div>
 </nav>
@@ -41,9 +59,25 @@
 export default{
     name: "Navbar",
     data() {
-      return {
-        login: undefined,
-      }
+
+        return {
+            links: [
+                { path: '/catalogue', text: 'Catalogue'},
+                { path: '/login', text: 'Login' },
+                { path: '/payment', text: 'Payment' },
+                  ],
+
+            query: "",
+            login: undefined,
+
+        }
+    },
+    methods: {
+      // Push search query into the catalogue page
+        search() {
+            this.$router.push({ path: '/', query: { q: this.query } })
+            console.log("help me")
+        }
 
     },
     methods: {

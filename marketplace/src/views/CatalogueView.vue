@@ -1,22 +1,14 @@
 <template>
   <div class="catalogue">
-    <h1>This is a catalogue</h1>
 
-    <table>
-      <tr>
-        <th>Name</th>
-        <th>Price</th>
-        <th>Quantity</th>
-      </tr>
 
-      <tr v-for="item in items" :key="item">
-        <td>{{ item.name }}</td>
-        <td>{{ item.price }}</td>
-        <td>
-          <select v-model="item.quantity">
-            <option v-for="i in quantity" :key="i">{{ i }}</option>
-          </select>
-        </td>
+    {{results}}
+
+    ====================================
+
+    <table v-if="queryField != []">
+      <tr v-for="filters in queryField" :key="filters">
+        <td>{{filters}}</td>
       </tr>
     </table>
     {{login}}
@@ -63,18 +55,143 @@
 
     methods: {
 
-      sumPrice(){
-        let sum = 0;
-        for(let i = 0; i < this.items.length; i++){
-          sum += this.items[i].price * this.items[i].quantity;
-        }
-        return sum;
-      },
       
-      summarise(){
+      // Querying the database here
+      // searchResults() {
+      //   axios.get('/', {
+      //     params: {
+      //       q: this.query
+      //     }
+      //   })
+      //     .then(response => {
+      //       this.results = response.data;
+      //     })
+      //     .catch(error => {
+      //       console.log(error);
+      //     })
+      // }
+    },
+    // computed: {
+      // Check if the query is empty 
+
+      
+    //  async searchItemDatabase(){
+
+
+    //     if (this.querytest == ""){
+    //       this.results = [];
+    //     }
+    //     else{
+    //       var getItemUrl = "http://localhost:5000/items"
+      
+    //       try{
+          
+    //       var databaseitems = await fetch(getItemUrl)
+    //       const databaseitemsJson = await databaseitems.json()
+
+    //       if (databaseitems.status === 200){
+    //         // Get all the databases 
+    //         this.results = databaseitemsJson;
+    //         console.log(this.results)
+
+    //       }
+
+
+
+
+    //       }
+
+    //       catch(error){
+    //         console.log(error)
+
+    //       }
+    //     }
+    //   }
+
+    // },
+
+    async created() {
+      // Fetch all the data from the data base first before query
+
+          try{
+          var getItemUrl = "http://localhost:5000/item"
+          
+          var databaseitems = await fetch(getItemUrl)
+          const databaseitemsJson = await databaseitems.json()
+
+          if (databaseitems.status === 200){
+            // Get all the databases 
+            this.results = databaseitemsJson.data.item;
+            console.log(this.results)
+
+          }
+          }
+
+          catch(error) {
+            console.log(error)
+          }
+
+
+
+
+
+    //       }
+
+    //       catch(error){
+    //         console.log(error)
+
+    //       }
+    //     }
+    //   }
+
+
+
+
+    },
+    computed: {
+      queryField() {
+
+        if (this.results && this.querytest){
+          console.log("lol2")
+          // console.log(this.results.filter(item => item.name.toLowerCase().includes(this.querytest.toLowerCase())))
+
+          // this.filteredResult = this.results.filter(item => item["ItemName"].toLowerCase().includes(this.querytest.toLowerCase()))
+
+          return this.results.filter(item => item["ItemName"].toLowerCase().includes(this.querytest.toLowerCase()))
+
+
+        }
+
+        else{
+          console.log("lol")
+          return "No result found"
+        }
+        
+
+      },
+
+      querytest(){
+        console.log("lol")
+        return this.$route.query.q
+      
+      
+
 
       }
-    
+
+      // changeQuery(){
+
+      //   if (this.$route.query.q != this.querytest) {
+
+      //     this.querytest = this.$route.query.q
+      //     // return this.querytest
+
+      //   }
+      //   return this.querytest
+
+      // }
+      
+
     }
   }
 </script>
