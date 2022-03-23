@@ -32,3 +32,8 @@ npm run lint
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
 test
+
+
+
+## Librairies/Dependencies loaded for Notifs
+pip install pymongo

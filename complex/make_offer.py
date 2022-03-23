@@ -10,24 +10,25 @@ app = Flask(__name__)
 CORS(app)
 
 # make sure the following microservices are running:
+# item_URL = "http://localhost:5000/item" 
 create_offer_URL = "http://localhost:5000/offer/buyer/createoffer"
-item_URL = "http://localhost:5000/item" # need to change port for multiple URLs (?)
-# error_URL = "http://localhost:5004/error"
-# notificatio_URL = "http://localhost:5004/notification" # requires AMQP
+error_URL = "http://localhost:5001/error"# need to change port for multiple URLs (?)
+notification_URL = "http://localhost:5002/notification" # requires AMQP
 
 @app.route("/")
 @app.route("/make_offer", methods=['POST'])
-def make_offer():
+def make_offer(): # BUYER SIDE
     # Simple check of input format and data of the request are JSON
     if request.is_json:
         try:
             offer = request.get_json() 
             print("\nReceived an offer in JSON:", offer)
 
-            # do the actual work
-            # 1. Send offer info {offer details}
+            # # do the actual work
+            # # 1. Send offer info {offer details}
             result = processMakeOffer(offer)
             return jsonify(result), result["code"]
+
 
         except Exception as e:
             # Unexpected error in code
@@ -41,37 +42,42 @@ def make_offer():
                 "message": "make_offer.py internal error: " + ex_str
             }), 500
 
-    # if reached here, not a JSON request.
+    # if reached here, means input was not a JSON request to begin with (refer to next comment)
     return jsonify({
         "code": 400,
         "message": "Invalid JSON input: " + str(request.get_data())
     }), 400
 
+# JSON input here should be in this format:
+    # {
+        # "price": 6000,
+        # "itemname": "iphonepromax232323",
+        # "itemid": "21",
+        # "buyerid": 123,
+        # "sellerid": 2323,
+        # "offerstatus": "Available"
+    # }
 
-def processMakeOffer(offer): # process the json code 
+def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
 
     # TBC on the logical flow
 
-    # 1. Get information of items requested in offer (GET one item)
+    # 0. (REMOVED as this is the json input) Get information of items requested in offer (GET one item)
     # Invoke the item microservice
     # print('\n-----Invoking item microservice-----')
     # item_result = invoke_http(item_URL, method='GET', json=offer)
     # print('item_result:', item_result)
 
-    # Send new offer request (POST offer)
-    # print('\n\n-----Invoking offer microservice-----')
-    # offer_result = invoke_http(create_offer_URL, method="POST", json=item_result)
-    # print("\nnew order created:", offer_result)
+    # 1. Invoke the order microservice to create new offer request (POST offer)
+    print('\n\n-----Invoking offer microservice-----')
+    offer_result = invoke_http(create_offer_URL, method="POST", json=offer)
+    print("\nnew order created:", offer_result)
 
-    # 2. Record new offer in notification (if AMQP to notification)
-    # log information for notification
-    # print('\n\n-----Invoking notification microservice-----')
-    # invoke_http(activity_log_URL, method="POST", json=offer_result)
-    # print("\nOffer sent to activity log.\n")
-    # - reply from the invocation is not used;
-    # continue even if this invocation fails
 
-    # 3. Check the offer result (AMQP?); if a failure, send it to the error microservice.
+    # 2. Check the offer creation result (AMQP?) - if failure:
+        # a. send the error to the error microservice to inform of failure
+        # b. return message about error
+
     # code = offer_result["code"]
     # if code not in range(200, 300):
         # Inform the error microservice
@@ -82,40 +88,47 @@ def processMakeOffer(offer): # process the json code
         # print("Offer status ({:d}) sent to the error microservice:".format(
         #     code), offer_result)
 
-        # 7. Return error
+        # 6/7.Return error
         # return {
         #     "code": 500,
         #     "data": {"offer_result": offer_result},
         #     "message": "Offer creation failure sent for error handling."
         # }
 
-    # 5.Check the offer result (AMQP?); if success/fail, Send this notification result to BUYER [make offer complex ms]
+    # 3. Record new offer in notification (AMQP route to notification)
+    # log information for notification
+    print('\n\n-----Invoking notification microservice-----')
+    invoke_http(notification_URL, method="POST", json=offer_result)
+    print("\nOffer sent to notification microservice.\n")
+    # the reply/result from this invocation is not used;
+    # continue even if this invocation fails
+
+    # The below might only be applicable for seller side accept
+    # X. Check the offer result (AMQP?); if success/fail, Send this notification result to BUYER [make offer complex ms]
     # Invoke the notification microservice - need to check AMQP
     # print('\n\n-----Invoking notification microservice-----')
     # notification_result = invoke_http(
     #     notification_URL, method="POST", json=offer_result['data'])
     # print("notification_result:", notification_result, '\n')
 
+    # 4. Invoke Payment Mircoservice module
+    # return {} # to remove
 
-    # 7. Return created offer + notification of result
+    # 5. Return created offer + notification of result
     return {
         "code": 201,
-        # "data": {
-        #     "offer_result": offer_result,
+        "data": {
+            "offer_result": offer_result,
         #     "notification_result": notification_result
-        # }
+        }
     }
-
-    # Invoke Payment Mircoservice module
-    # return {} # to remove
 
 
 # Execute this program if it is run as a main script (not by 'import')
 if __name__ == "__main__":
     print("This is flask " + os.path.basename(__file__) + " for placing an offer...")
-    app.run(host="0.0.0.0", port=5100, debug=True)
+    app.run(host="0.0.0.0", port=5100, debug=True) 
 
-    # Notes for the parameters:
     # - debug=True will reload the program automatically if a change is detected;
     #   -- it in fact starts two instances of the same flask program,
     #       and uses one of the instances to monitor the program changes;
