@@ -17,7 +17,7 @@ item_URL = "http://localhost:5000/item" # need to change port for multiple URLs 
 
 
 @app.route("/accept_offer", methods=['POST'])
-def accept_offer():
+def accept_offer(): # SELLER SIDE
     # Simple check of input format and data of the request are JSON
     if request.is_json:
         try:
@@ -26,7 +26,7 @@ def accept_offer():
 
             # do the actual work
             # 1. Send offer info {offer details}
-            result = processMakeOffer(offer)
+            result = processAcceptOffer(offer)
             return jsonify(result), result["code"]
 
         except Exception as e:
@@ -48,7 +48,7 @@ def accept_offer():
     }), 400
 
 
-def processAcceptOffer(offer):
+def processAcceptOffer(offer):  # process the json input of /accept_offer (SELLER)
 
     # TBC on the logical flow
 
