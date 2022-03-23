@@ -3,7 +3,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import secrets
 
-
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/payment'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -35,6 +34,9 @@ class Payment(db.Model):
                 "paymentStatus": self.paymentStatus}
 
 #GET sellerid, buyerid, price from "Accept Offer" microservice
+@app.route("/payment")
+def getdetails(): 
+    #pass   
 
 #step 1: get seller id, buyer id, price
 #step 2: auto create random payment id then go to external API
@@ -54,7 +56,9 @@ def get_all():
                 },
                 'message': 'All payments listed - only for checking purposes'
             }
-        )
+
+        ), 200
+        
     return jsonify(
         {
             "code": 404,
@@ -112,7 +116,6 @@ def createPayment():
                 "message": "An error occurred while creating the payment record. Please try again."
             }
         ), 500
-
     return jsonify(
         {
             "code": 201,
