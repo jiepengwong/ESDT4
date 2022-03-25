@@ -3,7 +3,9 @@
   <div>
       <Navbar />
 
-      <router-view/>
+      <!-- <router-view/> -->
+      <router-view
+      :baseURL='baseURL'/>
 
   </div>
 <!-- this is where the application is gonna live -->
@@ -23,6 +25,13 @@
   computed: {
 
   },
+
+  data(){
+    return{
+      baseURL: "http://localhost:5000/item"
+    }
+
+  }
 };
   
 </script>

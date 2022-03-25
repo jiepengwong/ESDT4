@@ -51,6 +51,7 @@ export default{
                 { path: '/catalogue', text: 'Catalogue'},
                 { path: '/login', text: 'Login' },
                 { path: '/payment', text: 'Payment' },
+                { path: '/SellerView', text: 'Seller View' }
                   ],
 
             query: ""

@@ -16,6 +16,7 @@
     <div v-else>
       No results found
     </div>
+    
 
     <!-- <div v-if="isEmpty()">
       <h1>Catalogue</h1>

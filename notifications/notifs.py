@@ -81,7 +81,13 @@ from flask import Flask, app, request, jsonify
 from os import environ
 from flask_cors import CORS
 
+
+
 notifsBindingKey = 'notify.*'
+
+app = Flask(__name__)
+CORS(app)
+
 
 def receiveNotification():
 
@@ -121,7 +127,7 @@ def processNotifs(Msg):
 def saveToDatabase(successMsg):
     successMsg = json.loads(successMsg)
     # query = 'mutation MyMutation {insert_Activity(objects: {Description: "'+successMsg["message"]+'"}){affected_rows}}'
-    
+
     #query for mongodb -- need find how to do 
     
     # url = 'https://esd-healthiswell-69.hasura.app/v1/graphql'

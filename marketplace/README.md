@@ -36,4 +36,5 @@ test
 
 
 ## Librairies/Dependencies loaded for Notifs
-pip install pymongo
+pip install pymongo --> notifs
+npm install --save axios sweetalert --> for sellerView UI
