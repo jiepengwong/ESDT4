@@ -9,100 +9,125 @@ from invokes import invoke_http
 app = Flask(__name__)
 CORS(app)
 
+
+# import pika
+# import amqp_setup
+
 # make sure the following microservices are running:
 # offer_URL = "http://localhost:5000/offer"
 item_URL = "http://localhost:5000/item" # need to change port for multiple URLs (?)
 # error_URL = "http://localhost:5004/error"
 # notificatio_URL = "http://localhost:5004/notification" # requires AMQP
 
+# @app.route('/')
+# def healthcheck():
+#     return 'Accept Offer is up and running!';
 
-@app.route("/accept_offer", methods=['POST'])
-def accept_offer(): # SELLER SIDE
-    # Simple check of input format and data of the request are JSON
-    if request.is_json:
-        try:
-            offer = request.get_json()
-            print("\nReceived an offer in JSON:", offer)
+#wt: tHE following is used for testing 
 
-            # do the actual work
-            # 1. Send offer info {offer details}
-            result = processAcceptOffer(offer)
-            return jsonify(result), result["code"]
-
-        except Exception as e:
-            # Unexpected error in code
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            ex_str = str(e) + " at " + str(exc_type) + ": " + fname + ": line " + str(exc_tb.tb_lineno)
-            print(ex_str)
-
-            return jsonify({
-                "code": 500,
-                "message": "accept_offer.py internal error: " + ex_str
-            }), 500
-
-    # if reached here, not a JSON request.
-    return jsonify({
-        "code": 400,
-        "message": "Invalid JSON input: " + str(request.get_data())
-    }), 400
+# @app.route('/test')
+# def test():
+#     one_notif = {
+#         "Notification_ID": 12345,
+#         "Seller_ID": "1",
+#         "Buyer_ID": "1",
+#         "Status": "1",
+#         "Message": "I am ok",
+#         "DateTimeSQL": 12345
+#     }
+#     amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="order.error", 
+#     body=one_notif, properties=pika.BasicProperties(delivery_mode = 2)) 
 
 
-def processAcceptOffer(offer):  # process the json input of /accept_offer (SELLER)
+##TEtsing stops here 
 
-    # TBC on the logical flow
+# @app.route("/accept_offer", methods=['POST'])
+# def accept_offer(): # SELLER SIDE
+#     # Simple check of input format and data of the request are JSON
+#     if request.is_json:
+#         try:
+#             offer = request.get_json()
+#             print("\nReceived an offer in JSON:", offer)
 
-    # 0. Get items based on offer (unless filtered once clicked)
+#             # do the actual work
+#             # 1. Send offer info {offer details}
+#             result = processAcceptOffer(offer)
+#             return jsonify(result), result["code"]
 
-    # 1. Send the accepted offer info {items} ?
-    # Invoke the offer microservice
-    # print('\n-----Invoking offer microservice-----')
-    # offer_result = invoke_http(offer_URL, method='POST', json=offer)
-    # print('offer_result:', offer_result)
+#         except Exception as e:
+#             # Unexpected error in code
+#             exc_type, exc_obj, exc_tb = sys.exc_info()
+#             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+#             ex_str = str(e) + " at " + str(exc_type) + ": " + fname + ": line " + str(exc_tb.tb_lineno)
+#             print(ex_str)
 
-    # 2. Record new offer (if we are doing an activity log microservice)
-    # record the activity log anyway
-    # print('\n\n-----Invoking activity_log microservice-----')
-    # invoke_http(activity_log_URL, method="POST", json=offer_result)
-    # print("\nOffer sent to activity log.\n")
-    # - reply from the invocation is not used;
-    # continue even if this invocation fails
+#             return jsonify({
+#                 "code": 500,
+#                 "message": "accept_offer.py internal error: " + ex_str
+#             }), 500
 
-    # 3. Check the offer result (AMQP?); if a failure, send it to the error microservice.
-    # code = offer_result["code"]
-    # if code not in range(200, 300):
-        # Inform the error microservice
-        # print('\n\n-----Invoking error microservice as offer fails-----')
-        # invoke_http(error_URL, method="POST", json=offer_result)
-        # - reply from the invocation is not used; 
-        # continue even if this invocation fails
-        # print("Offer status ({:d}) sent to the error microservice:".format(
-        #     code), offer_result)
-
-        # 7. Return error
-        # return {
-        #     "code": 500,
-        #     "data": {"offer_result": offer_result},
-        #     "message": "Offer creation failure sent for error handling."
-        # }
-
-    # 5.Check the offer result (AMQP?); if success/fail, Send this notification result to BUYER [make offer complex ms]
-    # Invoke the notification microservice - need to check AMQP
-    # print('\n\n-----Invoking notification microservice-----')
-    # notification_result = invoke_http(
-    #     notification_URL, method="POST", json=offer_result['data'])
-    # print("notification_result:", notification_result, '\n')
+#     # if reached here, not a JSON request.
+#     return jsonify({
+#         "code": 400,
+#         "message": "Invalid JSON input: " + str(request.get_data())
+#     }), 400
 
 
-    # 7. Return created offer, notification of result
-    # return {
-    #     "code": 201,
-    #     "data": {
-    #         "offer_result": offer_result,
-    #         "notification_result": notification_result
-    #     }
-    # }
-    return {} # to remove
+# def processAcceptOffer(offer):  # process the json input of /accept_offer (SELLER)
+
+#     # TBC on the logical flow
+
+#     # 0. Get items based on offer (unless filtered once clicked)
+
+#     # 1. Send the accepted offer info {items} ?
+#     # Invoke the offer microservice
+#     # print('\n-----Invoking offer microservice-----')
+#     # offer_result = invoke_http(offer_URL, method='POST', json=offer)
+#     # print('offer_result:', offer_result)
+
+#     # 2. Record new offer (if we are doing an activity log microservice)
+#     # record the activity log anyway
+#     # print('\n\n-----Invoking activity_log microservice-----')
+#     # invoke_http(activity_log_URL, method="POST", json=offer_result)
+#     # print("\nOffer sent to activity log.\n")
+#     # - reply from the invocation is not used;
+#     # continue even if this invocation fails
+
+#     # 3. Check the offer result (AMQP?); if a failure, send it to the error microservice.
+#     # code = offer_result["code"]
+#     # if code not in range(200, 300):
+#         # Inform the error microservice
+#         # print('\n\n-----Invoking error microservice as offer fails-----')
+#         # invoke_http(error_URL, method="POST", json=offer_result)
+#         # - reply from the invocation is not used; 
+#         # continue even if this invocation fails
+#         # print("Offer status ({:d}) sent to the error microservice:".format(
+#         #     code), offer_result)
+
+#         # 7. Return error
+#         # return {
+#         #     "code": 500,
+#         #     "data": {"offer_result": offer_result},
+#         #     "message": "Offer creation failure sent for error handling."
+#         # }
+
+#     # 5.Check the offer result (AMQP?); if success/fail, Send this notification result to BUYER [make offer complex ms]
+#     # Invoke the notification microservice - need to check AMQP
+#     # print('\n\n-----Invoking notification microservice-----')
+#     # notification_result = invoke_http(
+#     #     notification_URL, method="POST", json=offer_result['data'])
+#     # print("notification_result:", notification_result, '\n')
+
+
+#     # 7. Return created offer, notification of result
+#     # return {
+#     #     "code": 201,
+#     #     "data": {
+#     #         "offer_result": offer_result,
+#     #         "notification_result": notification_result
+#     #     }
+#     # }
+#     return {} # to remove
 
 
 
