@@ -151,7 +151,7 @@ app.put("/offer/buyer/edit/:offerid", (req,res) =>{
     const postreq = req.body
     console.log(postreq)
     // Only works for offerstatus = "Pending"
-    Offer.findOneAndUpdate({offerid: offerid.offerid, offerstatus: "Pending"}, {price: postreq.price})
+    Offer.findOneAndUpdate({offerid: offerid.offerid, offerstatus: "Pending"},  {price: postreq.price})
     .then((result)=>{
         console.log(result)
         if (result) {
