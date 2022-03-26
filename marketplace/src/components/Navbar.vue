@@ -57,18 +57,17 @@
   export default {
     name: "Navbar",
     data() {
-      return {
-        links: [
-          { path: "/catalogue", text: "Catalogue" },
-          { path: "/login", text: "Login" },
-          { path: "/offers", text: "Offers" },
-          { path: "/payment", text: "Payment" },
-          { path: "/sell", text: "Sell" },
+        return {
+            links: [
+                { path: '/catalogue', text: 'Catalogue'},
+                { path: '/login', text: 'Login' },
+                { path: "/offers", text: "Offers" },
+                { path: '/payment', text: 'Payment' },
+                { path: '/SellerView', text: 'Seller View' }
+                  ],
 
-        ],
-
-        query: "",
-      };
+            query: ""
+        }
     },
     methods: {
       // Push search query into the catalogue page
