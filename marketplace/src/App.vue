@@ -3,9 +3,8 @@
   <div>
       <Navbar />
 
-      <!-- <router-view/> -->
-      <router-view
-      :baseURL='baseURL'/>
+      <router-view />
+      {{isSignedIn}}
 
   </div>
 <!-- this is where the application is gonna live -->
@@ -22,16 +21,22 @@
   components: {
     Navbar,
   },
+  data() {
+    return{
+      login: localStorage.login
+    }
+  },
+
   computed: {
 
   },
 
-  data(){
-    return{
-      baseURL: "http://localhost:5000/item"
-    }
+  // data(){
+  //   return{
+  //     baseURL: "http://localhost:5000/item"
+  //   }
 
-  }
+  // }
 };
   
 </script>
