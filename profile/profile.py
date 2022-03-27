@@ -1,6 +1,7 @@
 import json
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 
 
 app = Flask(__name__)
@@ -12,9 +13,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
 db = SQLAlchemy(app)
+CORS(app)
 
 class Profile(db.Model):
-    __tablename__ = "Profile"
+    __tablename__ = "Profile_details"
 
     userId = db.Column(db.String(64), primary_key=True)
     name = db.Column(db.String(64), nullable = False)
@@ -29,9 +31,10 @@ class Profile(db.Model):
 
     def json(self):
         return {"userId": self.userId, "name": self.name, "email": self.email, "ratings":self.ratings}
+        
 
 # We need to get /profile/:id, this is to get the profile details of the user 
-@app.route("/profile/rating/<string:profile_ID>")
+@app.route("/profile/<string:profile_ID>")
 def find_by_profile_ID(profile_ID):
     profile = Profile.query.filter_by(userId=profile_ID).first()
     if profile:
@@ -42,14 +45,33 @@ def find_by_profile_ID(profile_ID):
     return jsonify({
         "code":404,
         "message": "User has yet to register"
-    })
+    }),404
 
 # We need to update profile/rating/:id, this is to update the profile ratings of the user
-@app.route("/profile/rating/<")
+@app.route("/profile/ratings/<string:Profile_Id>", methods=["PUT"])
+def update_ratings(Profile_Id):
+    if (Profile.query.filter_by(userId=Profile_Id).first()):
+        db.session.delete(Profile.query.filter_by(userId=Profile_Id).first())
+        db.session.commit()
+
+        data = request.get_json()
+        profile = Profile(Profile_Id, **data)
+        db.session.add(profile)
+        db.session.commit()
+        return jsonify({
+                "code":200,
+                "data":profile.json(),
+                "message":"Profile's rating has been sucessfully updated."
+            },200
+        )
+    return jsonify({
+        "code":404,
+        "message":"An error occured while updating the profile rating.Please try again."
+    })
 
 
 # We need to post /profile/register/, this is to register new user everytime they login with google 
-@app.route("/profile/<string:Profile_Id", methods=["POST"])
+@app.route("/profile/register/<string:Profile_Id>", methods=["POST"])
 def create_account(Profile_Id):
     if (Profile.query.filter_by(userId=Profile_Id).first()):
         return jsonify({
