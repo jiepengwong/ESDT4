@@ -31,6 +31,12 @@
 
   },
 
+  // data(){
+  //   return{
+  //     baseURL: "http://localhost:5000/item"
+  //   }
+
+  // }
 };
   
 </script>
