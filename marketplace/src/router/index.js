@@ -1,9 +1,17 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 // import HomeView from '../views/HomeView.vue';
-// import Login from "../views/Login.vue";
+// import login from "../views/Login.vue";
 
 
 const routes = [
+  {
+    path: "/",
+    name: "login",
+    component: () => import(/* webpackChunkName: "about" */ '../views/Login.vue'),
+    meta: {
+      requiresAuth: false
+    }
+  },
 
   {
     path: '/catalogue',
@@ -11,7 +19,10 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/CatalogueViewCopy.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/CatalogueViewCopy.vue'),
+    meta: {
+      requiresAuth: false
+    }
   }, 
 
   {
@@ -21,24 +32,21 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../components/CataloguePageComponent/CatalogueItemDetails.vue'),
-    props: true
+    props: true,
+    meta: {
+      requiresAuth: true
+    }
   }, 
-  
-  {
-    path: '/login',
-    name: 'login',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Login.vue')
-  },
   {
     path: '/seller',
     name: 'seller',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/SellerView.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/SellerView.vue'),
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/payment',
@@ -46,13 +54,31 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Payments.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/Payments.vue'),
+    meta: {
+      requiresAuth: true
+    }
   },
 ]
 
 const router = createRouter({
   history: createWebHashHistory(),
   routes
+})
+
+// To means where you are going
+// From means where you are coming currently
+// Next 
+router.beforeEach((to,from,next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    const checker = localStorage.getItem("id")
+    if (checker) {
+      next()
+    }
+    else{
+      router.push({name: 'login'})
+    }
+  }
 })
 
 export default router

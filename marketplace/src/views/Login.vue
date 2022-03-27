@@ -31,12 +31,12 @@
         </div>
       </div>
     </div>
-                <div> Hello {{name}} </div>
+                <!-- <div> Hello {{name}} </div>
                 <div>{{id}} </div>
                 <div> {{email}}</div>
                 <div> Am I signed in?  {{isSignedIn}} 
                 </div>
-                <div>{{testing}}</div>
+                <div>{{testing}}</div> -->
 </template>
 
 <script>
@@ -57,6 +57,7 @@
                 GoogleUser: null,
             } 
         },
+
     methods: {
         googleAuth() {
             let gapi = window.gapi;
@@ -148,9 +149,9 @@
                             console.log(jsondata)
                             console.log(typeof jsondata)
                             // Json Data ia String now
+                            // {name: "Yu Xiang" ,....}
                             localStorage.login = jsondata
-
-                            localStorage.iwanthisid = this.id
+                            localStorage.id = this.id
 
 
                             if (this.registered==false){
