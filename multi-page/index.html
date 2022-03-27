@@ -1,75 +1,123 @@
-<template>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-      <a class="navbar-brand">
-        <!-- <img class="img-fluid" src="@/assets/henesys.png" > -->
-        Henesys MarketPlace
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <div class="row mx-1">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Henesys Market Place</title>
+    <!--bootstrap css-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <!--axios-->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!--Vue-->
+    <script src="https://unpkg.com/vue@next"></script>
+    <!-- Google Auth0 -->
+    <script async defer src="https://apis.google.com/js/api.js"
+        onload="this.onload=function(){};handleClientLoad()"
+        onreadystatechange="if (this.readyState === 'complete') this.onload()">
+    </script>
+    <meta name="google-signin-client_id" content="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com">
 
-        <div class="col-2">
-          <ul class="navbar-nav">
-        <li class="nav-item" v-for="link in links" :key="link">
-          <a class="nav-link">
-              <router-link :to="link.path" >{{link.text}}</router-link>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" v-if="!login" >
-                <router-link  to="/login">Login</router-link>
-            </a>
-        </li>
 
-        <button v-if="computingLogin" @click="signOut()" type="button" class="btn btn-success btn-floating mx-1" style="">
-                        SignOut
-        </button>
-        <button v-if="!computingLogin" @click="googleAuth()" type="button" class="btn btn-success btn-floating mx-1" style="">
-          Login
-        </button>
-      </ul>
+</head>
+<body onload="loginStatus()">
+    <div id="app">
+        <!-- NAVIGATION BAR  --------------------------------------------------------------------------------------------------- -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+            <a class="navbar-brand">
+                Henesys Grocery MarketPlace
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="row mx-1">
+
+                <div class="col-2">
+                <ul class="navbar-nav">
+                <li class="nav-item" v-for="link in links">
+                    <a class="nav-link" :href="link.link">
+                        {{link.name}}
+                    </a>
+                </li>
+
+                <button v-if="computingLogin" @click="signOut()" type="button" class="btn btn-success btn-floating mx-1" style="">
+                                SignOut
+                </button>
+                <button v-if="!computingLogin" @click="googleAuth()" type="button" class="btn btn-success btn-floating mx-1" style="">
+                Login
+                </button>
+            </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- END OF NAVIGATION BAR --------------------------------------------------------------------------------------------- -->
+        <div class="container-fluid h-custom">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+          <div class="col-md-9 col-lg-6 col-xl-6 my-lg-5 py-lg-5">
+            <img src="./asset/HenesysHome.png" class="img-fluid"alt="Sample image">
+          </div>
+          <div class="col-md-8 col-lg-6 col-xl-5 offset-xl-1 my-lg-5 py-lg-5">
+            <form>
+            <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
+                <h2>Welcome to Henesys Grocery Place!</h2>
+            </div>
+            <hr>
+
+            <div style="margin-top:30px"></div>
+            
+                <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
+                    <p class="lead fw-normal mb-0 me-3 text-centre">Sign in with</p>
+                    <button @click="googleAuth()" type="button" class="btn btn-success btn-floating mx-1" >
+                        Google
+                    </button>
+                </div>
+
+            </form>
+            
+                </div>
+            </div>
         </div>
-      </div>
-  </nav>
-</template>
-
+    </div>
+    
+</body>
 <script>
-  export default {
-    name: "Navbar",
-    data() {
-
-        return {
-            links: [
-                { path: '/catalogue', text: 'Catalogue'},
-                { path: '/login', text: 'Login' },
-                { path: "/offers", text: "Offers" },
-                { path: '/payment', text: 'Payment' },
-                { path: '/SellerView', text: 'Seller View' }
-                  ],
-
-            query: "",
-            login: undefined,
-            id:null,
-            name: null,
-            email:null,
-            password: null,
-            googleUserProfile: undefined,
-            token: undefined, 
-            isSignedIn: null,
-            databaseSign: null,
-            registered: null,
-            GoogleUser: null,
-            show:false,
-            localStorage: localStorage.id,
-            localStorage2: localStorage.login,
-
+    function loginStatus() {
+        // If the login variable is initalised, then we will redirect them to 
+        if (localStorage.getItem("id")){
+            // redirect them to login page
+            window.location.replace("http://www.w3schools.com");
         }
-    },
-    methods: {
-      signOut() {
+    }
+
+    const app = Vue.createApp({
+        data() {
+            return {
+                links: [
+                    {"link":"catalogue.php", "name": "google"},
+
+
+                  ],
+                id:null,
+                name: null,
+                email:null,
+                password: null,
+                googleUserProfile: undefined,
+                token: undefined, 
+                isSignedIn: null,
+                databaseSign: null,
+                registered: null,
+                GoogleUser: null,
+            }
+        },
+        computed : {
+            
+        },
+        
+        methods: {
+            signOut() {
             let gapi = window.gapi;
             let clientId ="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com";
             let apiKey ="AIzaSyC0WtHoYqLnGKgaqLWX6RGkiL0X2C7dll8";
@@ -97,7 +145,7 @@
             alert("You have been logged out!")
             document.location.reload()
         },
-      googleAuth() {
+        googleAuth() {
             let gapi = window.gapi;
             let clientId ="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com";
             let apiKey ="AIzaSyC0WtHoYqLnGKgaqLWX6RGkiL0X2C7dll8";
@@ -218,22 +266,11 @@
                     })
              })
 
+            },
         },
-
-    },
-    computed: {
-      computingLogin() {
-        if(localStorage.getItem("id")) {
-          return true
-        }
-        else {return false}
-      }
-    }
-
-
-
-}
-
+        
+    })
+    const vm = app.mount('#app');
 </script>
 
-<style scoped></style>
+</html>
