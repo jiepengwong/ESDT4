@@ -108,6 +108,17 @@ export default {
 
     methods: {
 
+    //   sumPrice(){
+    //     let sum = 0;
+    //     for(let i = 0; i < this.items.length; i++){
+    //       sum += this.items[i].price * this.items[i].quantity;
+    //     }
+    //     return sum;
+    //   },
+      
+    //   summarise(){
+
+    //   }
 
     addProduct(){
 
