@@ -1,9 +1,11 @@
 const express = require("express");
+const cors = require('cors');
 const mongoose = require("mongoose");
 const Item = require("./models/itemSchema");
 const bodyParser = require("body-parser");
 
 const app = express();
+app.use(cors());
 
 // Converts Json to javascript object
 // app.use(express.json());
@@ -30,7 +32,7 @@ mongoose
   .catch((err) => {
     console.log(err);
   });
-const port = 5000;
+const port = 5001;
 // =========================================================================================
 
 // ======= [POST] =======
