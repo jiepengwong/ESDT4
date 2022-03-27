@@ -7,7 +7,6 @@ from flask_cors import CORS
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/profile'
 # The SQLAlchemy Database URI format is: dialect+driver://username:password@host:port/database
- 
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -21,16 +20,18 @@ class Profile(db.Model):
     user_id = db.Column(db.String(64), primary_key=True)
     name = db.Column(db.String(64), nullable = False)
     email = db.Column(db.String(64), nullable=False)
+    mobile = db.Column(db.String(8), nullable=False)
     ratings = db.Column(db.Float(precision=2), nullable = True)
 
-    def __init__(self,user_id,name,email,ratings):
+    def __init__(self,user_id,name,email,mobile,ratings):
         self.user_id = user_id
         self.name = name
         self.email = email
+        self.mobile = mobile
         self.ratings = ratings
 
     def json(self):
-        return {"user_id": self.user_id, "name": self.name, "email": self.email, "ratings":self.ratings}
+        return {"user_id": self.user_id, "name": self.name, "email": self.email, "mobile": self.mobile, "ratings":self.ratings}
         
 
 # We need to get /profile/:id, this is to get the profile details of the user 
