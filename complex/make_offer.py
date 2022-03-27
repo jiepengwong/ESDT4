@@ -15,7 +15,7 @@ create_offer_URL = "http://localhost:5000/offer/buyer/createoffer"
 error_URL = "http://localhost:5001/error"# need to change port for multiple URLs (?)
 notification_URL = "http://localhost:5002/notification" # requires AMQP
 
-@app.route("/")
+# @app.route("/")
 @app.route("/make_offer", methods=['POST'])
 def make_offer(): # BUYER SIDE
     # Simple check of input format and data of the request are JSON

@@ -80,7 +80,7 @@ def create_account(Profile_Id):
             "data": {
                 "user_id" : Profile_Id
             },
-            "message": "User has already registered"
+            "message": "User has already registe    red"
         }), 400
     
     data = request.get_json()

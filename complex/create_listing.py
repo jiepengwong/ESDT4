@@ -16,8 +16,8 @@ from types import SimpleNamespace
 app = Flask(__name__)
 CORS(app)
 
-create_item_URL = "http://localhost:5000/createitems"
-profile_URL =  "http://localhost:5001/profile/" # requires /:id
+profile_URL =  "http://localhost:5000/profile/" # requires /:id
+create_item_URL = "http://localhost:5001/createitems"
 
 @app.route("/create_listing", methods=['POST'])
 def create_listing():
@@ -56,16 +56,29 @@ def processCreateListing(listing):
 # invoke profile microservice to create a book
 
 #stringify JSON request
-profile = json.loads(listing, object_hook=lambda d: SimpleNamespace(**d))
-id = profile.user_id
+    # listing_details = json.load(listing_json, object_hook=lambda d: SimpleNamespace(**d))
+    # id = listing_details.user_id
+    # print (id)
+    id = listing['user_id']
 
 
-profile_details = invoke_http(
-    profile_URL + id, method='GET', 
-    )
+    profile_details = invoke_http(
+        profile_URL + id, method='GET', 
+        )
 
-# to remove
-print( "----- invoking profile microservice to get profile details -----" )
-print (profile_details)
+    # to remove
+    print( "----- invoking profile microservice to get profile details -----" )
+    # print (profile_details)
 
-profile_details = json.loads(listing, object_hook=lambda d: SimpleNamespace(**d))
+    # profile_details = json.loads(listing, object_hook=lambda d: SimpleNamespace(**d))
+
+    return {
+        "code": 201,
+        "data": {
+            "result": profile_details,
+        }
+    }
+
+if __name__ == "__main__":
+    print("This is flask " + os.path.basename(__file__) + " for placing an offer...")
+    app.run(host="0.0.0.0", port=5100, debug=True) 
