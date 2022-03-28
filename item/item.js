@@ -171,7 +171,7 @@ app.get("/items/myoffers/buyer/:buyer_id",(req,res) =>{
 // Method: [GET] offers made by a particular buyer
 // This would include  (Open, Pending, Paid)
 // URL: /items/myoffers/:buyer_id
-app.get("/items/myoffers/seller/:seller_id",(req,res) =>{
+app.get("/items/mylistings/seller/:seller_id",(req,res) =>{
 
     console.log(req.params.seller_id);
 
@@ -188,19 +188,22 @@ app.get("/items/myoffers/seller/:seller_id",(req,res) =>{
 
             Item.find({ "seller_id": req.params.seller_id}).where("buyer_id").ne(req.params.seller_id)
             .then((result) => {
+                console.log("hi")
+                console.log(result)
     
-                if (result){
-                    return res.json({"code": 404,"Error": "Seller has no listings"}).status(404);
+                if (result === []){
+                    res.json({"code": 404,"Error": "Seller has no listings"}).status(404);
                 }
                 else{
-                    res.json({"code": 200,"Success": item} ).status(200);
+                    res.json({"code": 200,"Success": result}).status(200);
     
                 } 
     
             })
     
             .catch((err)=>{
-                res.json({"code": 404, "Error" : err}.status(404))
+                console.log(err)
+                res.json({"code": 404, "Error": err}).status(404)
             })
         }
 
