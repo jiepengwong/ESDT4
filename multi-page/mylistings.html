@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- Vue Application -->
+    <script src="https://unpkg.com/vue@3"></script>
+    <!--  Bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+</head>
+<body>
+    <div id="app">
+        <!-- Navbar goes here -->
+        <nav class="navbar navbar-light bg-light static-top">
+          <div class="container">
+            <a class="navbar-brand" href="#!">Start Bootstrap</a>
+            <a class="btn btn-primary" href="#signup">Sign Up</a>
+          </div>
+        </nav>
+  
+        <!-- Header -->
+  
+        <header class="masthead bg-success p-5">
+          <div class="container position-relative">
+            <div class="row justify-content-center">
+              <div class="col-xl-6">
+                <div class="text-center text-white">
+                  <!-- Page heading-->
+                  <h1 class="mb-5">My Listings</h1>
+  
+                
+
+                  <div class="row justify-content-center">
+                    <div v-for="(key,value) in filters"  class="col-sm-2">
+
+                        <div class="d-flex">
+                            <button @click="filterListings(value)" class="btn btn-success p-3">{{key}}</button>
+                        </div>
+                     
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+  
+  
+        <section id="listings">
+  
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-12">
+                <h2 class="mb-5 py-5">Listings</h2>
+              </div>
+            </div>
+            <div class="row">
+              <div v-for="result in results" :key="result" class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100">
+                  <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt="" /></a>
+                  <div class="card-body">
+                    <h4 class="card-title">
+                      <a href="#">{{result.item_name}}</a>
+                    </h4>
+                    <p class="card-text">{{result.description}}</p>
+                    
+                    <button v-if="result.item_status == 'pending'" class="btn btn-primary" @click="acceptOffer(result._id)">Accept</button>
+                    <button v-else class="btn btn-primary" disabled>Accept</button>
+                  </div>
+                  <div class="card-footer">
+                    <small class="text-muted">Item status: {{result.item_status}}</small>
+                  </div>
+                </div>
+              </div>
+  
+          </div>
+  
+  
+        </section>
+  
+  
+      </div>
+    
+</body>
+</html>
+
+
+
+<script>
+    const app = Vue.createApp({
+    data() {
+      return {
+          filters: { "All": "All Listings", "open": "My Listings (Open)", "pending": "Incoming Offers (Pending)", "accepted": "Awaiting Collection (Accepted)", "closed": "Reviews (Closed)"},
+          localStorageData: "01370290", //this is from oauth, for now put some dummy data
+          results: [],
+          unfilteredResult: '',
+          filteredTabResults: []
+
+     
+      };
+    },
+
+    methods:{
+
+    },
+
+
+    async mounted() {
+
+      // Fetching from NEW items microservice
+      try{
+        //   this.localStorageData = localStorage.getItem("user_id"); -> When it is actually implemented try this
+
+          var getItemUrl = `http://localhost:5001/items/mylistings/seller/${this.localStorageData}`;
+          
+          var databaseitems = await fetch(getItemUrl)
+          const databaseitemsJson = await databaseitems.json()
+
+          if (databaseitems.status === 200){
+            console.log(databaseitemsJson)
+            // Get all the databases 
+            this.results = databaseitemsJson.Success;
+            this.unfilteredResult = databaseitemsJson.Success;
+            console.log(this.results)
+
+          }
+          else{
+            console.log("Database not connected")
+          }
+          }
+
+          catch(error) {
+            console.log(error)
+          }
+
+
+
+
+    },
+
+    methods:{
+      filterListings(categoryName){
+        console.log("hi")
+        this.resetPosts()
+        console.log(categoryName)
+        console.log(this.results)
+        if (categoryName !== "All"){
+
+          this.results = this.results.filter((result) => {
+            // console.log(result.Category)
+            return result.item_status === categoryName;
+          })
+        }
+
+      },
+
+      resetPosts(){
+        this.results = this.unfilteredResult
+      },
+
+      acceptOffer(itemid){
+          console.log("hi")
+          console.log(itemid)
+
+      }
+    },
+
+    computed:{
+    
+    }
+  });
+
+  app.mount("#app");
+
+</script>
+
+
+
+<style>
+
+</style>

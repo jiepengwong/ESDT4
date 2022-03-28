@@ -52,6 +52,7 @@ app.post("/createitem", (req, res) => {
         description: itemreq.description,
         location: itemreq.location,
         date_time: itemreq.date_time,
+        seller_name: itemreq.seller_name,
         seller_id: itemreq.seller_id,
         seller_mobile: itemreq.seller_mobile,
     });
@@ -59,14 +60,14 @@ app.post("/createitem", (req, res) => {
     newItem.save()
         .then((result) => {
             // Edit code here in the future to get back the order id (postreq._id)
-            res.status(200).json({"Success" : result});
+            res.status(200).json({"code": 200, "Success" : result});
 
         })
         .catch((err) => {
-            res.status(404).json({"Error": `${err}`});
+            res.status(404).json({"code": 404, "Error": `${err}`});
 
             // console.log(err.msg)
-                });
+        });
 
 
 
@@ -80,12 +81,12 @@ app.get("/items", (req,res) =>{
     Item.find().where("item_status").equals("open")
     .then((result)=>{
 
-        res.json({"Success": result}).status(200);
+        res.json({"code": 200,"Success": result}).status(200);
 
     })
 
     .catch((err)=>{
-        res.json({"Error":err}).status(404);
+        res.json({"code": 404,"Error":err}).status(404);
 
     })
     
@@ -97,10 +98,10 @@ app.get("/items/:id",(req,res) =>{
     console.log(req.params.id);
     Item.findOne({ "_id": req.params.id}, (err, item) => {
         if (err) {
-        res.json({"Error":err}).status(404);
+        res.json({"code": 404,"Error":err}).status(404);
         }
         // Send json response of items
-        res.json({"Success":item}).status(200);
+        res.json({"code": 200,"Success":item}).status(200);
     });
 
 
@@ -116,7 +117,7 @@ app.get("/items/:id",(req,res) =>{
 // Categorize according to (Pending, Accepted By Seller (Not Paid), Completed (Paid))
 
 // Method: [GET] offers made by a particular buyer
-// This would include  (Pending, Closed, Paid)
+// This would include  (Pending, Closed, Accepted)
 // URL: /items/myoffers/:buyer_id
 app.get("/items/myoffers/buyer/:buyer_id",(req,res) =>{
     console.log(req.params.buyer_id);
@@ -127,7 +128,7 @@ app.get("/items/myoffers/buyer/:buyer_id",(req,res) =>{
         console.log(result);
 
         if (result === null){
-            res.json({"Error": "There is no such buyer at all"}).status(404);
+            res.json({"code": 404,"Error": "There is no such buyer at all"}).status(404);
         }
 
         // Buyer exists
@@ -136,24 +137,24 @@ app.get("/items/myoffers/buyer/:buyer_id",(req,res) =>{
         .then((result) => {
 
             if (result){
-                return res.json({"Error": "No offers made"}).status(404);
+                return res.json({"code": 404,"Error": "No offers made"}).status(404);
             }
             else{
-                res.json({"Success": result} ).status(200);
+                res.json({"code": 200,"Success": result} ).status(200);
 
             } 
 
         })
 
         .catch((err)=>{
-            res.json({ "Error" : err}.status(404))
+            res.json({"code": 404, "Error" : err}.status(404))
         })
 
 
     })
 
     .catch((err) =>{
-        res.json({"Error": err}).status(404);
+        res.json({"code": 404,"Error": err}).status(404);
 
 
 
@@ -170,7 +171,7 @@ app.get("/items/myoffers/buyer/:buyer_id",(req,res) =>{
 // Method: [GET] offers made by a particular buyer
 // This would include  (Open, Pending, Paid)
 // URL: /items/myoffers/:buyer_id
-app.get("/items/myoffers/seller/:seller_id",(req,res) =>{
+app.get("/items/mylistings/seller/:seller_id",(req,res) =>{
 
     console.log(req.params.seller_id);
 
@@ -180,26 +181,29 @@ app.get("/items/myoffers/seller/:seller_id",(req,res) =>{
         console.log(result);
 
         if (result === null){
-            res.json({"Error": "There is no such seller at all"}).status(404);
+            res.json({"code": 404,"Error": "There is no such seller at all"}).status(404);
         }
 
         else{
 
             Item.find({ "seller_id": req.params.seller_id}).where("buyer_id").ne(req.params.seller_id)
             .then((result) => {
+                console.log("hi")
+                console.log(result)
     
-                if (result){
-                    return res.json({"Error": "Seller has no listings"}).status(404);
+                if (result === []){
+                    res.json({"code": 404,"Error": "Seller has no listings"}).status(404);
                 }
                 else{
-                    res.json({"Success": item} ).status(200);
+                    res.json({"code": 200,"Success": result}).status(200);
     
                 } 
     
             })
     
             .catch((err)=>{
-                res.json({ "Error" : err}.status(404))
+                console.log(err)
+                res.json({"code": 404, "Error": err}).status(404)
             })
         }
 
@@ -210,7 +214,7 @@ app.get("/items/myoffers/seller/:seller_id",(req,res) =>{
     })
 
     .catch((err) =>{
-        res.json({"Error": `"${req.params.seller_id} There is no such buyer at all"`}).status(404);
+        res.json({"code": 404,"Error": `"${req.params.seller_id} There is no such buyer at all"`}).status(404);
 
 
 
@@ -249,7 +253,7 @@ app.put("/items/:id",(req,res) =>{
         // Check if buyer_id == to seller_id (This is not possible)
 
         if (result["buyer_id"] == result["seller_id"]){
-            res.status(404).json({"Error": "Not updated, buyer_id cannot be the same as seller_id. TRY again"});
+            res.status(404).json({"code": 404,"Error": "Not updated, buyer_id cannot be the same as seller_id. TRY again"});
         }
 
         else{
@@ -258,18 +262,18 @@ app.put("/items/:id",(req,res) =>{
                 // Check if update is successful here
                 if (result[value] != updateDetails[value]){
                     console.log("Unsuccessful update")
-                    return res.status(404).json({"Error": "Not updated, check the data type of the parameters"});
+                    return res.status(404).json({"code": 404,"Error": "Not updated, check the data type of the parameters"});
                 }
             }
 
-            return res.status(200).json({"Success" : result});
+            return res.status(200).json({"code": 200,"Success" : result});
         }
 
 
 
     })
     .catch((err)=>{
-        res.status(404).json({"Error": `${err}`});
+        res.status(404).json({"code": 404,"Error": `${err}`});
     })
 })
 
@@ -278,10 +282,10 @@ app.put("/items/:id",(req,res) =>{
 app.delete("/items/delete/:id", (req, res) => {
     Item.findByIdAndDelete(req.params.id)
         .then((result) => {
-            res.status(200).json({"Success" : `${result._id} Deleted successfully`});
+            res.status(200).json({"code": 200,"Success" : `${result._id} Deleted successfully`});
         })
         .catch((err) => {
-            res.status(404).json({"Error": `${err}`, "Message": "Has item already been deleted?"});
+            res.status(404).json({"code": 404,"Error": `${err}`, "Message": "Has item already been deleted?"});
         });
 })
 
@@ -291,4 +295,4 @@ app.get("/delete", (req,res) =>{
       if(err) console.log(err);
       else console.log("Offers deleted");
     });
-  })
+})
