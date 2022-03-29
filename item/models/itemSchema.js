@@ -42,6 +42,11 @@ const itemSchema = new Schema({
             default: null
         },
 
+        seller_name:{
+            type: String,
+            required: true
+        },
+
         seller_id: {
             type: String,
             required: true
@@ -50,7 +55,13 @@ const itemSchema = new Schema({
         
         seller_mobile: {
             type: Number,
-            required: true
+            required: false
+        },
+
+
+        buyer_name: {
+            type: String,
+            required: null
         },
 
         buyer_id: {

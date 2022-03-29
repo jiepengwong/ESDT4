@@ -22,11 +22,12 @@ USE `Profile`;
 
 DROP TABLE IF EXISTS `Profile`;
 CREATE TABLE IF NOT EXISTS `Profile_details` (
-  `userId` varchar(64) NOT NULL,
+  `user_id` varchar(64) NOT NULL,
   `name` varchar(64) NOT NULL,
   `email` varchar(64) NOT NULL,
+  `mobile` varchar(8) NOT NULL,
   `ratings` float DEFAULT NULL,
-  PRIMARY KEY (`userId`)
+  PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
