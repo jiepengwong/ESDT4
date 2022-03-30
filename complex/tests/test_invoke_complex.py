@@ -9,11 +9,16 @@ from invokes import invoke_http
 import json
 from types import SimpleNamespace
 
+import amqp_setup
+import pika
+import json
+
 app = Flask(__name__)
 CORS(app)
 
 profile_URL =  "http://localhost:5000/profile/" # requires /:id
 create_item_URL = "http://localhost:5001/createitem"
+item_URL = "http://localhost:5000/items/" # requires :item_id
 
 @app.route("/create_listing", methods=['POST'])
 def create_listing():
@@ -78,3 +83,10 @@ def processCreateListing(listing):
 if __name__ == "__main__":
     print("This is flask " + os.path.basename(__file__) + " for placing an offer...")
     app.run(host="0.0.0.0", port=5100, debug=True) 
+    # - debug=True will reload the program automatically if a change is detected;
+    #   -- it in fact starts two instances of the same flask program,
+    #       and uses one of the instances to monitor the program changes;
+    # - host="0.0.0.0" allows the flask program to accept requests sent from any IP/host (in addition to localhost),
+    #   -- i.e., it gives permissions to hosts with any IP to access the flask program,
+    #   -- as long as the hosts can already reach the machine running the flask program along the network;
+    #   -- it doesn't mean to use http://0.0.0.0 to access the flask program.
