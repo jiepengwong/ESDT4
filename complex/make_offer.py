@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 import os, sys
-
+import json
 import requests
 from invokes import invoke_http
 
@@ -20,20 +20,19 @@ CORS(app)
 # make sure the following microservices are running:
 profile_URL =  "http://localhost:5000/profile/" # requires :user_id
 item_URL = "http://localhost:5000/items/" # requires :item_id
-notification_URL = "http://localhost:5002/notification" # requires AMQP
-error_URL = "http://localhost:5001/error" # AMQP 
+notification_URL = "http://localhost:5002/notification" # AMQP routing_key = 'notify.*' 
+error_URL = "http://localhost:5001/error" # AMQP routing_key = 'error.*'
 # need to change port for multiple services
 
-@app.route("/make_offer", methods=['POST'])
-def make_offer(): # BUYER invokes this complex microservice, requests using offer details 
+@app.route("/make_offer", methods=['POST']) # pass in offer details
+def make_offer(): # BUYER invokes this complex microservice, request = offer 
     # First check if input format and data of the request are JSON
     if request.is_json:
         try:
             offer = request.get_json() 
             print("\nReceived an offer in JSON:", offer)
 
-            # # do the actual work
-            # # 1. Send offer info {offer details}
+            # 1. Send offer info {offer details}
             result = processMakeOffer(offer)
             return jsonify(result), result["code"]
 
@@ -57,19 +56,21 @@ def make_offer(): # BUYER invokes this complex microservice, requests using offe
 
 def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
 
-    # 0. (REMOVED as this is the json input) Get information of items requested in offer (GET one item)
+    # 1. Invoke the profile microservice to retrieve mobile number to send messga thru notification
+        # a. request profile_id
+        # b. return mobile  
+    user_id = offer['buyerid']
+    print('\n\n-----Invoking profile microservice-----')
+    profile_result = invoke_http(profile_URL, method="POST", json=user_id)
+    print("\nmobile number:", profile_result['mobile'])
+
+    # 2. Update item using PUT
+# Get information of items requested in offer (GET one item)
     # Invoke the item microservice
     # print('\n-----Invoking item microservice-----')
     # item_result = invoke_http(item_URL, method='GET', json=offer)
     # print('item_result:', item_result)
-
-    # 1. Invoke the profile microservice to GET full profile 
-        # a. request profile_id
-        # b. return mobile   
-    print('\n\n-----Invoking profile microservice-----')
-    profile_result = invoke_http(profile_URL, method="POST", json=offer)
-    print("\nnew order created:", offer_result)
-
+    # print("\nnew order created:", offer_result)
 
     # 2. Check the offer creation result (AMQP?) - if failure:
         # a. send the error to the error microservice to inform of failure
