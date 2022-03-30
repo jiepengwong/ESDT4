@@ -83,7 +83,7 @@
                     <a href="#">{{result.item_name}}</a>
                   </h4>
                   <p class="card-text">{{result.description}}</p>
-                  <button><a :href="`itemDetailsNew.php?itemid=${result._id}`" >More Details</a></button>
+                  <button class="btn btn-success"><a class="text-white":href="`itemDetailsNew.php?itemid=${result._id}`" >More Details</a></button>
                 </div>
                 <div class="card-footer">
                   <small class="text-muted">Sold by: {{result.seller_name}}
