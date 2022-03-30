@@ -9,16 +9,24 @@ from invokes import invoke_http
 app = Flask(__name__)
 CORS(app)
 
-# make sure the following microservices are running:
-# item_URL = "http://localhost:5000/item" 
-create_offer_URL = "http://localhost:5000/offer/buyer/createoffer"
-error_URL = "http://localhost:5001/error"# need to change port for multiple URLs (?)
-notification_URL = "http://localhost:5002/notification" # requires AMQP
+# input JSON:
+# offer =
+# {
+#   "item_id": this.results.item_id,    # based on item selected
+#   "price": this.price,                # input by buyer on UI 
+#   "buyerid": this.buyerid             # stored on the browser (user_id)
+# }
 
-# @app.route("/")
+# make sure the following microservices are running:
+profile_URL =  "http://localhost:5000/profile/" # requires :user_id
+item_URL = "http://localhost:5000/items/" # requires :item_id
+notification_URL = "http://localhost:5002/notification" # requires AMQP
+error_URL = "http://localhost:5001/error" # AMQP 
+# need to change port for multiple services
+
 @app.route("/make_offer", methods=['POST'])
-def make_offer(): # BUYER SIDE
-    # Simple check of input format and data of the request are JSON
+def make_offer(): # BUYER invokes this complex microservice, requests using offer details 
+    # First check if input format and data of the request are JSON
     if request.is_json:
         try:
             offer = request.get_json() 
@@ -28,7 +36,6 @@ def make_offer(): # BUYER SIDE
             # # 1. Send offer info {offer details}
             result = processMakeOffer(offer)
             return jsonify(result), result["code"]
-
 
         except Exception as e:
             # Unexpected error in code
@@ -48,19 +55,7 @@ def make_offer(): # BUYER SIDE
         "message": "Invalid JSON input: " + str(request.get_data())
     }), 400
 
-# JSON input here should be in this format:
-    # {
-        # "price": 6000,
-        # "itemname": "iphonepromax232323",
-        # "itemid": "21",
-        # "buyerid": 123,
-        # "sellerid": 2323,
-        # "offerstatus": "Available"
-    # }
-
 def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
-
-    # TBC on the logical flow
 
     # 0. (REMOVED as this is the json input) Get information of items requested in offer (GET one item)
     # Invoke the item microservice
@@ -68,9 +63,11 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
     # item_result = invoke_http(item_URL, method='GET', json=offer)
     # print('item_result:', item_result)
 
-    # 1. Invoke the order microservice to create new offer request (POST offer)
-    print('\n\n-----Invoking offer microservice-----')
-    offer_result = invoke_http(create_offer_URL, method="POST", json=offer)
+    # 1. Invoke the profile microservice to GET full profile 
+        # a. request profile_id
+        # b. return mobile   
+    print('\n\n-----Invoking profile microservice-----')
+    profile_result = invoke_http(profile_URL, method="POST", json=offer)
     print("\nnew order created:", offer_result)
 
 

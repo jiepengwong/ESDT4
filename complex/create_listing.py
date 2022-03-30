@@ -17,7 +17,7 @@ app = Flask(__name__)
 CORS(app)
 
 profile_URL =  "http://localhost:5000/profile/" # requires /:id
-create_item_URL = "http://localhost:5001/createitems"
+create_item_URL = "http://localhost:5001/createitem"
 
 @app.route("/create_listing", methods=['POST'])
 def create_listing():
