@@ -3,6 +3,8 @@ import os
 import amqp_setup
 import twilio
 from twilio.rest import Client
+from dotenv import load_dotenv
+from pathlib import Path
 
 notifsBindingKey = 'notify.*'
 
@@ -31,18 +33,24 @@ def processNotifs(Msg):
         # 'user_phone': user_phone
         # }
 
-        noti_message = data['noti_message']
-        user_phone = '+65' + data['user_phone']
+        dotenv_path = Path('marketplace/.env')
+        load_dotenv(dotenv_path=dotenv_path)
 
-        account_sid = #'ACc2ba82a67c14ae8f185741f5aafc560a'
-        auth_token = #'9616a05f6632d5ab3e447f25fd6e29ef' #neeed to retreve from WT twillio - better to put in env file
+        # load_dotenv()
+
+        noti_message = data['seller_message']
+        seller_number = '+65' + data['seller_mobile']
+
+        account_sid = 'TWILIO_ACCOUNT_SID',
+        auth_token = 'TWILIO_AUTH_TOKEN',
         client = Client(account_sid, auth_token) 
 
         message = client.messages.create( 
-                                      from_='whatsapp:+14155238886',  
-                                      body=noti_message,      
-                                      to=user_phone 
-                                  ) 
+                                        from_='whatsapp:+14155238886',  
+                                        body=noti_message,     
+                                        # to=user_phone 
+                                        to= seller_number
+                                        ) 
 
         print(message.sid)
 
