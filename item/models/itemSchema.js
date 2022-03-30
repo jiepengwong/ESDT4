@@ -4,38 +4,78 @@ const Schema = mongoose.Schema; // Constructor function
 // === Creation of Schema ===
 
 // This is like the template for each listing
-const offerSchema = new Schema({
+const itemSchema = new Schema({
         // Put an object here so we can have more properties like required and stuff
     
 
+        item_name: {
+            type: String,
+            required: true
+        },
+
+        category: {
+            type: String,
+            required: true
+        },
+
+        description:{
+            type: String,
+            required: true
+        },
+        location:{
+            type: String,
+            required: true
+        },
+
+        date_time: {
+            type: String,
+            required: true
+        },
+
+        item_status:{
+            type: String,
+            default: "open"
+        },
+
         price: {
             type: Number,
-            required: true
+            default: null
         },
 
-        itemname: {
+        seller_name:{
             type: String,
             required: true
         },
 
-        itemid:{
+        seller_id: {
             type: String,
             required: true
         },
-        buyerid:{
+
+        
+        seller_mobile: {
             type: Number,
-            required: true
+            required: false
         },
 
-        sellerid: {
-            type: Number,
-            required: true
-        },
 
-        offerstatus:{
+        buyer_name: {
             type: String,
-            default: "Pending"
+            required: null
+        },
+
+        buyer_id: {
+            type: String,
+            default: null
+        },
+
+        buyer_mobile:{
+            type: Number,
+            default: null
+
         }
+
+
 
 
     
@@ -43,7 +83,7 @@ const offerSchema = new Schema({
 
 // === Creation of Model ===
 // This would refer to an instance of the blog 
-const Offer = mongoose.model('Offer',offerSchema);
+const Offer = mongoose.model('Item',itemSchema);
 // First argument here refers to the collection in the database collection
 // Second argument here refers to the structure. Schema is specified here to display the structure
 

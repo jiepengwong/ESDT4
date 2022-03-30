@@ -11,24 +11,8 @@
         <td>{{filters}}</td>
       </tr>
     </table>
-
-
-    <div v-else>
-      No results found
-    </div>
-
-    <!-- <div v-if="isEmpty()">
-      <h1>Catalogue</h1>
-      <p>No items found</p>
-    </div>
-
-    <div v-else>
-      <h1>Catalogue</h1>
-      <p></p>
-    </div> -->
-
-
-
+    {{login}}
+    {{id}}
   </div>
 </template>
 
@@ -39,10 +23,33 @@
 
     data() {
       return {
-        results: [],
-        filteredResult: []
-        // Get the query results from the search
-        // querytest: this.$route.query.q
+        items:[
+          {
+            name: "Item 1",
+            price: "10",
+            quantity: "0",
+            sellerid: "1"
+          },
+          {
+            name: "Item 2",
+            price: "20",
+            quantity: "0",
+            sellerid: "1"
+
+          },
+          {
+            name: "Item 3",
+            price: "30",
+            quantity: "0",
+            sellerid: "2"
+
+          }
+        ],
+        quantity: [1,2,3,4,5,6,7,8,9,10],
+        selected: 0,
+        login: localStorage.login,
+        id: localStorage.iwanthisid
+
         }
     },
 

@@ -81,7 +81,13 @@ from flask import Flask, app, request, jsonify
 from os import environ
 from flask_cors import CORS
 
+
+
 notifsBindingKey = 'notify.*'
+
+app = Flask(__name__)
+CORS(app)
+
 
 def receiveNotification():
 
@@ -121,7 +127,7 @@ def processNotifs(Msg):
 def saveToDatabase(successMsg):
     successMsg = json.loads(successMsg)
     # query = 'mutation MyMutation {insert_Activity(objects: {Description: "'+successMsg["message"]+'"}){affected_rows}}'
-    
+
     #query for mongodb -- need find how to do 
     
     # url = 'https://esd-healthiswell-69.hasura.app/v1/graphql'
@@ -132,11 +138,11 @@ def saveToDatabase(successMsg):
 
     one_notif = {
 
-        "Notification_ID": secrets.token_urlsafe(16),
-        "Seller_ID": "1",
-        "Buyer_ID": "1",
-        "Status": "1",
-        "Message":successMsg,
+        "Notification_ID": successMsg["Notification_ID"],
+        "Seller_ID": successMsg["Seller_ID"],
+        "Buyer_ID": successMsg["Buyer_ID"],
+        "Status":  successMsg["Status"],
+        "Message": successMsg["Message"],
         "DateTimeSQL": datetime.today()
     }
 
@@ -154,6 +160,10 @@ def saveToDatabase(successMsg):
 
     #not sure if i need this ... 
     r = requests.post(url, headers={'Content-type': 'application/json'}, json={'query': query})
+# r = requests.post(url, headers={'Content-type': 'application/json'}, json={'query': query})
+
+
+
 
 
 if __name__ == "__main__":  # execute this program only if it is run as a script (not by 'import')  same exchange different binding key 
