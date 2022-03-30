@@ -6,6 +6,10 @@ import json
 import requests
 from invokes import invoke_http
 
+import amqp_setup
+import pika
+import json
+
 app = Flask(__name__)
 CORS(app)
 
@@ -56,61 +60,58 @@ def make_offer(): # BUYER invokes this complex microservice, request = offer
 
 def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
 
-    # 1. Invoke the profile microservice to retrieve mobile number to send messga thru notification
-        # a. request profile_id
-        # b. return mobile  
+    # 1. Invoke the profile microservice to retrieve mobile number to send messgage thru notification
+        # a. request user_id
+        # b. return name, mobile  
     user_id = offer['buyerid']
     print('\n\n-----Invoking profile microservice-----')
-    profile_result = invoke_http(profile_URL, method="POST", json=user_id)
-    print("\nmobile number:", profile_result['mobile'])
+    profile_details = invoke_http(profile_URL + user_id, method="GET")
+    name = profile_details['name']
+    mobile = profile_details['mobile']
+    print("\nname:", profile_details['name'])
+    print("\nmobile number:", profile_details['mobile'])
 
-    # 2. Update item using PUT
-# Get information of items requested in offer (GET one item)
-    # Invoke the item microservice
-    # print('\n-----Invoking item microservice-----')
-    # item_result = invoke_http(item_URL, method='GET', json=offer)
-    # print('item_result:', item_result)
-    # print("\nnew order created:", offer_result)
+    # 2. Update item details (mobile, buyerid) using PUT to add new offer details
+        # Invoke the item microservice
+        # a. PUT offer_details (buyer_id, buyer_name, buyer_mobile, item_status)
+        # b. return offer_result
+    print('\n-----Invoking item microservice-----')
+    offer_details = { "buyer_id": user_id, "buyer_name": name, "buyer_mobile": mobile, "item_status": 'pending'}
+    offer_result = invoke_http(item_URL, method='PUT', json=offer_details)
+    print("\nitem updated with buyer information:", offer)
 
-    # 2. Check the offer creation result (AMQP?) - if failure:
-        # a. send the error to the error microservice to inform of failure
-        # b. return message about error
-
-    # code = offer_result["code"]
-    # if code not in range(200, 300):
-        # Inform the error microservice
-        # print('\n\n-----Invoking error microservice as offer fails-----')
-        # invoke_http(error_URL, method="POST", json=offer_result)
-        # - reply from the invocation is not used; 
+    # 3. Check the item update result succeeded 
+        # if failure:       
+            # a. send the error to the error microservice to inform of failure
+            # b. return error message
+    code = offer["code"]
+    if code not in range(200, 300):
+        # Inform the error microservice (AMQP routing_key = 'error.*' )
+        print('\n\n-----Invoking error microservice as offer fails-----')
+        invoke_http(error_URL, method="POST", json=offer_result)
+        # result from the invocation is not used
         # continue even if this invocation fails
-        # print("Offer status ({:d}) sent to the error microservice:".format(
-        #     code), offer_result)
+        print("Offer status ({:d}) sent to the error microservice:".format(code), offer) #tbc
 
-        # 6/7.Return error
-        # return {
-        #     "code": 500,
-        #     "data": {"offer_result": offer_result},
-        #     "message": "Offer creation failure sent for error handling."
-        # }
+        # Return error
+        return {
+            "code": 500,
+            "data": {"offer_result": offer_result},
+            "message": "Offer creation failure is sent for error handling."
+        }
 
-    # 3. Record new offer in notification (AMQP route to notification)
-    # log information for notification
+    # 4. Record new offer in notification (AMQP routing_key = 'notify.*' )
+    # Send information to notification
     print('\n\n-----Invoking notification microservice-----')
     invoke_http(notification_URL, method="POST", json=offer_result)
     print("\nOffer sent to notification microservice.\n")
-    # the reply/result from this invocation is not used;
-    # continue even if this invocation fails
-
-    # The below might only be applicable for seller side accept
-    # X. Check the offer result (AMQP?); if success/fail, Send this notification result to BUYER [make offer complex ms]
-    # Invoke the notification microservice - need to check AMQP
-    # print('\n\n-----Invoking notification microservice-----')
-    # notification_result = invoke_http(
-    #     notification_URL, method="POST", json=offer_result['data'])
-    # print("notification_result:", notification_result, '\n')
-
-    # 4. Invoke Payment Mircoservice module
-    # return {} # to remove
+    code = offer["code"]
+    if code not in range(200, 300):
+        # Inform the error microservice (AMQP routing_key = 'error.*' )
+        print('\n\n-----Invoking error microservice as offer fails-----')
+        invoke_http(error_URL, method="POST", json=offer_result)
+        # result from the invocation is not used
+        # continue even if this invocation fails
 
     # 5. Return created offer + notification of result
     return {
@@ -121,16 +122,7 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
         }
     }
 
-
 # Execute this program if it is run as a main script (not by 'import')
 if __name__ == "__main__":
     print("This is flask " + os.path.basename(__file__) + " for placing an offer...")
     app.run(host="0.0.0.0", port=5100, debug=True) 
-
-    # - debug=True will reload the program automatically if a change is detected;
-    #   -- it in fact starts two instances of the same flask program,
-    #       and uses one of the instances to monitor the program changes;
-    # - host="0.0.0.0" allows the flask program to accept requests sent from any IP/host (in addition to localhost),
-    #   -- i.e., it gives permissions to hosts with any IP to access the flask program,
-    #   -- as long as the hosts can already reach the machine running the flask program along the network;
-    #   -- it doesn't mean to use http://0.0.0.0 to access the flask program.
