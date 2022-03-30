@@ -80,49 +80,77 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
     offer_result = invoke_http(item_URL, method='PUT', json=offer_details)
     print("\nitem updated with buyer information:", offer)
 
-    # 3. Check the item update result succeeded 
-        # if failure:       
+    # 3. Check if the item update failed (AMQP routing_key = 'error.*' )
             # a. send the error to the error microservice to inform of failure
             # b. return error message
     code = offer["code"]
+    message = json.dumps(offer_result)
     if code not in range(200, 300):
-        # Inform the error microservice (AMQP routing_key = 'error.*' )
-        print('\n\n-----Invoking error microservice as offer fails-----')
-        invoke_http(error_URL, method="POST", json=offer_result)
-        # result from the invocation is not used
-        # continue even if this invocation fails
-        print("Offer status ({:d}) sent to the error microservice:".format(code), offer) #tbc
+        # Inform the error microservice 
+        print('\n\n-----Publishing the failed offer error message with routing_key= error.*-----')
+        amqp_setup.channel.basic_publish(
+        exchange=amqp_setup.exchangename, 
+        routing_key="error.*", 
+        body=message, 
+        properties=pika.BasicProperties(delivery_mode = 2)
+        ) 
+        # message is persistent within the matching queues until received by notification.py
+        # reply from the invocation is not used;
+        # continue even if this invocation fails        
+        print("\nOffer failure ({:d}) published to the RabbitMQ Exchange:".format(code), offer_result)
 
-        # Return error
+        # HTTP Version (Old)
+        # print('\n\n-----Invoking error microservice as offer fails-----')
+        # invoke_http(error_URL, method="POST", json=offer_result)
+        # # result from the invocation is not used
+        # # continue even if this invocation fails
+        # print("Offer status ({:d}) sent to the error microservice:".format(code), offer) #tbc
+
+        # Return error and end here
         return {
             "code": 500,
             "data": {"offer_result": offer_result},
-            "message": "Offer creation failure is sent for error handling."
+            "message": "Make offer failure is sent for error handling."
         }
 
-    # 4. Record new offer in notification (AMQP routing_key = 'notify.*' )
-    # Send information to notification
-    print('\n\n-----Invoking notification microservice-----')
-    invoke_http(notification_URL, method="POST", json=offer_result)
-    print("\nOffer sent to notification microservice.\n")
-    code = offer["code"]
-    if code not in range(200, 300):
-        # Inform the error microservice (AMQP routing_key = 'error.*' )
-        print('\n\n-----Invoking error microservice as offer fails-----')
-        invoke_http(error_URL, method="POST", json=offer_result)
-        # result from the invocation is not used
-        # continue even if this invocation fails
+    # publish to notification only when there is no error in making offer 
 
-    # 5. Return created offer + notification of result
+    else: 
+        # 4. Send offer success to notification (AMQP routing_key = 'notify.*' )
+        # Send status to notification
+        # need to pass mobile number through message somehow - mobile variable is available (TBC)
+        print('\n\n-----Publishing the successful order message with routing_key=order.info-----')    
+        amqp_setup.channel.basic_publish(
+        exchange=amqp_setup.exchangename, 
+        routing_key="notify.*", 
+        body=message, 
+        properties=pika.BasicProperties(delivery_mode = 2) #TBC on persistence
+        )
+
+        print("\nOffer success published to RabbitMQ Exchange.\n")
+        # - reply from the invocation is not used;
+        #  continue even if this invocation fails
+
+    # HTTP below
+    # print('\n\n-----Invoking notification microservice-----')
+    # invoke_http(notification_URL, method="POST", json=offer_result)
+    # print("\nOffer sent to notification microservice.\n")
+    # if code not in range(200, 300):
+    #     # Inform the error microservice (AMQP routing_key = 'error.*' )
+    #     print('\n\n-----Invoking error microservice as offer fails-----')
+    #     invoke_http(error_URL, method="POST", json=offer_result)
+    #     # result from the invocation is not used
+    #     # continue even if this invocation fails
+
+    # 5. Return the updated offer (item) details if successful
     return {
         "code": 201,
         "data": {
             "offer_result": offer_result,
-        #     "notification_result": notification_result
         }
     }
 
-# Execute this program if it is run as a main script (not by 'import')
+# Execute this program if it is run as a main script and not by 'import'
 if __name__ == "__main__":
-    print("This is flask " + os.path.basename(__file__) + " for placing an offer...")
+    print("This is flask " + os.path.basename(__file__) + " for making an offer...")
     app.run(host="0.0.0.0", port=5100, debug=True) 
