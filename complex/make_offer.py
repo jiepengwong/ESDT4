@@ -65,6 +65,7 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
         # b. return name, mobile  
     user_id = offer['buyer_id']
     item_id = offer['item_id']
+    price = offer['price']
     print('\n\n-----Invoking profile microservice-----')
     profile_details = invoke_http(profile_URL + user_id, method="GET")
     name = profile_details['data']['name']
@@ -77,7 +78,7 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
         # a. PUT offer_details (buyer_id, buyer_name, buyer_mobile, item_status)
         # b. return offer_result
     print('\n-----Invoking item microservice-----')
-    offer_details = { "buyer_id": user_id, "buyer_name": name, "buyer_mobile": mobile, "item_status": 'pending'}
+    offer_details = { "buyer_id": user_id, "buyer_name": name, "buyer_mobile": mobile, "item_status": 'pending', "price": price}
     offer_result = invoke_http(item_URL + item_id, method='PUT', json=offer_details)
     print("\nitem updated with buyer information:", offer_details)
 
@@ -85,7 +86,15 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
             # a. send the error to the error microservice to inform of failure
             # b. return error message
     code = offer_result["code"]
-    message = json.dumps(offer_result)
+    seller_mobile = offer_result['Success']['seller_mobile']
+    data = {
+        "seller_mobile": seller_mobile,
+        "seller_message": "You have a new offer. Please check your 'Offers' page to accept or reject the offer" 
+        }
+    message = json.dumps(data)
+    print('message =' + message)
+    # print(type(message))
+    
     if code not in range(200, 300):
         # Inform the error microservice 
         print('\n\n-----Publishing the failed offer error message with routing_key= error.*-----')
@@ -120,7 +129,7 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
         # 4. Send offer success to notification (AMQP routing_key = 'notify.*' )
         # Send status to notification
         # need to pass mobile number through message somehow - mobile variable is available (TBC)
-        print('\n\n-----Publishing the successful order message with routing_key=order.info-----')    
+        print('\n\n-----Publishing the successful order message with routing_key=notify.*-----')    
         amqp_setup.channel.basic_publish(
         exchange=amqp_setup.exchangename, 
         routing_key="notify.*", 
@@ -128,6 +137,7 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
         properties=pika.BasicProperties(delivery_mode = 2) #TBC on persistence
         )
         print(message)
+        print("\nOffer success ({:d}) published to the RabbitMQ Exchange:".format(code), offer_result)
 
     #     print("\nOffer success published to RabbitMQ Exchange.\n")
     #     # - reply from the invocation is not used;
