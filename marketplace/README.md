@@ -40,6 +40,7 @@ docker run -d --hostname esd-rabbit --name rabbitmq-mgmt -p 5672:5672 -p 15672:1
 python -m pip install pika
 pip3 install twilio --upgrade
 easy_install twilio
+pip install python-dotenv
 
 
 ## Librairies/Dependencies loaded for SellerView UI
