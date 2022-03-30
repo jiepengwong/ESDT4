@@ -2,7 +2,7 @@ import json
 import os
 import amqp_setup
 import twilio
-from twillio.rest import Client
+from twilio.rest import Client
 
 notifsBindingKey = 'notify.*'
 
@@ -34,13 +34,13 @@ def processNotifs(Msg):
         noti_message = data['noti_message']
         user_phone = '+65' + data['user_phone']
 
-        account_sid = #'ACc2ba82a67c14ae8f185741f5aafc560a' 
+        account_sid = #'ACc2ba82a67c14ae8f185741f5aafc560a'
         auth_token = #'9616a05f6632d5ab3e447f25fd6e29ef' #neeed to retreve from WT twillio - better to put in env file
         client = Client(account_sid, auth_token) 
 
         message = client.messages.create( 
                                       from_='whatsapp:+14155238886',  
-                                      body=noti_message,,      
+                                      body=noti_message,      
                                       to=user_phone 
                                   ) 
 
