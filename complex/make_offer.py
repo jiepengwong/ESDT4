@@ -23,9 +23,9 @@ CORS(app)
 
 # make sure the following microservices are running:
 profile_URL =  "http://localhost:5000/profile/" # requires :user_id
-item_URL = "http://localhost:5000/items/" # requires :item_id
+item_URL = "http://localhost:5001/items/" # requires :item_id
 notification_URL = "http://localhost:5002/notification" # AMQP routing_key = 'notify.*' 
-error_URL = "http://localhost:5001/error" # AMQP routing_key = 'error.*'
+error_URL = "http://localhost:5003/error" # AMQP routing_key = 'error.*'
 # need to change port for multiple services
 
 @app.route("/make_offer", methods=['POST']) # pass in offer details
