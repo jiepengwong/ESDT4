@@ -177,8 +177,6 @@
                         // console.log(GoogleAuth.isSignedIn.get())
                         var GoogleUser = this.GoogleAuth.currentUser.get();
 
-                        
-
                         // GoogleAuth.currentUser.get() ==> google user. ###################################################################
                         // This will give me the getId() portion, but do not use this for your backend. Instead call out. ##################
                         // console.log(GoogleUser.getId())
@@ -220,9 +218,6 @@
                                 .catch(error => {
                                     console.log(error)
                                 })
-
-                            // Why is registered here a null
-                            console.log(this.registered)
                             
                             // If not registered, I have to pass fields into my microservice. 
                             var registered_url = "http://127.0.0.1:5000/profile/register/" + this.id
@@ -230,15 +225,13 @@
                             let jsondata = JSON.stringify({
                                     "name": this.name,
                                     "email": this.email,
-                                    "ratings": null
+                                    "ratings": null,
+                                    "mobile": "0"
                             })
                             console.log(jsondata)
                             console.log(typeof jsondata)
                             // Json Data ia String now
                             // {name: "Yu Xiang" ,....}
-
-
-
                             if (this.registered==false){
                                 fetch(registered_url,{
                                     method: "POST",
@@ -262,6 +255,14 @@
                             this.localStorage= localStorage.id
                             document.location.reload()
 
+                            newjsondata = JSON.parse(jsondata)
+                            mobile = newjsondata['mobile']
+                            if (mobile == "0") {
+                                window.location.replace("/ESD_PROJECT/ESDT4/multi-page/testing.php");
+                            }
+                            else{
+                                window.location.replace("/ESD_PROJECT/ESDT4/multi-page/catalogue.php");
+                            }
                         }
                     })
              })
