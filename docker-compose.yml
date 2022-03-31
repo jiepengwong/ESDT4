@@ -1,6 +1,107 @@
 version: "3.8"
 
+volumes:
+  rabbitmq_data:
+
 services:
-  order: 
-    image: mongo
-  # Havent create yet
+  # order: 
+  #   image: mongo
+
+  ####################################
+  # RabbitMQ: The messaging broker   
+  ####################################
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: esd-rabbit
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes: 
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  ####################################
+  # twilio_notifs: The twilio notifier
+  ####################################
+  twilio_notifs:
+    build:
+      context: ./
+      dockerfile: twilio_notifs.Dockerfile
+    image: tinggzster/twilio_notifs:esd
+    restart: always
+    depends_on:
+      - rabbitmq
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      PYTHONUNBUFFERED: 1
+
+    # hostname: esd-twilio
+    # restart: always
+    # ports:
+    #   - "80:80"
+    # volumes:
+    #   - twilio_data:/var/lib/twilio
+    # environment:
+    #   - TWILIO_ACCOUNT_SID={{.TwilioAccountSid}}
+    #   - TWILIO_AUTH_TOKEN={{.TwilioAuthToken}}
+    #   - TWILIO_NUMBER={{.TwilioNumber}}
+    #   - TWILIO_NOTIF_URL={{.TwilioNotifUrl}}
+    #   - TWILIO_NOTIF_SID={{.TwilioNotifSid}}
+    #   - TWILIO_NOTIF_TOKEN={{.TwilioNotifToken}}
+    #   - TWILIO_NOTIF_FROM={{.TwilioNotifFrom}}
+    #   - TWILIO_NOTIF_TO={{.TwilioNotifTo}}
+    #   - TWILIO_NOTIF_SUBJECT={{.TwilioNotifSubject}}
+    #   - TWILIO_NOTIF_BODY={{.TwilioNotifBody}}
+    #   - TWILIO_NOTIF_SMS_BODY={{.TwilioNotifSmsBody}}
+    #   - TWILIO_NOTIF_SMS_FROM={{.TwilioNotifSmsFrom}}
+    #   - TWILIO_NOTIF_SMS_TO={{.TwilioNotifSmsTo}}
+    #   - TWILIO_NOTIF_SMS_SID={{.TwilioNotifSmsSid}}
+    #   - TWILIO_NOTIF_SMS_TOKEN={{.TwilioNotifSmsToken}}
+    #   - TWILIO_NOTIF_SMS_FROM={{.TwilioNotifSmsFrom}}
+    #   - TWILIO_NOTIF_SMS_TO={{.TwilioNotifSmsTo}}
+    #   - TWILIO_NOTIF_SMS_SID={{.TwilioNotifSms
+
+
+  ###################################
+  # Error: The Error microservice
+  ###################################
+  error:
+    build:
+      context: ./
+      dockerfile: error.Dockerfile
+    image: tinggzster/error:esd
+    restart: always
+    depends_on:
+      - rabbitmq
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      PYTHONUNBUFFERED: 1
+
+
+  ###################################
+  #Accept Offer: The Accept Offer complex microservice
+  ###################################
+
+
+  ###################################
+  #Create Listing: The Create Listing complex microservice
+  ###################################
+
+
+  ###################################
+  #Make Offer: The Make Offer complex microservice
+  ###################################
+
+
+  ###################################
+  #Rate Seller: The Rate Seller complex microservice
+  ###################################
+
+
+  ###################################
+  #Reject Offer: The Reject Offer complex microservice
+  ###################################
+
+

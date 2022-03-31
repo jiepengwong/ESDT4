@@ -2,33 +2,43 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 import os, sys
-
+import json
 import requests
 from invokes import invoke_http
+
+import amqp_setup
+import pika
+import json
 
 app = Flask(__name__)
 CORS(app)
 
-# make sure the following microservices are running:
-# item_URL = "http://localhost:5000/item" 
-create_offer_URL = "http://localhost:5000/offer/buyer/createoffer"
-error_URL = "http://localhost:5001/error"# need to change port for multiple URLs (?)
-notification_URL = "http://localhost:5002/notification" # requires AMQP
+# input JSON:
+# offer =
+# {
+#   "item_id": this.results.item_id,    # based on item selected
+#   "price": this.price,                # input by buyer on UI 
+#   "buyerid": this.buyerid             # stored on the browser (user_id)
+# }
 
-# @app.route("/")
-@app.route("/make_offer", methods=['POST'])
-def make_offer(): # BUYER SIDE
-    # Simple check of input format and data of the request are JSON
+# make sure the following microservices are running:
+profile_URL =  "http://localhost:5000/profile/" # requires :user_id
+item_URL = "http://localhost:5001/items/" # requires :item_id
+notification_URL = "http://localhost:5002/notification" # AMQP routing_key = 'notify.*' 
+error_URL = "http://localhost:5003/error" # AMQP routing_key = 'error.*'
+# need to change port for multiple services
+
+@app.route("/make_offer", methods=['POST']) # pass in offer details
+def make_offer(): # BUYER invokes this complex microservice, request = offer 
+    # First check if input format and data of the request are JSON
     if request.is_json:
         try:
             offer = request.get_json() 
             print("\nReceived an offer in JSON:", offer)
 
-            # # do the actual work
-            # # 1. Send offer info {offer details}
+            # 1. Send offer info {offer details}
             result = processMakeOffer(offer)
             return jsonify(result), result["code"]
-
 
         except Exception as e:
             # Unexpected error in code
@@ -48,91 +58,99 @@ def make_offer(): # BUYER SIDE
         "message": "Invalid JSON input: " + str(request.get_data())
     }), 400
 
-# JSON input here should be in this format:
-    # {
-        # "price": 6000,
-        # "itemname": "iphonepromax232323",
-        # "itemid": "21",
-        # "buyerid": 123,
-        # "sellerid": 2323,
-        # "offerstatus": "Available"
-    # }
-
 def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
 
-    # TBC on the logical flow
+    # 1. Invoke the profile microservice to retrieve mobile number to send messgage thru notification
+        # a. request user_id
+        # b. return name, mobile  
+    user_id = offer['buyerid']
+    print('\n\n-----Invoking profile microservice-----')
+    profile_details = invoke_http(profile_URL + user_id, method="GET")
+    name = profile_details['name']
+    mobile = profile_details['mobile']
+    print("\nname:", profile_details['name'])
+    print("\nmobile number:", profile_details['mobile'])
 
-    # 0. (REMOVED as this is the json input) Get information of items requested in offer (GET one item)
-    # Invoke the item microservice
-    # print('\n-----Invoking item microservice-----')
-    # item_result = invoke_http(item_URL, method='GET', json=offer)
-    # print('item_result:', item_result)
+    # 2. Update item details (mobile, buyerid) using PUT to add new offer details
+        # Invoke the item microservice
+        # a. PUT offer_details (buyer_id, buyer_name, buyer_mobile, item_status)
+        # b. return offer_result
+    print('\n-----Invoking item microservice-----')
+    offer_details = { "buyer_id": user_id, "buyer_name": name, "buyer_mobile": mobile, "item_status": 'pending'}
+    offer_result = invoke_http(item_URL, method='PUT', json=offer_details)
+    print("\nitem updated with buyer information:", offer)
 
-    # 1. Invoke the order microservice to create new offer request (POST offer)
-    print('\n\n-----Invoking offer microservice-----')
-    offer_result = invoke_http(create_offer_URL, method="POST", json=offer)
-    print("\nnew order created:", offer_result)
+    # 3. Check if the item update failed (AMQP routing_key = 'error.*' )
+            # a. send the error to the error microservice to inform of failure
+            # b. return error message
+    code = offer["code"]
+    message = json.dumps(offer_result)
+    if code not in range(200, 300):
+        # Inform the error microservice 
+        print('\n\n-----Publishing the failed offer error message with routing_key= error.*-----')
+        amqp_setup.channel.basic_publish(
+        exchange=amqp_setup.exchangename, 
+        routing_key="error.*", 
+        body=message, 
+        properties=pika.BasicProperties(delivery_mode = 2)
+        ) 
+        # message is persistent within the matching queues until received by notification.py
+        # reply from the invocation is not used;
+        # continue even if this invocation fails        
+        print("\nOffer failure ({:d}) published to the RabbitMQ Exchange:".format(code), offer_result)
 
-
-    # 2. Check the offer creation result (AMQP?) - if failure:
-        # a. send the error to the error microservice to inform of failure
-        # b. return message about error
-
-    # code = offer_result["code"]
-    # if code not in range(200, 300):
-        # Inform the error microservice
+        # HTTP Version (Old)
         # print('\n\n-----Invoking error microservice as offer fails-----')
         # invoke_http(error_URL, method="POST", json=offer_result)
-        # - reply from the invocation is not used; 
-        # continue even if this invocation fails
-        # print("Offer status ({:d}) sent to the error microservice:".format(
-        #     code), offer_result)
+        # # result from the invocation is not used
+        # # continue even if this invocation fails
+        # print("Offer status ({:d}) sent to the error microservice:".format(code), offer) #tbc
 
-        # 6/7.Return error
-        # return {
-        #     "code": 500,
-        #     "data": {"offer_result": offer_result},
-        #     "message": "Offer creation failure sent for error handling."
-        # }
+        # Return error and end here
+        return {
+            "code": 500,
+            "data": {"offer_result": offer_result},
+            "message": "Make offer failure is sent for error handling."
+        }
 
-    # 3. Record new offer in notification (AMQP route to notification)
-    # log information for notification
-    print('\n\n-----Invoking notification microservice-----')
-    invoke_http(notification_URL, method="POST", json=offer_result)
-    print("\nOffer sent to notification microservice.\n")
-    # the reply/result from this invocation is not used;
-    # continue even if this invocation fails
+    # publish to notification only when there is no error in making offer 
 
-    # The below might only be applicable for seller side accept
-    # X. Check the offer result (AMQP?); if success/fail, Send this notification result to BUYER [make offer complex ms]
-    # Invoke the notification microservice - need to check AMQP
+    else: 
+        # 4. Send offer success to notification (AMQP routing_key = 'notify.*' )
+        # Send status to notification
+        # need to pass mobile number through message somehow - mobile variable is available (TBC)
+        print('\n\n-----Publishing the successful order message with routing_key=order.info-----')    
+        amqp_setup.channel.basic_publish(
+        exchange=amqp_setup.exchangename, 
+        routing_key="notify.*", 
+        body=message, 
+        properties=pika.BasicProperties(delivery_mode = 2) #TBC on persistence
+        )
+
+        print("\nOffer success published to RabbitMQ Exchange.\n")
+        # - reply from the invocation is not used;
+        #  continue even if this invocation fails
+
+    # HTTP below
     # print('\n\n-----Invoking notification microservice-----')
-    # notification_result = invoke_http(
-    #     notification_URL, method="POST", json=offer_result['data'])
-    # print("notification_result:", notification_result, '\n')
+    # invoke_http(notification_URL, method="POST", json=offer_result)
+    # print("\nOffer sent to notification microservice.\n")
+    # if code not in range(200, 300):
+    #     # Inform the error microservice (AMQP routing_key = 'error.*' )
+    #     print('\n\n-----Invoking error microservice as offer fails-----')
+    #     invoke_http(error_URL, method="POST", json=offer_result)
+    #     # result from the invocation is not used
+    #     # continue even if this invocation fails
 
-    # 4. Invoke Payment Mircoservice module
-    # return {} # to remove
-
-    # 5. Return created offer + notification of result
+    # 5. Return the updated offer (item) details if successful
     return {
         "code": 201,
         "data": {
             "offer_result": offer_result,
-        #     "notification_result": notification_result
         }
     }
 
-
-# Execute this program if it is run as a main script (not by 'import')
+# Execute this program if it is run as a main script and not by 'import'
 if __name__ == "__main__":
-    print("This is flask " + os.path.basename(__file__) + " for placing an offer...")
+    print("This is flask " + os.path.basename(__file__) + " for making an offer...")
     app.run(host="0.0.0.0", port=5100, debug=True) 
-
-    # - debug=True will reload the program automatically if a change is detected;
-    #   -- it in fact starts two instances of the same flask program,
-    #       and uses one of the instances to monitor the program changes;
-    # - host="0.0.0.0" allows the flask program to accept requests sent from any IP/host (in addition to localhost),
-    #   -- i.e., it gives permissions to hosts with any IP to access the flask program,
-    #   -- as long as the hosts can already reach the machine running the flask program along the network;
-    #   -- it doesn't mean to use http://0.0.0.0 to access the flask program.

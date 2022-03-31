@@ -1,6 +1,5 @@
 <?php
 
-
 ?>
 
 <!DOCTYPE html>
@@ -20,16 +19,10 @@
       crossorigin="anonymous"
     />
   </head>
-  <body>
+  <body onload="loginStatus()">
     <div id="app">
       <!-- Navbar goes here -->
-      <nav class="navbar navbar-light bg-light static-top">
-        <div class="container">
-          <a class="navbar-brand" href="#!">Start Bootstrap</a>
-          <a class="btn btn-primary" href="#signup">Sign Up</a>
-        </div>
-      </nav>
-
+      <navbar></navbar>
       <!-- Header -->
 
       <header class="masthead bg-success p-5">
@@ -83,6 +76,7 @@
                     <a href="#">{{result.item_name}}</a>
                   </h4>
                   <p class="card-text">{{result.description}}</p>
+                  <button class="btn btn-success"><a class="text-white":href="`itemDetailsNew.php?itemid=${result._id}`" >More Details</a></button>
                 </div>
                 <div class="card-footer">
                   <small class="text-muted">Sold by: {{result.seller_name}}
@@ -100,7 +94,15 @@
   </body>
 </html>
 
+<script src="./narbar.js"></script>
 <script>
+  function loginStatus() {
+        // If the login variable is initalised, then we will redirect them to 
+        if (!localStorage.getItem("id")){
+            // redirect them to login page
+            window.location.replace("/ESD_PROJECT/ESDT4/multi-page/index.html");
+        }
+    }
   const app = Vue.createApp({
     data() {
       return {
@@ -175,7 +177,46 @@
       }
     }
   });
+  app.component("navbar",{
+            template: template1,
+            data() {
+                return{
+                    links: links1,
+                    isSignedIn: localStorage.getItem("id"),
+                }
 
+            },
+            methods:{
+                signOut() {
+                    let gapi = window.gapi;
+                    let clientId ="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com";
+                    let apiKey ="AIzaSyC0WtHoYqLnGKgaqLWX6RGkiL0X2C7dll8";
+                    let secretClientId = "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";
+                    let discoveryDocs =["https://www.googleapis.com/discovery/v1/apis/oauth2/v2/rest"];
+                    let scope ="https://www.googleapis.com/auth/userinfo.profile";
+
+                    gapi.load("client:auth2", () => {
+                        gapi.client.init({
+                            apiKey,
+                            clientId,
+                            discoveryDocs,
+                            scope,
+                            secretClientId,})
+
+                            .then(() => {
+                                var GoogleAuthObj = gapi.auth2.getAuthInstance();
+                                this.GoogleAuth = GoogleAuthObj.signOut();
+                                this.isSignedIn = false;
+                            })
+                    })
+                    
+                    localStorage.removeItem("login")
+                    localStorage.removeItem("id")
+                    alert("You have been logged out!")
+                    location.reload()
+        },
+            }
+        })
   app.mount("#app");
 </script>
 

@@ -31,7 +31,7 @@ class Profile(db.Model):
         self.ratings = ratings
 
     def json(self):
-        return {"user_id": self.user_id, "name": self.name, "email": self.email, "mobile": self.mobile, "ratings":self.ratings}
+        return {"user_id": self.user_id, "name": self.name, "email": self.email, "mobile": self.mobile,"ratings":self.ratings}
         
 
 # We need to get /profile/:id, this is to get the profile details of the user 
@@ -70,6 +70,29 @@ def update_ratings(Profile_Id):
         "message":"An error occured while updating the profile rating.Please try again."
     })
 
+# We need to update profile/number/<id> 
+@app.route("/profile/mobile/<string:Profile_Id>", methods=["PUT"])
+def update_number(Profile_Id):
+    if (Profile.query.filter_by(user_id=Profile_Id).first()):
+        db.session.delete(Profile.query.filter_by(user_id=Profile_Id).first())
+        db.session.commit()
+
+        data = request.get_json()
+        profile = Profile(Profile_Id, **data)
+        db.session.add(profile)
+        db.session.commit()
+        return jsonify({
+                "code":200,
+                "data":profile.json(),
+                "message":"Profile's number has been updated."
+            },200
+        )
+    return jsonify({
+        "code":404,
+        "message":"An error occured while updating the profile number.Please try again."
+    })
+
+
 
 # We need to post /profile/register/, this is to register new user everytime they login with google 
 @app.route("/profile/register/<string:Profile_Id>", methods=["POST"])
@@ -80,7 +103,7 @@ def create_account(Profile_Id):
             "data": {
                 "user_id" : Profile_Id
             },
-            "message": "User has already registe    red"
+            "message": "User has already registered"
         }), 400
     
     data = request.get_json()
@@ -100,7 +123,7 @@ def create_account(Profile_Id):
         }), 500
     
     return jsonify({
-        "code":201,
+        "code":200,
         "data":profile.json()
     })
 
