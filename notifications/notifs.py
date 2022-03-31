@@ -163,8 +163,8 @@ def saveToDatabase(successMsg):
 # r = requests.post(url, headers={'Content-type': 'application/json'}, json={'query': query})
 
 
-if __name__ == "__main__":  # execute this program only if it is run as a script (not by 'import')  same exchange different binding key 
-    
+
+
 
 if __name__ == "__main__":  # execute this program only if it is run as a script (not by 'import')  same exchange different binding key 
     print("\nThis is " + os.path.basename(__file__), end='')
