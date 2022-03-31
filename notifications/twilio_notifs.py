@@ -38,8 +38,8 @@ def processNotifs(Msg):
 
         # load_dotenv()
 
-        noti_message = data['noti_message']
-        user_phone = '+65' + data['user_phone']
+        noti_message = data['seller_message']
+        seller_number = '+65' + data['seller_mobile']
 
         account_sid = 'TWILIO_ACCOUNT_SID',
         auth_token = 'TWILIO_AUTH_TOKEN',
@@ -49,7 +49,7 @@ def processNotifs(Msg):
                                         from_='whatsapp:+14155238886',  
                                         body=noti_message,     
                                         # to=user_phone 
-                                        to='whatsapp:+6591127531'
+                                        to= seller_number
                                         ) 
 
         print(message.sid)
