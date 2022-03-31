@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile</title>
+    <!--bootstrap css-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <!--axios-->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!--Vue-->
+    <script src="https://unpkg.com/vue@next"></script>
+    <!-- Google Auth0 -->
+    <script async defer src="https://apis.google.com/js/api.js"
+        onload="this.onload=function(){};handleClientLoad()"
+        onreadystatechange="if (this.readyState === 'complete') this.onload()">
+    </script>
+    <meta name="google-signin-client_id" content="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com">
+</head>
+<body onload="checkLogin()">
+    <div id="app">
+        <!-- This is where the NAVBAR IS!! ############## -->
+        <navbar></navbar>
+        <!-- This is where the NAVBAR ENDS!! ############## -->
+
+        <!--THIS IS WHERE ThE PROFILE IS..################  -->
+        <div class="bg-light rounded-3 m-2">
+            <div class="fw-light fs-6" style="color:grey; text-align:center">User information</div>
+            
+            <!-- 1st Row -->
+            <!-- {{name}} {{email}} {{mobile}} {{ratings}} -->
+            
+            <div class="row m-2">
+                <div class="col-sm-6">
+                    <label for="username" class="form-label" >Name</label>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="username" aria-describedby="basic-addon3" v-bind:value="id" readonly>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row m-2">
+                <div class="col-sm-6">
+                    <label for="username" class="form-label" >Name</label>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="username" aria-describedby="basic-addon3" v-bind:value="name" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2nd Row  -->
+            <div class="row m-2 mb-4">
+                <div class="col-sm-6">
+                    <label for="birthday" class="form-label">Email</label>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="birthday" aria-describedby="basic-addon3" v-bind:value="email" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3rd Row -->
+            <div class="row m-2 mb-4">
+                <div class="col-sm-6">
+                    <label for="birthday" class="form-label">Ratings</label>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="birthday" aria-describedby="basic-addon3" v-bind:value="ratings" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4th Row -->
+            <div class="row m-2 mb-4">
+                <div class="col-sm-6">
+                    <label for="birthday" class="form-label">Number</label>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon3">+65</span>
+                        <input type="text" class="form-control" id="birthday" aria-describedby="basic-addon3" v-bind:value="mobile" readonly>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+
+<script src="./narbar.js"></script>
+<script>
+    function checkLogin() {
+        // If the login variable is initalised, then we will redirect them to 
+        if (localStorage.getItem("id")){
+            // redirect them to login page
+            // window.location.replace("/ESD_PROJECT/ESDT4/multi-page/catalogue.php");
+        }
+        else {
+            window.location.replace("/ESD_PROJECT/ESDT4/multi-page/index.html");
+        }
+    }
+
+    var jsondata_obj = JSON.parse(localStorage.login);
+    console.log(jsondata_obj);
+    var name = jsondata_obj['name'];
+    var mobile = jsondata_obj['mobile'];
+    var email = jsondata_obj['email'];
+    var ratings = jsondata_obj['ratings'];
+
+    if (ratings == null){
+        ratings = "There is no ratings yet";
+    }
+    if (mobile == '0' || mobile == null) {
+        mobile = "There is no mobile input yet";
+    }
+
+    console.log(name)
+    console.log(mobile)
+    console.log(email)
+    console.log(ratings)
+
+    
+    // VUE PORTION GOES IN HERE #################################################################################
+    const app = Vue.createApp({
+        data() {
+            return {
+                // THE JSON DATA IS TAKEN FROM THE Google Chrome 
+                jsondata: localStorage.login,
+                id: localStorage.id,
+                name: name,
+                mobile: mobile,
+                email: email,
+                ratings: ratings,
+                id: localStorage.id,
+            }
+        },
+        computed : {
+        
+        },
+        
+        methods: {
+        
+            
+        },
+        computed: {
+
+        },
+            },
+        
+        )
+        app.component("navbar",{
+            template: template1,
+            data() {
+                return{
+                    links: links1,
+                    isSignedIn: localStorage.getItem("id"),
+                }
+
+            },
+            methods:{
+                signOut() {
+                    let gapi = window.gapi;
+                    let clientId ="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com";
+                    let apiKey ="AIzaSyC0WtHoYqLnGKgaqLWX6RGkiL0X2C7dll8";
+                    let secretClientId = "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";
+                    let discoveryDocs =["https://www.googleapis.com/discovery/v1/apis/oauth2/v2/rest"];
+                    let scope ="https://www.googleapis.com/auth/userinfo.profile";
+
+                    gapi.load("client:auth2", () => {
+                        gapi.client.init({
+                            apiKey,
+                            clientId,
+                            discoveryDocs,
+                            scope,
+                            secretClientId,})
+
+                            .then(() => {
+                                var GoogleAuthObj = gapi.auth2.getAuthInstance();
+                                this.GoogleAuth = GoogleAuthObj.signOut();
+                                this.isSignedIn = false;
+                            })
+                    })
+                    
+                    localStorage.removeItem("login")
+                    localStorage.removeItem("id")
+                    alert("You have been logged out!")
+                    location.reload()
+        },
+            }
+        })
+    const vm = app.mount('#app');
+</script>
+</html>

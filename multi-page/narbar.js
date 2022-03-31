@@ -35,5 +35,5 @@ var links1 = [
     {"link":"offersmade.php", "name": "Offers Made"},
     {"link":"mylistings.html", "name": "My Listings"},
     {"link": "givereviews.html", "name": "Give Ratings"},
-    {'link':"profile.html",'name':'My Profile'}
+    {'link':"myprofile.html",'name':'My Profile'}
     ];
