@@ -41,14 +41,12 @@
             <li>Date Time: {{results.date_time}}</li>
           </ul>
 
-          <form>
 
             <h3>Offer?</h3>
     
             <input type="number" v-model="price" required />
             <button @click="makeOffer()" class="btn btn-primary">Make Offer Now</button>
 
-          </form>
   
         </div>
   
@@ -83,7 +81,7 @@
       return {
         results: [],
         price: 0,
-        buyerid: 1234 //Taken from yuxiang side
+        buyerid: 12345 //Taken from yuxiang side
 
       };
     },
