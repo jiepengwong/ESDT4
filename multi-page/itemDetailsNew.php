@@ -1,6 +1,5 @@
 <?php
 
-
 ?>
 
 <!DOCTYPE html>
@@ -20,7 +19,6 @@
 <body>
   <div id="app">
     <div class="container">
-  
       <!-- Portfolio Item Heading -->
       <h1 class="my-4">Page Heading
         <small>Secondary Text</small>
@@ -48,7 +46,7 @@
             <h3>Offer?</h3>
     
             <input type="number" v-model="price" required />
-            <button class="btn btn-primary">Make Offer Now</button>
+            <button @click="makeOffer()" class="btn btn-primary">Make Offer Now</button>
 
           </form>
   
@@ -79,26 +77,13 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 <script>
   const app = Vue.createApp({
     data() {
       return {
         results: [],
         price: 0,
-        buyerid: "122323" //Taken from yuxiang side
+        buyerid: 1234 //Taken from yuxiang side
 
       };
     },
@@ -134,7 +119,7 @@
       }
 
       else{
-        window.location.href="cataloguenew.php"
+        // window.location.href="cataloguenew.php"
       }
 
 
@@ -147,8 +132,43 @@
 
     methods: {
       // Invoke the complex microservice here to make an offer
-      makeOffer() {
+      async makeOffer() {
+        console.log("help")
         requiredObjects = {"item_id": this.results._id, "price": this.price, "buyerid": this.buyerid}
+        console.log(requiredObjects)
+
+        // Make a fetch first to check if the item is available
+
+        option = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requiredObjects)
+        }
+
+        url = "http://localhost:5100/make_offer"
+
+        const result = await fetch(url, option)
+
+        const response = await result.json()
+
+
+        try {
+          if (result.ok) {
+            console.log(response)
+          } 
+        }
+
+        catch(err){
+
+          console.log(err)
+        
+        }
+
+
+
+
 
       }
 
