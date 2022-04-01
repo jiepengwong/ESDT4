@@ -23,44 +23,15 @@
 <body onload="loginStatus()">
     <div id="app">
         <!-- NAVIGATION BAR  --------------------------------------------------------------------------------------------------- -->
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-            <a class="navbar-brand">
-                Henesys Grocery MarketPlace
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-            <div class="row mx-1">
-
-                <div class="col-2">
-                <ul class="navbar-nav">
-                <li class="nav-item" v-for="link in links">
-                    <a class="nav-link" :href="link.link">
-                        {{link.name}}
-                    </a>
-                </li>
-
-                <button v-if="computingLogin" @click="signOut()" type="button" class="btn btn-success btn-floating mx-1" style="">
-                                SignOut
-                </button>
-                <button v-if="!computingLogin" @click="googleAuth()" type="button" class="btn btn-success btn-floating mx-1" style="">
-                Login
-                </button>
-            </ul>
-                </div>
-            </div>
-        </nav>
-
+        <navbar></navbar>
         <!-- END OF NAVIGATION BAR --------------------------------------------------------------------------------------------- -->
+
         <div class="container-fluid h-custom">
         <div class="row d-flex justify-content-center align-items-center h-100">
           <div class="col-md-9 col-lg-6 col-xl-6 my-lg-5 py-lg-5">
             <img src="./asset/HenesysHome.png" class="img-fluid"alt="Sample image">
           </div>
           <div class="col-md-8 col-lg-6 col-xl-5 offset-xl-1 my-lg-5 py-lg-5">
-            <form>
             <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
                 <h2>Welcome to Henesys Grocery Place!</h2>
             </div>
@@ -70,25 +41,25 @@
             
                 <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
                     <p class="lead fw-normal mb-0 me-3 text-centre">Sign in with</p>
-                    <button @click="googleAuth()" type="button" class="btn btn-success btn-floating mx-1" >
+                    <button @click="googleAuthtry()" type="button" class="btn btn-success btn-floating mx-1" >
                         Google
                     </button>
                 </div>
-
-            </form>
-            
+            {{id}}
+            {{isSignedIn}}
                 </div>
             </div>
         </div>
     </div>
     
 </body>
+<script src="./narbar.js"></script>
 <script>
     function loginStatus() {
         // If the login variable is initalised, then we will redirect them to 
         if (localStorage.getItem("id")){
             // redirect them to login page
-            window.location.replace("/ESD_PROJECT/ESDT4/multi-page/catalogue.php");
+            window.location.replace("/ESD_PROJECT/ESDT4/multi-page/cataloguenew.php");
         }
     }
 
@@ -110,6 +81,7 @@
                 databaseSign: null,
                 registered: null,
                 GoogleUser: null,
+                googleAuth: null,
             }
         },
         computed : {
@@ -117,43 +89,14 @@
         },
         
         methods: {
-            signOut() {
+        GoogleSignIn() {
             let gapi = window.gapi;
             let clientId ="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com";
             let apiKey ="AIzaSyC0WtHoYqLnGKgaqLWX6RGkiL0X2C7dll8";
             let secretClientId = "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";
             let discoveryDocs =["https://www.googleapis.com/discovery/v1/apis/oauth2/v2/rest"];
             let scope ="https://www.googleapis.com/auth/userinfo.profile";
-
             gapi.load("client:auth2", () => {
-                gapi.client.init({
-                    apiKey,
-                    clientId,
-                    discoveryDocs,
-                    scope,
-                    secretClientId,})
-
-                    .then(() => {
-                        var GoogleAuthObj = gapi.auth2.getAuthInstance();
-                        this.GoogleAuth = GoogleAuthObj.signOut();
-                        this.isSignedIn = false;
-                    })
-            })
-            localStorage.removeItem('login')
-            localStorage.removeItem('id')
-            console.log(localStorage.id)
-            alert("You have been logged out!")
-            document.location.reload()
-        },
-        googleAuth() {
-            let gapi = window.gapi;
-            let clientId ="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com";
-            let apiKey ="AIzaSyC0WtHoYqLnGKgaqLWX6RGkiL0X2C7dll8";
-            let secretClientId = "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";
-            let discoveryDocs =["https://www.googleapis.com/discovery/v1/apis/oauth2/v2/rest"];
-            let scope ="https://www.googleapis.com/auth/userinfo.profile";
-
-             gapi.load("client:auth2", () => {
                     gapi.client.init({
                     apiKey,
                     clientId,
@@ -163,114 +106,166 @@
                     })
                     .then(() => {
                         gapi.auth2.getAuthInstance().signIn().then(() => {
-                        this.googleUserProfile = gapi.auth2.getAuthInstance().currentUser.get()});
 
-                        this.googleUserProfile = gapi.auth2.getAuthInstance().currentUser.get();
-                        // gapi.auth2.getAuthInstance() returns a GoogleAuth Object#########################################################
-                        this.GoogleAuth = gapi.auth2.getAuthInstance();
-                        
-
-                        // There are many functions in Google OAuth. #######################################################################
-                        // console.log("This is Google Auth")
-                        // console.log(GoogleAuth)
-                        // console.log(GoogleAuth.signOut)
-                        // console.log(GoogleAuth.isSignedIn.get())
-                        var GoogleUser = this.GoogleAuth.currentUser.get();
-
-                        // GoogleAuth.currentUser.get() ==> google user. ###################################################################
-                        // This will give me the getId() portion, but do not use this for your backend. Instead call out. ##################
-                        // console.log(GoogleUser.getId())
-                        // console.log(GoogleUser.isSignedIn())
-                        // console.log(GoogleUser.getGrantedScopes())
-
-                        // Get the Token stuff via a HTTP GET, call out function OfficialToken###############################################
-                        var BasicProfile = GoogleUser.getBasicProfile()
-                        this.id = BasicProfile.getId();
-                        this.name = BasicProfile.getName();
-                        this.email = BasicProfile.getEmail();
-                        this.isSignedIn = GoogleUser.isSignedIn();
-
-
-                        // Retrieving all the necessary information 
-
-                        // Connecting to Profile Microservice : 
-                        if (this.isSignedIn && this.id != null) {
-                            // If Authentication with Google Login is successful, proceed to register into database or check with database. 
-                            // Check with the database. 
-                            var database_url = "http://127.0.0.1:5000/profile/" + this.id;
-                            
-                            console.log(database_url);
-
-                            fetch(database_url)
-                                .then(response => response.json())
-                                .then(data => {
-                                    console.log(data.code)
-                                    console.log(data.code == 404)
-                                    if (data.code == 404) {
-                                        console.log("This is condition 1")
-                                        this.registered = false
-                                    }
-                                    else {
-                                        console.log("this is condition 2")
-                                        this.registered = true;
-                                    }
-                                })
-                                .catch(error => {
-                                    console.log(error)
-                                })
-                            
-                            // If not registered, I have to pass fields into my microservice. 
-                            var registered_url = "http://127.0.0.1:5000/profile/register/" + this.id
-                            console.log(registered_url)
+                            var hehe = gapi.auth2.getAuthInstance();
+                            var GoogleUser = hehe.currentUser.get();
+                            var BasicProfile = GoogleUser.getBasicProfile()
+                            this.id = BasicProfile.getId();
+                            this.name = BasicProfile.getName();
+                            this.email = BasicProfile.getEmail();
+                            this.isSignedIn = GoogleUser.isSignedIn();
                             let jsondata = JSON.stringify({
-                                    "name": this.name,
-                                    "email": this.email,
-                                    "ratings": null,
-                                    "mobile": "0"
-                            })
-                            console.log(jsondata)
-                            console.log(typeof jsondata)
-                            // Json Data ia String now
-                            // {name: "Yu Xiang" ,....}
-                            if (this.registered==false){
-                                fetch(registered_url,{
-                                    method: "POST",
-                                    headers: {
-                                        "Content-type": "application/json"
-                                    },
-                                    body: jsondata
-                                })
+                                                "name": this.name,
+                                                "email": this.email,
+                                                "ratings": null,
+                                                "mobile": "0"
+                                            })
+                                            
+                            if (this.isSignedIn && this.id != null) {
+                                var database_url = "http://127.0.0.1:5000/profile/" + this.id;
+                                console.log(database_url);
+                                fetch(database_url)
                                 .then(response => response.json())
                                 .then(data => {
-                                    console.log(data)
-                                })
-                                .catch(error=> {
-                                    console.log(error)
-                                })
-                            }
-                            localStorage.login = jsondata
-                            localStorage.id = this.id
-                            this.show = true
+                                console.log(data.code)
+                                console.log(data.code == 404)
+                                if (data.code == 404) {
+                                    console.log("There is no such data in the database")
+                                    this.registered = false;
+                                    console.log(this.registered)
+                                    var registered_url = "http://127.0.0.1:5000/profile/register/" + this.id
+                                    console.log(registered_url)
+                                    console.log(jsondata)
+                                    console.log(typeof jsondata)
+                                    console.log(this.registered)
+                        
+                                    if (this.registered==false){
+                                        fetch(registered_url,{
+                                            method: "POST",
+                                            headers: {
+                                                "Content-type": "application/json"
+                                            },
+                                            body: jsondata
+                                        })
+                                        .then(response => response.json())
+                                        then(data => {console.log(data)})
+                                        .catch(error=> {console.log(error)})
+                                        localStorage.login = jsondata
+                                        localStorage.id = this.id
+                                        this.show = true
 
-                            this.localStorage= localStorage.id
-                            document.location.reload()
+                                        this.localStorage= localStorage.id
 
-                            newjsondata = JSON.parse(jsondata)
-                            mobile = newjsondata['mobile']
-                            if (mobile == "0") {
-                                window.location.replace("/ESD_PROJECT/ESDT4/multi-page/testing.php");
-                            }
-                            else{
-                                window.location.replace("/ESD_PROJECT/ESDT4/multi-page/catalogue.php");
-                            }
+                                        newjsondata = JSON.parse(jsondata)
+                                        mobile = newjsondata['mobile']
+                                        console.log(newjsondata)
+                                        console.log(mobile)
+
+                                        if (mobile == "0") {
+                                            window.location.replace("./insertmobile.php");
+                                        }
+                                        else{
+                                            window.location.replace("./cataloguenew.php");
+                                        }
+                                    }
+                        
+                        
+                                }
+                                else {
+                                    console.log("There is already data in the database")
+                                    this.registered = true;
+                                    console.log(this.registered)
+                                    localStorage.login = jsondata
+                                    localStorage.id = this.id
+                                    window.location.replace("./cataloguenew.php");
+                            
+                            
+                                }
+                })
+                
+                    }
+                    else {
+                        // if isSignedIn and id is null means we dont route them to anything
+                        alert("There is an error in the Sign In process. ")
+                            
                         }
+        })
+    })
+
+})
+        },
+        googleAuthtry() {
+            let gapi = window.gapi;
+            let clientId ="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com";
+            let apiKey ="AIzaSyC0WtHoYqLnGKgaqLWX6RGkiL0X2C7dll8";
+            let secretClientId = "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";
+            let discoveryDocs =["https://www.googleapis.com/discovery/v1/apis/oauth2/v2/rest"];
+            let scope ="https://www.googleapis.com/auth/userinfo.profile";
+
+           
+
+            gapi.load("client:auth2", () => {
+                    gapi.client.init({
+                    apiKey,
+                    clientId,
+                    discoveryDocs,
+                    scope,
+                    secretClientId,
                     })
-             })
+                    .then(() => {
+                        gapi.auth2.getAuthInstance().signIn().then(() => {
+                            var googleAuth = gapi.auth2.getAuthInstance();
+                            googleAuth.isSignedIn.listen(this.GoogleSignIn())
+
+                    })
+                })
+
+            })
+        },
+
+    }
+
+    })
+    app.component("navbar",{
+            template: template1,
+            data() {
+                return{
+                    links: links1,
+                    isSignedIn: localStorage.getItem("id"),
+                }
 
             },
+            methods:{
+                signOut() {
+                    let gapi = window.gapi;
+                    let clientId ="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com";
+                    let apiKey ="AIzaSyC0WtHoYqLnGKgaqLWX6RGkiL0X2C7dll8";
+                    let secretClientId = "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";
+                    let discoveryDocs =["https://www.googleapis.com/discovery/v1/apis/oauth2/v2/rest"];
+                    let scope ="https://www.googleapis.com/auth/userinfo.profile";
+
+                    gapi.load("client:auth2", () => {
+                        gapi.client.init({
+                            apiKey,
+                            clientId,
+                            discoveryDocs,
+                            scope,
+                            secretClientId,})
+
+                            .then(() => {
+                                var GoogleAuthObj = gapi.auth2.getAuthInstance();
+                                this.GoogleAuth = GoogleAuthObj.signOut();
+                                this.isSignedIn = false;
+                            })
+                    })
+                    
+                    localStorage.removeItem("login")
+                    localStorage.removeItem("id")
+                    alert("You have been logged out!")
+                    location.reload()
         },
-        
-    })
+            }
+        })
     const vm = app.mount('#app');
 </script>
 

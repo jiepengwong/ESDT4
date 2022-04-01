@@ -1,0 +1,171 @@
+<script>
+    var GoogleAuth;
+    var SCOPE = 'https://www.googleapis.com/auth/drive.metadata.readonly';
+    function handleClientLoad() {
+      // Load the API's client and auth2 modules.
+      // Call the initClient function after the modules load.
+      gapi.load('client:auth2', initClient);
+    }
+  
+    function initClient() {
+      // In practice, your app can retrieve one or more discovery documents.
+      var discoveryUrl = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
+  
+      // Initialize the gapi.client object, which app uses to make API requests.
+      // Get API key and client ID from API Console.
+      // 'scope' field specifies space-delimited list of access scopes.
+      gapi.client.init({
+          'apiKey': 'AIzaSyC0WtHoYqLnGKgaqLWX6RGkiL0X2C7dll8',
+          'clientId': '616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com',
+          'discoveryDocs': [discoveryUrl],
+          'scope': "https://www.googleapis.com/auth/userinfo.profile"
+      }).then(function () {
+        GoogleAuth = gapi.auth2.getAuthInstance();
+  
+        // Listen for sign-in state changes.
+        GoogleAuth.isSignedIn.listen(updateSigninStatus);
+  
+        // Handle initial sign-in state. (Determine if user is already signed in.)
+        var user = GoogleAuth.currentUser.get();
+        setSigninStatus();
+  
+        // Call handleAuthClick function when user clicks on
+        //      "Sign In/Authorize" button.
+        $('#sign-in-or-out-button').click(function() {
+          handleAuthClick();
+        });
+        $('#revoke-access-button').click(function() {
+          revokeAccess();
+        });
+      });
+    }
+  
+    function handleAuthClick() {
+      if (GoogleAuth.isSignedIn.get()) {
+        // User is authorized and has clicked "Sign out" button.
+        GoogleAuth.signOut();
+      } else {
+        // User is not signed in. Start Google auth flow.
+        GoogleAuth.signIn();
+      }
+    }
+  
+    function revokeAccess() {
+      GoogleAuth.disconnect();
+    }
+  
+    function setSigninStatus() {
+      var user = GoogleAuth.currentUser.get();
+      var isAuthorized = user.hasGrantedScopes(SCOPE);
+      if (isAuthorized) {
+        $('#sign-in-or-out-button').html('Sign out');
+        $('#revoke-access-button').css('display', 'inline-block');
+        $('#auth-status').html('You are currently signed in and have granted ' +
+            'access to this app.');
+      } else {
+        $('#sign-in-or-out-button').html('Sign In/Authorize');
+        $('#revoke-access-button').css('display', 'none');
+        $('#auth-status').html('You have not authorized this app or you are ' +
+            'signed out.');
+      }
+    }
+  
+    function updateSigninStatus() {
+      setSigninStatus();
+    }
+  </script>
+  
+  <button id="sign-in-or-out-button"
+          style="margin-left: 25px">Sign In/Authorize</button>
+  <button id="revoke-access-button"
+          style="display: none; margin-left: 25px">Revoke access</button>
+  
+  <div id="auth-status" style="display: inline; padding-left: 25px"></div><hr>
+  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script async defer src="https://apis.google.com/js/api.js"
+          onload="this.onload=function(){};handleClientLoad()"
+          onreadystatechange="if (this.readyState === 'complete') this.onload()">
+  </script>
+
+if (this.isSignedIn && this.id != null) {
+    // If Authentication with Google Login is successful, proceed to register into database or check with database. 
+    // Check with the database. 
+    var database_url = "http://127.0.0.1:5000/profile/" + this.id;
+    
+    console.log(database_url);
+
+    fetch(database_url)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data.code)
+            console.log(data.code == 404)
+            if (data.code == 404) {
+                console.log("There is no such data in the database")
+                this.registered = false;
+                console.log(this.registered)
+                var registered_url = "http://127.0.0.1:5000/profile/register/" + this.id
+                console.log(registered_url)
+                
+                console.log(jsondata)
+                console.log(typeof jsondata)
+                // Json Data ia String now
+                // {name: "Yu Xiang" ,....}
+
+                console.log(this.registered)
+
+                if (this.registered==false){
+                    fetch(registered_url,{
+                        method: "POST",
+                        headers: {
+                            "Content-type": "application/json"
+                        },
+                        body: jsondata
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data)
+                        console.log("Register successful!")
+                    })
+                    .catch(error=> {
+                        console.log(error)
+                        console.log("register Fails")
+                    })
+                }
+
+                localStorage.login = jsondata
+                localStorage.id = this.id
+                this.show = true
+
+                this.localStorage= localStorage.id
+
+                newjsondata = JSON.parse(jsondata)
+                mobile = newjsondata['mobile']
+                console.log(newjsondata)
+                console.log(mobile)
+
+                if (mobile == "0") {
+                    window.location.replace("/ESD_PROJECT/ESDT4/multi-page/insertmobile.php");
+                }
+                else{
+                    window.location.replace("/ESD_PROJECT/ESDT4/multi-page/cataloguenew.php");
+                }
+            }
+            else {
+                console.log("There is already data in the database")
+                this.registered = true;
+                console.log(this.registered)
+                localStorage.login = jsondata
+                localStorage.id = this.id
+                window.location.replace("/ESD_PROJECT/ESDT4/multi-page/cataloguenew.php");
+
+
+            }
+        })
+        .catch(error => {
+            console.log(error)
+        })
+    
+    // If not registered, I have to pass fields into my microservice. 
+    
+}
