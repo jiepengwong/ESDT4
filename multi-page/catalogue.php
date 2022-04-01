@@ -84,7 +84,7 @@ $(async() => {
                         "<h5 class='card-title'>" + item.item_name + "</h5>" +
                         "<p class='card-text'>" + item.category + "</p>" +
                         "<p class='card-text'>" + item.description + "</p>" +
-                        "<a href='http://127.0.0.1:5001/items/" + item._id + "' class='btn btn-primary'>More Details</a>";
+                        "<a href='./itemDetails" + "' class='btn btn-primary'>More Details</a>";
                 card += "<div class='card' style='width: 18rem;'> <div class='card-body'>" + cardDetails + "</div> </div>";
             }
                 // add all the rows to the table

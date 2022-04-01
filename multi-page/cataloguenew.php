@@ -100,7 +100,7 @@
         // If the login variable is initalised, then we will redirect them to 
         if (!localStorage.getItem("id")){
             // redirect them to login page
-            window.location.replace("/ESD_PROJECT/ESDT4/multi-page/index.html");
+            window.location.replace("./index.html");
         }
     }
   const app = Vue.createApp({
