@@ -1,6 +1,5 @@
 <?php
 
-
 ?>
 
 
@@ -104,60 +103,6 @@ $(async() => {
         } // error
 });
 </script>
-
-        <!-- <script>
-        const app = Vue.createApp( {
-            //=========== DATA PROPERTIES ===========
-            data() {
-                return {
-                    uniArr: [],
-                    countArr: [],
-                    university_selected: '*',
-                    country_selected: '*'
-
-                }
-            },
-
-            //=========== METHODS =========== 
-            methods: {
-                addChild() {
-                    
-                    var url = "../countries.json";
-                    axios.get(url) 
-                    .then(response => {
-                        var myCountries = response.data;
-                        var universities = []
-                        var countries = []
-                        for (let i=0; i<myCountries.length; i++){
-                            if (!countries.includes(myCountries[i]['Country'])) {
-                                countries.push(myCountries[i]['Country'])
-                            }
-                            universities.push(myCountries[i]['University'])
-                        }
-
-                        universities.sort();
-                        countries.sort();
-
-                        this.uniArr = universities;
-                        this.countArr = countries;
-                        // console.log(this.uniVar);
-                        // console.log(this.countryVar);
-                        // return universities, countries
-                    })
-                    .catch(error => {
-                        console.log(error.message)
-                    })
-                }
-            },
-
-            created() {
-                this.addChild()
-            },
-
-        } )
-        const vm = app.mount('#app')
-
-        </script> -->
 
         <!-- BOOTSTRAP -->    
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" 

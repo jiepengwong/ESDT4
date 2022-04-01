@@ -59,10 +59,10 @@
         // If the login variable is initalised, then we will redirect them to 
         if (localStorage.getItem("id")){
             // redirect them to login page
-            // window.location.replace("./catalogue.php");
+            // window.location.replace("/ESD_PROJECT/ESDT4/multi-page/catalogue.php");
         }
         else {
-            window.location.replace("./index.html");
+            window.location.replace("/ESD_PROJECT/ESDT4/multi-page/index.html");
         }
     }
 
@@ -133,7 +133,7 @@
                 .then(response => response.json())
                 .then(data => {
                     console.log(data)
-                    window.location.replace("./cataloguenew.php");
+                    window.location.replace("/ESD_PROJECT/ESDT4/multi-page/cataloguenew.php");
                 })
                 .catch(error=> {
                     console.log(error)
