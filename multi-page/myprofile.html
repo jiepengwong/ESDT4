@@ -99,7 +99,40 @@
 
 <script src="./narbar.js"></script>
 <script>
+
     
+
+    function checkLogin() {
+        // If the login variable is initalised, then we will redirect them to 
+        if (localStorage.getItem("id")){
+            // redirect them to login page
+            // window.location.replace("./catalogue.php");
+        }
+        else {
+            window.location.replace("./index.html");
+        }
+    }
+
+    var jsondata_obj = JSON.parse(localStorage.login);
+    console.log(jsondata_obj);
+    var name = jsondata_obj['name'];
+    var mobile = jsondata_obj['mobile'];
+    var email = jsondata_obj['email'];
+    var ratings = jsondata_obj['ratings'];
+
+    if (ratings == null){
+        ratings = "There is no ratings yet";
+    }
+    if (mobile == '0' || mobile == null) {
+        mobile = "There is no mobile input yet";
+    }
+
+    console.log(name)
+    console.log(mobile)
+    console.log(email)
+    console.log(ratings)
+
+
     
     // VUE PORTION GOES IN HERE #################################################################################
     const app = Vue.createApp({

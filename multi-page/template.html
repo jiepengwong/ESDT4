@@ -42,7 +42,19 @@
 
 <script src="./narbar.js"></script>
 <script>
+
     
+
+    function checkLogin() {
+        // If the login variable is initalised, then we will redirect them to 
+        if (localStorage.getItem("id")){
+            // redirect them to login page
+            // window.location.replace("./catalogue.php");
+        }
+        else {
+            window.location.replace("./index.html");
+        }
+    }
 
     // VUE PORTION GOES IN HERE #################################################################################
     const app = Vue.createApp({
