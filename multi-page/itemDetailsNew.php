@@ -81,7 +81,7 @@
       return {
         results: [],
         price: 0,
-        buyerid: 12345 //Taken from yuxiang side
+        buyerid: "12345" //Taken from yuxiang side
 
       };
     },
@@ -132,7 +132,7 @@
       // Invoke the complex microservice here to make an offer
       async makeOffer() {
         console.log("help")
-        requiredObjects = {"item_id": this.results._id, "price": this.price, "buyerid": this.buyerid}
+        requiredObjects = {"item_id": this.results._id, "price": this.price, "buyer_id": this.buyerid}
         console.log(requiredObjects)
 
         // Make a fetch first to check if the item is available
@@ -155,6 +155,11 @@
         try {
           if (result.ok) {
             console.log(response)
+            if (response.code == 201){
+              alert("Your offer has been made successfully, you will be redirected to the catalog page shortly...")
+
+              this.redirect()
+            }
           } 
         }
 
@@ -168,6 +173,13 @@
 
 
 
+      },
+
+      redirect(){
+        let tID = setTimeout(function () {
+            window.location.href = "cataloguenew.php";
+            window.clearTimeout(tID);		// clear time out.
+        }, 1000)
       }
 
     },
