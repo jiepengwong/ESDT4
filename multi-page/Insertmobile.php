@@ -32,14 +32,14 @@
             <div class="row">
                 <div class="col-3"></div>
                 <div class="col-6">
-                        <h1 class="h3 mb-3 fw-normal">Update your number to stay contacted!</h1>
+                        <h1 class="h3 mb-3 fw-normal">Before we start, we need your mobile number</h1>
 
                         <div class="input-group mb-3">
                             <span class="input-group-text" id="basic-addon1">+65</span>
                             <input type="text" class="form-control" placeholder="Enter your number here!" aria-label="Username" aria-describedby="basic-addon1" v-model="number">
                         </div>
 
-                        <button class="w-100 btn btn-lg btn-primary" @click="updateMobile()" >Update</button>
+                        <button v-if:disabled ="check_number" class="w-100 btn btn-lg btn-primary" @click="updateMobile" >Update</button>
                         <span v-if='!number_status' style='color:red; font-size:small'>This is not a valid number!</span>
                         <span v-if='number_status' style='color:green; font-size:small'>This is a valid number!</span>
 
@@ -115,11 +115,10 @@
         updateMobile() {
             var change_mobile_url = "http://127.0.0.1:5000/profile/mobile/" + this.id;
             console.log(change_mobile_url)
-            console.log(this.jsondata)
-            var jsondata_obj = this.jsondata
-            console.log(typeof jsondata_obj)
+            var jsondata_obj = JSON.parse(this.jsondata)
+            console.log(jsondata_obj)
 
-            jsondata_obj['mobile'] = this.number;
+            jsondata_obj['mobile'] = String(this.number);
             console.log(jsondata_obj)
 
             jsondata_obj = JSON.stringify(jsondata_obj)
