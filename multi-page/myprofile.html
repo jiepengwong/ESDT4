@@ -18,6 +18,17 @@
     </script>
     <meta name="google-signin-client_id" content="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com">
 </head>
+<script>
+    function checkLogin() {
+        // If the login variable is initalised, then we will redirect them to 
+        if (localStorage.getItem("id")){
+            // redirect them to login page
+        }
+        else {
+            window.location.replace("/ESD_PROJECT/ESDT4/multi-page/index.html");
+        }
+    }
+</script>
 <body onload="checkLogin()">
     <div id="app">
         <!-- This is where the NAVBAR IS!! ############## -->
@@ -78,6 +89,7 @@
                         <span class="input-group-text" id="basic-addon3">+65</span>
                         <input type="text" class="form-control" id="birthday" aria-describedby="basic-addon3" v-bind:value="mobile" readonly>
                     </div>
+                    <a href ="Insertmobile.php">Update my number</a>
                 </div>
             </div>
 
@@ -87,36 +99,7 @@
 
 <script src="./narbar.js"></script>
 <script>
-    function checkLogin() {
-        // If the login variable is initalised, then we will redirect them to 
-        if (localStorage.getItem("id")){
-            // redirect them to login page
-            // window.location.replace("/ESD_PROJECT/ESDT4/multi-page/catalogue.php");
-        }
-        else {
-            window.location.replace("/ESD_PROJECT/ESDT4/multi-page/index.html");
-        }
-    }
-
-    var jsondata_obj = JSON.parse(localStorage.login);
-    console.log(jsondata_obj);
-    var name = jsondata_obj['name'];
-    var mobile = jsondata_obj['mobile'];
-    var email = jsondata_obj['email'];
-    var ratings = jsondata_obj['ratings'];
-
-    if (ratings == null){
-        ratings = "There is no ratings yet";
-    }
-    if (mobile == '0' || mobile == null) {
-        mobile = "There is no mobile input yet";
-    }
-
-    console.log(name)
-    console.log(mobile)
-    console.log(email)
-    console.log(ratings)
-
+    
     
     // VUE PORTION GOES IN HERE #################################################################################
     const app = Vue.createApp({
@@ -125,11 +108,10 @@
                 // THE JSON DATA IS TAKEN FROM THE Google Chrome 
                 jsondata: localStorage.login,
                 id: localStorage.id,
-                name: name,
-                mobile: mobile,
-                email: email,
-                ratings: ratings,
-                id: localStorage.id,
+                name: "",
+                mobile: "",
+                email: "",
+                ratings: "",
             }
         },
         computed : {
@@ -142,6 +124,51 @@
         },
         computed: {
 
+        },
+        async mounted () {
+            try{
+                var getItemUrl = "http://localhost:5000/profile/" + String(localStorage.id)
+                console.log(getItemUrl)
+            
+                var databaseitems = await fetch(getItemUrl)
+                const databaseitemsJson = await databaseitems.json()
+                console.log(databaseitemsJson)
+
+                if (databaseitems.status === 200){
+                    // Get all the databases 
+                    
+                    var jsondata_obj = databaseitemsJson.data;
+                    localStorage.login = jsondata_obj
+
+                    this.name = jsondata_obj['name']
+                    this.email = jsondata_obj['email']
+                    this.id = localStorage.id
+                    
+                    if (jsondata_obj['mobile'] == "0" || jsondata_obj['mobile'] == null) {
+                        this.mobile = "There is no number yet."
+                    }
+                    else{
+                        this.mobile = jsondata_obj['mobile']
+                    }
+
+                    if (jsondata_obj['ratings'] == "0" || jsondata_obj['ratings'] == null) {
+                        this.ratings = "There is no ratings yet."
+                    }
+                    else{
+                        this.ratings = jsondata_obj['ratings']
+                    }
+                    
+                    localStorage.login = String(jsondata_obj)
+
+                }
+                else{
+                    console.log("Database not connected")
+                }
+            }
+
+          catch(error) {
+            console.log(error)
+          }
         },
             },
         

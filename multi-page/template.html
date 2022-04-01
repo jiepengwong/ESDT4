@@ -18,6 +18,18 @@
     </script>
     <meta name="google-signin-client_id" content="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com">
 </head>
+<script>
+    function checkLogin() {
+        // If the login variable is initalised, then we will redirect them to 
+        if (localStorage.getItem("id")){
+            // redirect them to login page
+            // window.location.replace("/ESD_PROJECT/ESDT4/multi-page/catalogue.php");
+        }
+        else {
+            window.location.replace("/ESD_PROJECT/ESDT4/multi-page/index.html");
+        }
+    }
+</script>
 <body onload="checkLogin()">
     <div id="app">
         <!-- This is where the NAVBAR IS!! ############## -->
@@ -30,16 +42,7 @@
 
 <script src="./narbar.js"></script>
 <script>
-    function checkLogin() {
-        // If the login variable is initalised, then we will redirect them to 
-        if (localStorage.getItem("id")){
-            // redirect them to login page
-            // window.location.replace("/ESD_PROJECT/ESDT4/multi-page/catalogue.php");
-        }
-        else {
-            window.location.replace("/ESD_PROJECT/ESDT4/multi-page/index.html");
-        }
-    }
+    
 
     // VUE PORTION GOES IN HERE #################################################################################
     const app = Vue.createApp({
