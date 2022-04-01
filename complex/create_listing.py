@@ -62,6 +62,9 @@ def processCreateListing(listing):
         profile_URL + id, method='GET', 
         )
 
+    # POST back new item_num
+    # GET new item_num
+
     # to remove
     print( "----- invoking profile microservice to get profile details -----" )
     # print (profile_details)
