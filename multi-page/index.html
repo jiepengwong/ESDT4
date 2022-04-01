@@ -41,11 +41,12 @@
             
                 <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
                     <p class="lead fw-normal mb-0 me-3 text-centre">Sign in with</p>
-                    <button @click="googleAuth()" type="button" class="btn btn-success btn-floating mx-1" >
+                    <button @click="googleAuthtry()" type="button" class="btn btn-success btn-floating mx-1" >
                         Google
                     </button>
                 </div>
-            
+            {{id}}
+            {{isSignedIn}}
                 </div>
             </div>
         </div>
@@ -58,7 +59,7 @@
         // If the login variable is initalised, then we will redirect them to 
         if (localStorage.getItem("id")){
             // redirect them to login page
-            window.location.replace("./cataloguenew.php");
+            window.location.replace("/ESD_PROJECT/ESDT4/multi-page/cataloguenew.php");
         }
     }
 
@@ -80,6 +81,7 @@
                 databaseSign: null,
                 registered: null,
                 GoogleUser: null,
+                googleAuth: null,
             }
         },
         computed : {
@@ -87,15 +89,14 @@
         },
         
         methods: {
-        googleAuth() {
+        GoogleSignIn() {
             let gapi = window.gapi;
             let clientId ="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com";
             let apiKey ="AIzaSyC0WtHoYqLnGKgaqLWX6RGkiL0X2C7dll8";
             let secretClientId = "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";
             let discoveryDocs =["https://www.googleapis.com/discovery/v1/apis/oauth2/v2/rest"];
             let scope ="https://www.googleapis.com/auth/userinfo.profile";
-
-             gapi.load("client:auth2", () => {
+            gapi.load("client:auth2", () => {
                     gapi.client.init({
                     apiKey,
                     clientId,
@@ -105,87 +106,50 @@
                     })
                     .then(() => {
                         gapi.auth2.getAuthInstance().signIn().then(() => {
-                        this.googleUserProfile = gapi.auth2.getAuthInstance().currentUser.get()});
 
-                        this.googleUserProfile = gapi.auth2.getAuthInstance().currentUser.get();
-                        // gapi.auth2.getAuthInstance() returns a GoogleAuth Object#########################################################
-                        this.GoogleAuth = gapi.auth2.getAuthInstance();
-
-                        // There are many functions in Google OAuth. #######################################################################
-                        // console.log("This is Google Auth")
-                        // console.log(GoogleAuth)
-                        // console.log(GoogleAuth.signOut)
-                        // console.log(GoogleAuth.isSignedIn.get())
-                        var GoogleUser = this.GoogleAuth.currentUser.get();
-
-                        // GoogleAuth.currentUser.get() ==> google user. ###################################################################
-                        // This will give me the getId() portion, but do not use this for your backend. Instead call out. ##################
-                        // console.log(GoogleUser.getId())
-                        // console.log(GoogleUser.isSignedIn())
-                        // console.log(GoogleUser.getGrantedScopes())
-
-                        // Get the Token stuff via a HTTP GET, call out function OfficialToken###############################################
-                        var BasicProfile = GoogleUser.getBasicProfile()
-                        this.id = BasicProfile.getId();
-                        this.name = BasicProfile.getName();
-                        this.email = BasicProfile.getEmail();
-                        this.isSignedIn = GoogleUser.isSignedIn();
-
-                        let jsondata = JSON.stringify({
+                            var hehe = gapi.auth2.getAuthInstance();
+                            var GoogleUser = hehe.currentUser.get();
+                            var BasicProfile = GoogleUser.getBasicProfile()
+                            this.id = BasicProfile.getId();
+                            this.name = BasicProfile.getName();
+                            this.email = BasicProfile.getEmail();
+                            this.isSignedIn = GoogleUser.isSignedIn();
+                            let jsondata = JSON.stringify({
                                                 "name": this.name,
                                                 "email": this.email,
                                                 "ratings": null,
                                                 "mobile": "0"
-                                        })
-
-                        // Retrieving all the necessary information 
-
-                        // Connecting to Profile Microservice : 
-                        if (this.isSignedIn && this.id != null) {
-                            // If Authentication with Google Login is successful, proceed to register into database or check with database. 
-                            // Check with the database. 
-                            var database_url = "http://127.0.0.1:5000/profile/" + this.id;
-                            
-                            console.log(database_url);
-
-                            fetch(database_url)
+                                            })
+                                            
+                            if (this.isSignedIn && this.id != null) {
+                                var database_url = "http://127.0.0.1:5000/profile/" + this.id;
+                                console.log(database_url);
+                                fetch(database_url)
                                 .then(response => response.json())
                                 .then(data => {
-                                    console.log(data.code)
-                                    console.log(data.code == 404)
-                                    if (data.code == 404) {
-                                        console.log("There is no such data in the database")
-                                        this.registered = false;
-                                        console.log(this.registered)
-                                        var registered_url = "http://127.0.0.1:5000/profile/register/" + this.id
-                                        console.log(registered_url)
-                                        
-                                        console.log(jsondata)
-                                        console.log(typeof jsondata)
-                                        // Json Data ia String now
-                                        // {name: "Yu Xiang" ,....}
-
-                                        console.log(this.registered)
-
-                                        if (this.registered==false){
-                                            fetch(registered_url,{
-                                                method: "POST",
-                                                headers: {
-                                                    "Content-type": "application/json"
-                                                },
-                                                body: jsondata
-                                            })
-                                            .then(response => response.json())
-                                            .then(data => {
-                                                console.log(data)
-                                                console.log("Register successful!")
-                                            })
-                                            .catch(error=> {
-                                                console.log(error)
-                                                console.log("register Fails")
-                                            })
-                                        }
-
+                                console.log(data.code)
+                                console.log(data.code == 404)
+                                if (data.code == 404) {
+                                    console.log("There is no such data in the database")
+                                    this.registered = false;
+                                    console.log(this.registered)
+                                    var registered_url = "http://127.0.0.1:5000/profile/register/" + this.id
+                                    console.log(registered_url)
+                                    console.log(jsondata)
+                                    console.log(typeof jsondata)
+                                    console.log(this.registered)
+                        
+                                    if (this.registered==false){
+                                        fetch(registered_url,{
+                                            method: "POST",
+                                            headers: {
+                                                "Content-type": "application/json"
+                                            },
+                                            body: jsondata
+                                        })
+                                        .then(response => response.json())
+                                        then(data => {console.log(data)})
+                                        .catch(error=> {console.log(error)})
                                         localStorage.login = jsondata
                                         localStorage.id = this.id
                                         this.show = true
@@ -204,30 +168,63 @@
                                             window.location.replace("./cataloguenew.php");
                                         }
                                     }
-                                    else {
-                                        console.log("There is already data in the database")
-                                        this.registered = true;
-                                        console.log(this.registered)
-                                        localStorage.login = jsondata
-                                        localStorage.id = this.id
-                                        window.location.replace("./cataloguenew.php");
-
-
-                                    }
-                                })
-                                .catch(error => {
-                                    console.log(error)
-                                })
+                        
+                        
+                                }
+                                else {
+                                    console.log("There is already data in the database")
+                                    this.registered = true;
+                                    console.log(this.registered)
+                                    localStorage.login = jsondata
+                                    localStorage.id = this.id
+                                    window.location.replace("./cataloguenew.php");
                             
-                            // If not registered, I have to pass fields into my microservice. 
+                            
+                                }
+                })
+                
+                    }
+                    else {
+                        // if isSignedIn and id is null means we dont route them to anything
+                        alert("There is an error in the Sign In process. ")
                             
                         }
-                    })
-             })
+        })
+    })
 
-            },
+})
         },
-        
+        googleAuthtry() {
+            let gapi = window.gapi;
+            let clientId ="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com";
+            let apiKey ="AIzaSyC0WtHoYqLnGKgaqLWX6RGkiL0X2C7dll8";
+            let secretClientId = "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";
+            let discoveryDocs =["https://www.googleapis.com/discovery/v1/apis/oauth2/v2/rest"];
+            let scope ="https://www.googleapis.com/auth/userinfo.profile";
+
+           
+
+            gapi.load("client:auth2", () => {
+                    gapi.client.init({
+                    apiKey,
+                    clientId,
+                    discoveryDocs,
+                    scope,
+                    secretClientId,
+                    })
+                    .then(() => {
+                        gapi.auth2.getAuthInstance().signIn().then(() => {
+                            var googleAuth = gapi.auth2.getAuthInstance();
+                            googleAuth.isSignedIn.listen(this.GoogleSignIn())
+
+                    })
+                })
+
+            })
+        },
+
+    }
+
     })
     app.component("navbar",{
             template: template1,
