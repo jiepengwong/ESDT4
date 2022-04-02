@@ -22,13 +22,15 @@ class Profile(db.Model):
     email = db.Column(db.String(64), nullable=False)
     mobile = db.Column(db.String(8), nullable=False)
     ratings = db.Column(db.Float(precision=2), nullable = True)
+    counts = db.Column(db.Float(precision=3),nullable=True)
 
-    def __init__(self,user_id,name,email,mobile,ratings):
+    def __init__(self,user_id,name,email,mobile,ratings,counts):
         self.user_id = user_id
         self.name = name
         self.email = email
         self.mobile = mobile
         self.ratings = ratings
+        self.counts = counts
 
     def json(self):
         return {"user_id": self.user_id, "name": self.name, "email": self.email, "mobile": self.mobile,"ratings":self.ratings}
@@ -49,37 +51,49 @@ def find_by_profile_ID(profile_ID):
     }),404
 
 # We need to update profile/rating/:id, this is to update the profile ratings of the user
+# INPUT JSON TO THIS MICROSERVICE, new count + new ratings
+# {"ratings": 5}
+# New User ratings will be 0 and count will be 0. 
 @app.route("/profile/ratings/<string:Profile_Id>", methods=["PUT"])
 def update_ratings(Profile_Id):
     if (Profile.query.filter_by(user_id=Profile_Id).first()):
-        db.session.delete(Profile.query.filter_by(user_id=Profile_Id).first())
+        data = request.get_json() 
+        input_ratings = data['ratings']
+        
+        profile = Profile.query.filter_by(user_id=Profile_Id).first()
+
+        aggregated_count = profile.counts
+        new_count = profile.counts + 1
+        profile.counts += 1
+
+        database_ratings = profile.ratings
+
+        
+        temporary_formula = ((aggregated_count * database_ratings) + input_ratings)/ new_count
+
+        profile.ratings = temporary_formula
         db.session.commit()
 
-        data = request.get_json()
-        profile = Profile(Profile_Id, **data)
-        db.session.add(profile)
-        db.session.commit()
         return jsonify({
                 "code":200,
                 "data":profile.json(),
-                "message":"Profile's rating has been sucessfully updated."
+                "message":"Profile's ratings has been updated."
             },200
         )
     return jsonify({
         "code":404,
-        "message":"An error occured while updating the profile rating.Please try again."
+        "message":"An error occured while updating the profile ratings.Please try again."
     })
 
-# We need to update profile/number/<id> 
+# WE NEED TO UPDATE THE PROFILE 
 @app.route("/profile/mobile/<string:Profile_Id>", methods=["PUT"])
 def update_number(Profile_Id):
     if (Profile.query.filter_by(user_id=Profile_Id).first()):
-        db.session.delete(Profile.query.filter_by(user_id=Profile_Id).first())
-        db.session.commit()
 
         data = request.get_json()
-        profile = Profile(Profile_Id, **data)
-        db.session.add(profile)
+        profile = Profile.query.filter_by(user_id=Profile_Id).first()
+        print(profile.mobile)
+        profile.mobile = data['mobile']
         db.session.commit()
         return jsonify({
                 "code":200,

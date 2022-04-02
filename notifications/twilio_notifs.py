@@ -31,18 +31,24 @@ def processNotifs(Msg):
         # notification_json = {
         # 'noti_message': noti_message,
         # 'user_phone': user_phone
-        # }
+        # } 
 
-        dotenv_path = Path('marketplace/.env')
-        load_dotenv(dotenv_path=dotenv_path)
+        # dotenv_path = Path('marketplace/.env')
+        # load_dotenv(dotenv_path=dotenv_path)
+
 
         # load_dotenv()
+
+        load_dotenv('../.env')
+        account_sid = os.getenv('TWILIO_ACCOUNT_SID')
+        auth_token = os.getenv('TWILIO_AUTH_TOKEN')
+
 
         noti_message = data['seller_message']
         seller_number = '+65' + data['seller_mobile']
 
-        account_sid = 'TWILIO_ACCOUNT_SID',
-        auth_token = 'TWILIO_AUTH_TOKEN',
+        # account_sid = 'TWILIO_ACCOUNT_SID'
+        # auth_token = 'TWILIO_AUTH_TOKEN'
         client = Client(account_sid, auth_token) 
 
         message = client.messages.create( 
@@ -53,6 +59,9 @@ def processNotifs(Msg):
                                         ) 
 
         print(message.sid)
+
+
+
 
 
         # print(data)

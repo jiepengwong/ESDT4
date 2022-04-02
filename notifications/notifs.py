@@ -16,7 +16,7 @@ cluster = pymongo.MongoClient("mongodb+srv://tingz:rS21GYaQ7snuxaTK@wtesd.azs8r.
 
 #picking which db we want 
 db = cluster["ESDnotifs"]
-collection = db['notifications']
+collection = db['error_micro']
 
 
 # user_schema = {  #this needs to be in the savetoDB function
