@@ -159,7 +159,7 @@
             if (response.code == 201){
               alert("Your offer has been made successfully, you will be redirected to the catalog page shortly...")
 
-              this.redirect()
+              window.location.href = "cataloguenew.php";
             }
           } 
         }
@@ -176,12 +176,12 @@
 
       },
 
-      redirect(){
-        let tID = setTimeout(function () {
-            window.location.href = "cataloguenew.php";
-            window.clearTimeout(tID);		// clear time out.
-        }, 1000)
-      }
+      // redirect(){
+      //   let tID = setTimeout(function () {
+      //       window.location.href = "cataloguenew.php";
+      //       window.clearTimeout(tID);		// clear time out.
+      //   }, 1000)
+      // }
 
     },
 
