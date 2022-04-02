@@ -67,6 +67,7 @@
     }
 
     const app = Vue.createApp({
+        mounted
         data() {
             return {
                 links: [
