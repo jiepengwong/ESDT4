@@ -65,48 +65,7 @@
             },
         
         )
-        app.component("navbar",{
-            template: template1,
-            data() {
-                return{
-                    links: links1,
-                    isSignedIn: localStorage.getItem("id"),
-                }
-
-            },
-
-            methods:{
-                
-                signOut() {
-                    let gapi = window.gapi;
-                    let clientId ="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com";
-                    let apiKey ="AIzaSyC0WtHoYqLnGKgaqLWX6RGkiL0X2C7dll8";
-                    let secretClientId = "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";
-                    let discoveryDocs =["https://www.googleapis.com/discovery/v1/apis/oauth2/v2/rest"];
-                    let scope ="https://www.googleapis.com/auth/userinfo.profile";
-
-                    gapi.load("client:auth2", () => {
-                        gapi.client.init({
-                            apiKey,
-                            clientId,
-                            discoveryDocs,
-                            scope,
-                            secretClientId,})
-
-                            .then(() => {
-                                var GoogleAuthObj = gapi.auth2.getAuthInstance();
-                                this.GoogleAuth = GoogleAuthObj.signOut();
-                                this.isSignedIn = false;
-                            })
-                    })
-                    
-                    localStorage.removeItem("login")
-                    localStorage.removeItem("id")
-                    alert("You have been logged out!")
-                    location.reload()
-        },
-            }
-        })
+       
     const vm = app.mount('#app');
 </script>
 </html>

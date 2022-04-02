@@ -32,8 +32,8 @@ var template1 = `
                     </div>`;
 var links1 = [
     {"link":"cataloguenew.php", "name": "Catalogue"},
-    {"link":"offersmade.php", "name": "My Offers"},
+    {"link":"myoffers.html", "name": "My Offers"},
     {"link":"mylistings.html", "name": "My Listings"},
-    {"link": "givereviews.html", "name": "Give Ratings"},
+    {"link": "createlisting.php", "name": "Sell"},
     {'link':"myprofile.html",'name':'My Profile'}
     ];

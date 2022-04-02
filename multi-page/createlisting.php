@@ -1,29 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <!-- Vue Application -->
-    <script src="https://unpkg.com/vue@3"></script>
-    <!--  Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Offers</title>
+    <!--bootstrap css-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <!--axios-->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!--Vue-->
+    <script src="https://unpkg.com/vue@next"></script>
+    <!-- Google Auth0 -->
+    <script async defer src="https://apis.google.com/js/api.js"
+        onload="this.onload=function(){};handleClientLoad()"
+        onreadystatechange="if (this.readyState === 'complete') this.onload()">
+    </script>
+    <meta name="google-signin-client_id" content="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com">
 </head>
 
 <body>
     <div id="app">
         <!-- Navbar goes here -->
-        <nav class="navbar navbar-light bg-light static-top">
-            <div class="container">
-                <a class="navbar-brand" href="#!">Start Bootstrap</a>
-                <a class="btn btn-primary" href="#signup">Sign Up</a>
-            </div>
-        </nav>
-
+        <navbar></navbar>
         <!-- Header -->
-
         <header class="masthead bg-success p-5">
             <div class="container position-relative">
                 <div class="row justify-content-center">
@@ -80,6 +80,7 @@
     </div>
 </body>
 
+<script src="./narbar.js"></script>
 <script>
     const app = Vue.createApp({
         data() {
@@ -92,12 +93,21 @@
                 pickupLocation: ""
                 
                 
-
-
             };
         },
 
         methods:{
+            checkLogin() {
+                // If the login variable is initalised, then we will redirect them to 
+                    if (localStorage.getItem("id")){
+                        // redirect them to login page
+                        // window.location.replace("/ESD_PROJECT/ESDT4/multi-page/catalogue.php");
+                    }
+                    else {
+                        window.location.replace("/ESD_PROJECT/ESDT4/multi-page/index.html");
+                    }
+                }, 
+
             async makeoffer(){
                 payload = {
                     item_name: this.itemname,
@@ -105,12 +115,7 @@
                     category: this.selectedCategory,
                     datetime: this.datetime,
                     location: this.pickupLocation
-
-
                 }
-
-
-                
                 // Date time format 
                 // "2022-03-17T13:05"
                 console.log(payload);
@@ -124,7 +129,6 @@
                     },
                     body: JSON.stringify(payload)
                 }
-
                 const result = await fetch(url, options );
 
                 const data = await result.json();
@@ -149,12 +153,55 @@
 
         },
 
-        computed:{
-
+        mounted() {
+            this.checkLogin();
         }
 
 
     });
+
+    app.component("navbar",{
+            template: template1,
+            data() {
+                return{
+                    links: links1,
+                    isSignedIn: localStorage.getItem("id"),
+                }
+
+            },
+
+            methods:{
+                
+                signOut() {
+                    let gapi = window.gapi;
+                    let clientId ="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com";
+                    let apiKey ="AIzaSyC0WtHoYqLnGKgaqLWX6RGkiL0X2C7dll8";
+                    let secretClientId = "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";
+                    let discoveryDocs =["https://www.googleapis.com/discovery/v1/apis/oauth2/v2/rest"];
+                    let scope ="https://www.googleapis.com/auth/userinfo.profile";
+
+                    gapi.load("client:auth2", () => {
+                        gapi.client.init({
+                            apiKey,
+                            clientId,
+                            discoveryDocs,
+                            scope,
+                            secretClientId,})
+
+                            .then(() => {
+                                var GoogleAuthObj = gapi.auth2.getAuthInstance();
+                                this.GoogleAuth = GoogleAuthObj.signOut();
+                                this.isSignedIn = false;
+                            })
+                    })
+                    
+                    localStorage.removeItem("login")
+                    localStorage.removeItem("id")
+                    alert("You have been logged out!")
+                    location.reload()
+        },
+            }
+        })
 
     app.mount("#app");
 </script>
