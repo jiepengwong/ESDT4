@@ -151,6 +151,7 @@
             var change_mobile_url = "http://127.0.0.1:5000/profile/mobile/" + this.id;
             console.log(this.number)
             jsondata_obj = JSON.stringify({"mobile":this.number})
+            
 
             const result = await fetch(change_mobile_url,{
                     method: "PUT",
