@@ -123,10 +123,12 @@
                     this.email = jsondata_obj['email'];
                     this.ratings = jsondata_obj['ratings'];
 
+                    console.log(this.mobile)
+
                     if (this.ratings == null){
                         this.ratings = "There is no ratings yet";
                     }
-                    if (this.mobile == '0' || this.mobile == null) {
+                    if (this.mobile == '' || this.mobile == null) {
                         this.mobile = "There is no mobile input yet";
                     }
                     
@@ -146,7 +148,6 @@
                 if (localStorage.getItem("id")){
                     // redirect them to login page
                     // window.location.replace("/ESD_PROJECT/ESDT4/multi-page/catalogue.php");
-                    console.log("id is missing")
                 }
                 else {
                     console.log("i need to route")
