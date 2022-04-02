@@ -99,6 +99,8 @@ def processCreateListing(listing):
     #     # result from the invocation is not used
     #     # continue even if this invocation fails
 
+    # profile_details = json.loads(listing, object_hook=lambda d: SimpleNamespace(**d))
+
 if __name__ == "__main__":
     print("This is flask " + os.path.basename(__file__) + " for placing an offer...")
     app.run(host="0.0.0.0", port=5100, debug=True) 

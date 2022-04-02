@@ -61,7 +61,7 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
 
     # 1. Invoke the profile microservice to retrieve mobile number to send messgage thru notification ['GET']
         # a. Send user_id
-        # b. Return name, mobile  
+        # b. Return name, mobile / error
 
     user_id = offer['buyer_id']
     print('\n\n-----Invoking profile microservice-----')
@@ -71,11 +71,21 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
     print("\nname:", profile_details['data']['name'])
     print("\nmobile number:", profile_details['data']['mobile'])
 
+    code = profile_details["code"]
+
+    # 6. Return error if profile not retrieved
+    if code not in range(200, 300):
+        return {
+            "code": 404,
+            "data": {"profile_details": profile_details},
+            "message": "Error while trying to retrieve profile information"
+        }
+
 
     # 2. Update item details (mobile, buyer_id) using PUT to add new offer details ['PUT']
         # Invoke the item microservice
         # a. Send offer_details (buyer_id, buyer_name, buyer_mobile, item_status)
-        # b. Return offer_result
+        # b. Return offer_result / error
 
     item_id = offer['item_id']
     price = offer['price']
@@ -86,7 +96,7 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
 
 
     # 3. Check if the item update failed [AMQP]
-        # a. Send the error to the error microservice to inform of failure (routing_key = 'error.*' )
+        # a. Send the error to the error microservice to log failure (routing_key = 'error.*' )
 
     code = offer_result["code"]
     message = json.dumps(offer_result)
@@ -96,7 +106,7 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
         print('\n\n-----Publishing the failed offer error message with routing_key= error.*-----')
         amqp_setup.channel.basic_publish(
         exchange=amqp_setup.exchangename, 
-        routing_key="error.*", 
+        routing_key="error.offer", 
         body=message, 
         properties=pika.BasicProperties(delivery_mode = 2)
         ) 
@@ -128,7 +138,7 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
         print('\n\n-----Publishing the successful order message with routing_key=notify.*-----')    
         amqp_setup.channel.basic_publish(
         exchange=amqp_setup.exchangename, 
-        routing_key="notify.*", 
+        routing_key="notify.offer", 
         body=message, 
         properties=pika.BasicProperties(delivery_mode = 2) #TBC on persistence
         )

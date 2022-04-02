@@ -62,9 +62,9 @@ def create_listing():
 
 def processCreateListing(listing):
 
-    # 2. Invoke the profile microservice to retrieve seller details ['GET'] 
+    # 2. Invoke the profile microservice to retrieve seller information ['GET'] 
         # a. Send user_id
-        # b. Return name, mobile  
+        # b. Return name, mobile  / error
 
     user_id = listing['seller_id']
     print('\n\n-----Invoking profile microservice-----')
@@ -75,19 +75,19 @@ def processCreateListing(listing):
     print("\nmobile number:", profile_details['data']['mobile'])
 
     item_details = listing['item_details']
-
-    # 3. Invoke the item microservice ['POST']
-        # a. Send the item information, change status and mobile {item}, {mobile}
-        # b. Return 
-    # POST back new item_num
-    # GET new item_num
+    # add seller information to item details
+    item_details['seller_id'] = user_id
+    item_details['seller_mobile'] = mobile
+    item_details['seller_name'] = name    
 
     # to remove
-    print( "----- invoking profile microservice to get profile details -----" )
-    # print (profile_details)
+    print("item details sent to item micro:" + item_details)
 
-    # profile_details = json.loads(listing, object_hook=lambda d: SimpleNamespace(**d))
+    # 3. Invoke the item microservice ['POST']
+        # a. Send the item information (incl seller information)
+        # b. Return newly created item / error
 
+    # if no issues, 
     return {
         "code": 201,
         "data": {
