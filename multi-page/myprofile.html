@@ -18,7 +18,7 @@
     </script>
     <meta name="google-signin-client_id" content="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com">
 </head>
-<body onload="checkLogin()">
+<body>
     <div id="app">
         <!-- This is where the NAVBAR IS!! ############## -->
         <navbar></navbar>
@@ -33,7 +33,7 @@
             
             <div class="row m-2">
                 <div class="col-sm-6">
-                    <label for="username" class="form-label" >Name</label>
+                    <label for="username" class="form-label" >ID</label>
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" id="username" aria-describedby="basic-addon3" v-bind:value="id" readonly>
                     </div>
@@ -79,6 +79,7 @@
                         <input type="text" class="form-control" id="birthday" aria-describedby="basic-addon3" v-bind:value="mobile" readonly>
                     </div>
                 </div>
+                <a href="./Insertmobile.php">Update my contact information</a>
             </div>
 
         </div>
@@ -87,37 +88,7 @@
 
 <script src="./narbar.js"></script>
 <script>
-    function checkLogin() {
-        // If the login variable is initalised, then we will redirect them to 
-        if (localStorage.getItem("id")){
-            // redirect them to login page
-            // window.location.replace("/ESD_PROJECT/ESDT4/multi-page/catalogue.php");
-        }
-        else {
-            window.location.replace("/ESD_PROJECT/ESDT4/multi-page/index.html");
-        }
-    }
 
-    var jsondata_obj = JSON.parse(localStorage.login);
-    console.log(jsondata_obj);
-    var name = jsondata_obj['name'];
-    var mobile = jsondata_obj['mobile'];
-    var email = jsondata_obj['email'];
-    var ratings = jsondata_obj['ratings'];
-
-    if (ratings == null){
-        ratings = "There is no ratings yet";
-    }
-    if (mobile == '0' || mobile == null) {
-        mobile = "There is no mobile input yet";
-    }
-
-    console.log(name)
-    console.log(mobile)
-    console.log(email)
-    console.log(ratings)
-
-    
     // VUE PORTION GOES IN HERE #################################################################################
     const app = Vue.createApp({
         data() {
@@ -125,19 +96,65 @@
                 // THE JSON DATA IS TAKEN FROM THE Google Chrome 
                 jsondata: localStorage.login,
                 id: localStorage.id,
-                name: name,
-                mobile: mobile,
-                email: email,
-                ratings: ratings,
-                id: localStorage.id,
+                name: "",
+                mobile: "",
+                email: "",
+                ratings: "",
             }
         },
-        computed : {
-        
+        async mounted() {
+            this.checkLogin()
+
+            try{
+                var getItemUrl = "http://localhost:5000/profile/" + localStorage.id
+                console.log(getItemUrl)
+                
+                var databaseitems = await fetch(getItemUrl)
+                const profile_json = await databaseitems.json()
+
+                if (databaseitems.status === 200){
+                    console.log(profile_json)
+                    // Get all the databases 
+                    localStorage.login = JSON.stringify(profile_json.data)
+
+                    jsondata_obj = JSON.parse(localStorage.login)
+                    this.name = jsondata_obj['name'];
+                    this.mobile = jsondata_obj['mobile'];
+                    this.email = jsondata_obj['email'];
+                    this.ratings = jsondata_obj['ratings'];
+
+                    if (this.ratings == null){
+                        this.ratings = "There is no ratings yet";
+                    }
+                    if (this.mobile == '0' || this.mobile == null) {
+                        this.mobile = "There is no mobile input yet";
+                    }
+                    
+                }
+                else{
+                    console.log("Database not connected")
+                }
+            }
+            catch(error) {
+                console.log(error)
+            }
         },
         
         methods: {
-        
+            checkLogin() {
+                // If the login variable is initalised, then we will redirect them to 
+                if (localStorage.getItem("id")){
+                    // redirect them to login page
+                    // window.location.replace("/ESD_PROJECT/ESDT4/multi-page/catalogue.php");
+                    console.log("id is missing")
+                }
+                else {
+                    console.log("i need to route")
+                    window.location.replace("/ESD_PROJECT/ESDT4/multi-page/index.html");
+
+                }
+            },
+
             
         },
         computed: {

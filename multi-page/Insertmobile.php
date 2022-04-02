@@ -18,7 +18,7 @@
     </script>
     <meta name="google-signin-client_id" content="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com">
 </head>
-<body onload="checkLogin()">
+<body>
 <!-- END OF HEADER ############################################################################################################## -->
 
     <div id="app">
@@ -39,7 +39,7 @@
                             <input type="text" class="form-control" placeholder="Enter your number here!" aria-label="Username" aria-describedby="basic-addon1" v-model="number">
                         </div>
 
-                        <button v-if:disabled ="check_number" class="w-100 btn btn-lg btn-primary" @click="updateMobile" >Update</button>
+                        <button class="w-100 btn btn-lg btn-primary" @click="updateMobile" >Update</button>
                         <span v-if='!number_status' style='color:red; font-size:small'>This is not a valid number!</span>
                         <span v-if='number_status' style='color:green; font-size:small'>This is a valid number!</span>
 
@@ -71,19 +71,16 @@
             this.checkLogin()
 
             try{
-                var getItemUrl = "http://localhost:5000/profile/" + this.id
+                var getItemUrl = "http://localhost:5000/profile/" + localStorage.id
                 console.log(getItemUrl)
                 
                 var databaseitems = await fetch(getItemUrl)
-                const databaseitemsJson = await databaseitems.json()
+                const profile_json = await databaseitems.json()
 
                 if (databaseitems.status === 200){
-                    console.log(databaseitemsJson)
+                    console.log(profile_json)
                     // Get all the databases 
-                    this.results = databaseitemsJson.Success;
-                    this.unfilteredResult = databaseitemsJson.Success;
-                    console.log(this.results)
-
+                    localStorage.login = JSON.stringify(profile_json.data)
                 }
                 else{
                     console.log("Database not connected")
@@ -150,33 +147,41 @@
             alert("You have been logged out!")
             location.reload()
         },
-        updateMobile() {
+        async updateMobile() {
             var change_mobile_url = "http://127.0.0.1:5000/profile/mobile/" + this.id;
-            console.log(change_mobile_url)
-            var jsondata_obj = JSON.parse(this.jsondata)
-            console.log(jsondata_obj)
+            console.log(this.number)
+            jsondata_obj = JSON.stringify({"mobile":this.number})
 
-            jsondata_obj['mobile'] = String(this.number);
-            console.log(jsondata_obj)
-
-            jsondata_obj = JSON.stringify(jsondata_obj)
-
-            fetch(change_mobile_url,{
+            const result = await fetch(change_mobile_url,{
                     method: "PUT",
                     headers: {
                         "Content-type": "application/json"
                     },
                     body: jsondata_obj
                 })
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data)
-                    window.location.replace("/ESD_PROJECT/ESDT4/multi-page/cataloguenew.php");
-                })
-                .catch(error=> {
-                    console.log(error)
-                    console.log("Number failed to update")
-                })
+
+            const resultJson =  await result.json()
+            try {
+                if (result.ok){
+                    console.log(resultJson)
+                    alert("Profile number has been updated! ")
+                    window.location.replace("./myprofile.html");
+                }
+            }
+            catch(error) {
+                alert("There is a problem while updating the profile number")
+            }
+                // .then(response => response.json())
+                // .then(data => {
+                //     console.log(data)
+                //     alert("Mobile Number has been updated!")
+                //     window.location.replace("./myprofile.html")
+                // })
+                // .catch(error=> {
+                //     console.log(error)
+                //     alert("There is something wrong...")
+                //     console.log("Number failed to update")
+                // })
             }
             
         },
