@@ -5,20 +5,24 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <!-- Vue Application -->
-    <script src="https://unpkg.com/vue@3"></script>
-    <!--  Bootstrap -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-      crossorigin="anonymous"
-    />
-  </head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalogue</title>
+    <link rel="stylesheet" href="style.css">
+    <!--bootstrap css-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <!--axios-->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!--Vue-->
+    <script src="https://unpkg.com/vue@next"></script>
+    <!-- Google Auth0 -->
+    <script async defer src="https://apis.google.com/js/api.js"
+        onload="this.onload=function(){};handleClientLoad()"
+        onreadystatechange="if (this.readyState === 'complete') this.onload()">
+    </script>
+    <meta name="google-signin-client_id" content="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com">
+</head>
   <body>
     <div id="app">
       <!-- Navbar goes here -->
@@ -114,7 +118,7 @@
 
 
     async mounted() {
-      this.loginStatus()
+      this.checkLogin()
       // Fetching from NEW items microservice
       try{
           var getItemUrl = "http://localhost:5001/items"
@@ -145,10 +149,13 @@
     },
 
     methods:{
-      loginStatus() {
+      checkLogin() {
         // If the login variable is initalised, then we will redirect them to 
-        if (!localStorage.getItem("id")){
-            // redirect them to login page
+        if (localStorage.getItem("id")){
+          // redirect them to login page
+          // window.location.replace("/ESD_PROJECT/ESDT4/multi-page/catalogue.php");
+        }
+        else {
             window.location.replace("/ESD_PROJECT/ESDT4/multi-page/index.html");
         }
       },
@@ -178,6 +185,7 @@
       }
     }
   });
+  
   app.component("navbar",{
             template: template1,
             data() {
@@ -187,7 +195,9 @@
                 }
 
             },
+
             methods:{
+                
                 signOut() {
                     let gapi = window.gapi;
                     let clientId ="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com";
