@@ -35,7 +35,7 @@ def make_offer(): # BUYER invokes this complex microservice, request = offer
             offer = request.get_json() 
             print("\nReceived an offer in JSON:", offer)
 
-            # 1. Send offer info {offer details}
+            # 1. Send offer info {offer} to processMakeOffer to do the work
             result = processMakeOffer(offer)
             return jsonify(result), result["code"]
 
@@ -59,30 +59,30 @@ def make_offer(): # BUYER invokes this complex microservice, request = offer
 
 def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
 
-    # 1. Invoke the profile microservice to retrieve mobile number to send messgage thru notification ['GET']
+    # 2. Invoke the profile microservice to retrieve mobile number to send messgage thru notification ['GET']
         # a. Send user_id
         # b. Return name, mobile / error
 
     user_id = offer['buyer_id']
     print('\n\n-----Invoking profile microservice-----')
-    profile_details = invoke_http(profile_URL + user_id, method="GET")
-    name = profile_details['data']['name']
-    mobile = profile_details['data']['mobile']
-    print("\nname:", profile_details['data']['name'])
-    print("\nmobile number:", profile_details['data']['mobile'])
+    profile_results = invoke_http(profile_URL + user_id, method="GET")
+    name = profile_results['data']['name']
+    mobile = profile_results['data']['mobile']
+    print("\nname:", profile_results['data']['name'])
+    print("\nmobile number:", profile_results['data']['mobile'])
 
-    code = profile_details["code"]
+    code = profile_results["code"]
 
     # 6. Return error if profile not retrieved
     if code not in range(200, 300):
         return {
             "code": 404,
-            "data": {"profile_details": profile_details},
+            "data": {"profile_results": profile_results},
             "message": "Error while trying to retrieve profile information"
         }
 
 
-    # 2. Update item details (mobile, buyer_id) using PUT to add new offer details ['PUT']
+    # 3. Update item details (mobile, buyer_id) using PUT to add new offer details ['PUT']
         # Invoke the item microservice
         # a. Send offer_details (buyer_id, buyer_name, buyer_mobile, item_status)
         # b. Return offer_result / error
@@ -95,7 +95,7 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
     print("\nitem updated with buyer information:", offer_details)
 
 
-    # 3. Check if the item update failed [AMQP]
+    # 4. Check if the item update failed [AMQP]
         # a. Send the error to the error microservice to log failure (routing_key = 'error.*' )
 
     code = offer_result["code"]
@@ -115,7 +115,7 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
         # continue even if this invocation fails        
         print("\nOffer failure ({:d}) published to the RabbitMQ Exchange:".format(code), offer_result)
 
-        # Return error and end here
+        # 6. Return error and end here
         return {
             "code": 500,
             "data": {"offer_result": offer_result},
@@ -125,7 +125,7 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
 
     # Publish to notification only when there is no error in making offer 
     else: 
-        # 4. Send offer success to notification [AMQP]
+        # 5. Send offer success to notification [AMQP]
             # a. Send the message and seller mobile number to the notification microservice to inform seller of offer (routing_key = 'notify.*' )
         
         seller_mobile = offer_result['Success']['seller_mobile']
@@ -146,7 +146,7 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
         print("\nOffer success ({:d}) published to the RabbitMQ Exchange:".format(code), offer_result)
 
 
-    # 5. Return the updated offer (item) details if successful
+    # 6. Return the updated offer (item) details if successful
     return {
         "code": 201,
         "data": {
