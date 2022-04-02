@@ -67,6 +67,33 @@
     }
 
     const app = Vue.createApp({
+        async mounted() {
+            this.checkLogin()
+
+            try{
+                var getItemUrl = "http://localhost:5000/profile/" + this.id
+                console.log(getItemUrl)
+                
+                var databaseitems = await fetch(getItemUrl)
+                const databaseitemsJson = await databaseitems.json()
+
+                if (databaseitems.status === 200){
+                    console.log(databaseitemsJson)
+                    // Get all the databases 
+                    this.results = databaseitemsJson.Success;
+                    this.unfilteredResult = databaseitemsJson.Success;
+                    console.log(this.results)
+
+                }
+                else{
+                    console.log("Database not connected")
+                }
+            }
+
+            catch(error) {
+                console.log(error)
+            }
+        },
         data() {
             return {
                 links: [
@@ -84,6 +111,17 @@
         },
         
         methods: {
+            checkLogin() {
+                // If the login variable is initalised, then we will redirect them to 
+                if (localStorage.getItem("id")){
+                    // redirect them to login page
+                    // window.location.replace("/ESD_PROJECT/ESDT4/multi-page/catalogue.php");
+                }
+                else {
+                    window.location.replace("/ESD_PROJECT/ESDT4/multi-page/index.html");
+                }
+            },
+
             signOut() {
             let gapi = window.gapi;
             let clientId ="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com";

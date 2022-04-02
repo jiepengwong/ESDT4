@@ -131,24 +131,32 @@ app.get("/items/myoffers/buyer/:buyer_id",(req,res) =>{
             res.json({"code": 404,"Error": "There is no such buyer at all"}).status(404);
         }
 
-        // Buyer exists
+
+        else{
+            // Buyer exists
+            Item.find({ "buyer_id": req.params.buyer_id}).where("seller_id").ne(req.params.buyer_id)
+            .then((result) => {
+    
+                if (result === []){
+                    console.log("hi")
+                    console.log(result)
+                    res.json({"code": 404,"Error": "Buyer did not make an offer"}).status(404);
+                }
+                else{
+                    res.json({"code": 200,"Success": result}).status(200);
+    
+                } 
+    
+            })
+    
+            .catch((err)=>{
+                res.json({"code": 404, "Error" : err}.status(404))
+            })
+
+        }
+
         // Conditional clause to check if buyer_id not equals to buyer_id
-        Item.find({ "buyer_id": req.params.buyer_id}).where("seller_id").ne(req.params.buyer_id)
-        .then((result) => {
 
-            if (result){
-                return res.json({"code": 404,"Error": "No offers made"}).status(404);
-            }
-            else{
-                res.json({"code": 200,"Success": result} ).status(200);
-
-            } 
-
-        })
-
-        .catch((err)=>{
-            res.json({"code": 404, "Error" : err}.status(404))
-        })
 
 
     })
@@ -171,6 +179,9 @@ app.get("/items/myoffers/buyer/:buyer_id",(req,res) =>{
 // Method: [GET] offers made by a particular buyer
 // This would include  (Open, Pending, Paid)
 // URL: /items/myoffers/:buyer_id
+
+
+// WEIRD THING IS THAT SELLER ID HAS TO BE A STRING, 
 app.get("/items/mylistings/seller/:seller_id",(req,res) =>{
 
     console.log(req.params.seller_id);

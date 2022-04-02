@@ -96,13 +96,7 @@
 
 <script src="./narbar.js"></script>
 <script>
-  function loginStatus() {
-        // If the login variable is initalised, then we will redirect them to 
-        if (!localStorage.getItem("id")){
-            // redirect them to login page
-            window.location.replace("/ESD_PROJECT/ESDT4/multi-page/index.html");
-        }
-    }
+
   const app = Vue.createApp({
     data() {
       return {
@@ -120,7 +114,7 @@
 
 
     async mounted() {
-
+      this.loginStatus()
       // Fetching from NEW items microservice
       try{
           var getItemUrl = "http://localhost:5001/items"
@@ -151,6 +145,13 @@
     },
 
     methods:{
+      loginStatus() {
+        // If the login variable is initalised, then we will redirect them to 
+        if (!localStorage.getItem("id")){
+            // redirect them to login page
+            window.location.replace("/ESD_PROJECT/ESDT4/multi-page/index.html");
+        }
+      },
       filterPosts(categoryName){
         console.log("hi")
         this.resetPosts()

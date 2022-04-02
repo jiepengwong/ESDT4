@@ -32,7 +32,7 @@ var template1 = `
                     </div>`;
 var links1 = [
     {"link":"cataloguenew.php", "name": "Catalogue"},
-    {"link":"offersmade.php", "name": "Offers Made"},
+    {"link":"offersmade.php", "name": "My Offers"},
     {"link":"mylistings.html", "name": "My Listings"},
     {"link": "givereviews.html", "name": "Give Ratings"},
     {'link':"myprofile.html",'name':'My Profile'}
