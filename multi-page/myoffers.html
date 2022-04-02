@@ -73,19 +73,21 @@
                     </h4>
                     <p class="card-text">{{result.description}}</p>
 
-                    <div v-if="result.item_status == 'pending'">
-                        <p><b>Please wait while the seller reviews your offer! :D</b></p>
-                    </div>
-                    <div v-if="result.item_status == 'accepted'">
-                        <p><b >Please Proceed to the location: {{result.location}}</b></p>
-                    <div>
-                        <p><b v-if="result.item_status == 'closed'">ratings</b></p>
-                    </div>
+                    <div class="row">
 
-                    
-                    <button v-if="result.item_status == 'pending'" class="btn btn-primary" @click="acceptOffer(result._id)">Accept</button>
-                    <button v-else class="btn btn-primary" disabled>Accept</button>
-                  </div>
+                      <div class="col text-center">
+                        <button v-if="result.item_status == 'pending'" class="btn btn-success" @click="acceptOffer(result._id)">Accept</button>
+
+                      </div>
+
+                      <div class="col text-center">
+                        <button v-if="result.item_status == 'pending'" class="btn btn-primary btn-danger" @click="buyerReject(result_.id)">Reject</button>
+
+                      </div>
+                      <!-- <button v-else class="btn btn-primary" disabled>Accept</button> -->
+                      <button class="btn btn-primary" v-if="result.item_status == 'closed'">Review</button>
+
+                    </div>
                   <div class="card-footer">
                     <small class="text-muted">Item status: {{result.item_status}}</small>
 
