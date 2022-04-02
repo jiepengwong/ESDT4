@@ -19,7 +19,7 @@
       crossorigin="anonymous"
     />
   </head>
-  <body onload="loginStatus()">
+  <body>
     <div id="app">
       <!-- Navbar goes here -->
       <navbar></navbar>

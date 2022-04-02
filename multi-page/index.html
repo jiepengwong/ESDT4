@@ -112,9 +112,9 @@
                             let jsondata = JSON.stringify({
                                                 "name": this.name,
                                                 "email": this.email,
-                                                "mobile": null,
+                                                "mobile": "",
                                                 "ratings": 0,
-                                                "counts": 0,
+                                                "counts": 0
                                             })
                                             
                             if (this.isSignedIn && this.id != null) {
@@ -129,6 +129,7 @@
                                     console.log("There is no such data in the database")
                                     this.registered = false;
                                     console.log(this.registered)
+                                    console.log(this.id)
                                     var registered_url = "http://127.0.0.1:5000/profile/register/" + this.id
                                     console.log(registered_url)
                                     console.log(jsondata)
@@ -144,7 +145,7 @@
                                             body: jsondata
                                         })
                                         .then(response => response.json())
-                                        then(data => {console.log(data)})
+                                        .then(data => {console.log(data)})
                                         .catch(error=> {console.log(error)})
                                         localStorage.login = jsondata
                                         localStorage.id = this.id
@@ -174,8 +175,6 @@
                                     localStorage.login = jsondata
                                     localStorage.id = this.id
                                     window.location.replace("./cataloguenew.php");
-                            
-                            
                                 }
                 })
                 
