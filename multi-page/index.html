@@ -112,8 +112,9 @@
                             let jsondata = JSON.stringify({
                                                 "name": this.name,
                                                 "email": this.email,
-                                                "ratings": null,
-                                                "mobile": "0"
+                                                "mobile": null,
+                                                "ratings": 0,
+                                                "counts": 0,
                                             })
                                             
                             if (this.isSignedIn && this.id != null) {
@@ -181,7 +182,7 @@
                     }
                     else {
                         // if isSignedIn and id is null means we dont route them to anything
-                        alert("There is an error in the Sign In process. ")
+                        alert("There is an error in the Sign In process.")
                             
                         }
         })

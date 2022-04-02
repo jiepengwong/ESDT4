@@ -52,26 +52,28 @@ def find_by_profile_ID(profile_ID):
 
 # We need to update profile/rating/:id, this is to update the profile ratings of the user
 # INPUT JSON TO THIS MICROSERVICE, new count + new ratings
-# {"ratings": 5, "count": 1}
+# {"ratings": 5}
 # New User ratings will be 0 and count will be 0. 
 @app.route("/profile/ratings/<string:Profile_Id>", methods=["PUT"])
 def update_ratings(Profile_Id):
     if (Profile.query.filter_by(user_id=Profile_Id).first()):
         data = request.get_json() 
         input_ratings = data['ratings']
-        input_count = data['count']
-
+        
         profile = Profile.query.filter_by(user_id=Profile_Id).first()
-        profile.count = input_count
+
+        aggregated_count = profile.counts
+        new_count = profile.counts + 1
+        profile.counts += 1
 
         database_ratings = profile.ratings
 
-        aggregated_count = input_count - 1
-        temporary_formula = ((aggregated_count * database_ratings) + input_ratings)/ input_count
+        
+        temporary_formula = ((aggregated_count * database_ratings) + input_ratings)/ new_count
 
         profile.ratings = temporary_formula
         db.session.commit()
-        
+
         return jsonify({
                 "code":200,
                 "data":profile.json(),
