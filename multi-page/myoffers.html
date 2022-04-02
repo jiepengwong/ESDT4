@@ -38,7 +38,7 @@
                 
 
                   <div class="row justify-content-center">
-                    <div v-for="(key,value) in filters"  class="col-sm-2">
+                    <div v-for="(value,key) in filters"  class="col-sm-2">
 
                         <div class="d-flex">
                             <button @click="filterListings(value)" class="btn btn-success p-3">{{key}}</button>
@@ -59,10 +59,12 @@
             <div class="row">
               <div class="col-lg-12">
                 <h2 class="mb-5 py-5">Listings</h2>
+
               </div>
             </div>
             <div class="row">
               <div v-for="result in results" :key="result" class="col-lg-4 col-md-6 mb-4">
+
                 <div class="card h-100">
                   <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt="" /></a>
                   <div class="card-body">
@@ -70,17 +72,31 @@
                       <a href="#">{{result.item_name}}</a>
                     </h4>
                     <p class="card-text">{{result.description}}</p>
+
+                    <div v-if="result.item_status == 'pending'">
+                        <p><b>Please wait while the seller reviews your offer! :D</b></p>
+                    </div>
+                    <div v-if="result.item_status == 'accepted'">
+                        <p><b >Please Proceed to the location: {{result.location}}</b></p>
+                    <div>
+                        <p><b v-if="result.item_status == 'closed'">ratings</b></p>
+                    </div>
+
                     
                     <button v-if="result.item_status == 'pending'" class="btn btn-primary" @click="acceptOffer(result._id)">Accept</button>
                     <button v-else class="btn btn-primary" disabled>Accept</button>
                   </div>
                   <div class="card-footer">
                     <small class="text-muted">Item status: {{result.item_status}}</small>
+
                   </div>
                 </div>
+
+
               </div>
 
               {{localStorageData}}
+
   
           </div>
   
@@ -99,7 +115,7 @@
     const app = Vue.createApp({
     data() {
       return {
-          filters: { "All": "All Listings", "open": "My Listings (Open)", "pending": "Incoming Offers (Pending)", "accepted": "Awaiting Collection (Accepted)", "closed": "Reviews (Closed)"},
+          filters: { "All Listings": "All", "Awaiting Reply": "pending", "Accepted Offer": "accepted", "Past Success Offers": "closed"},
           localStorageData: localStorage.id, //this is from oauth, for now put some dummy data
           results: [],
           unfilteredResult: '',
@@ -120,7 +136,7 @@
       try{
         //   this.localStorageData = localStorage.getItem("user_id"); -> When it is actually implemented try this
 
-          var getItemUrl = `http://localhost:5001/items/mylistings/seller/${this.localStorageData}`;
+          var getItemUrl = `http://localhost:5001/items/myoffers/buyer/${this.localStorageData}`;
           
           var databaseitems = await fetch(getItemUrl)
           const databaseitemsJson = await databaseitems.json()
@@ -134,7 +150,7 @@
 
           }
           else{
-           
+            console.log("Database not connected")
           }
           }
 

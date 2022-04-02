@@ -47,7 +47,8 @@
             <input type="number" v-model="price" required />
             <button @click="makeOffer()" class="btn btn-primary">Make Offer Now</button>
 
-  
+            {{buyerid}}
+
         </div>
   
       </div>
@@ -81,7 +82,7 @@
       return {
         results: [],
         price: 0,
-        buyerid: "12345" //Taken from yuxiang side
+        buyerid: localStorage.id //Taken from yuxiang side
 
       };
     },
