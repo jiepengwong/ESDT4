@@ -64,7 +64,7 @@ services:
 
 
   ###################################
-  # Error: The Error microservice
+  # error: The Error microservice
   ###################################
   error:
     build:
@@ -79,29 +79,155 @@ services:
       rabbit_port: 5672
       PYTHONUNBUFFERED: 1
 
+  ###################################
+  #item microservice: The Item microservice
+  ###################################
+
+  item:
+    build:
+      context: ./
+      dockerfile: item.Dockerfile
+    image: tinggzster/item:esd
+    restart: always
+    environment:
+      dbURI: mongodb+srv://esdt4:esdt4@nodejstutoriallearning.xssjk.mongodb.net/itemdb?retryWrites=true&w=majority
+      # PYTHONUNBUFFERED: 1
+
+  ###################################
+  #profile microservice: The Item microservice
+  ###################################
+
+  profile:
+    build:
+      context: ./
+      dockerfile: profile.Dockerfile
+    image: tinggzster/profile:esd
+    restart: always
+    environment:
+      dbURL: mysql+mysqlconnector://root@localhost:3306/profile
+      PYTHONUNBUFFERED: 1
 
   ###################################
   #Accept Offer: The Accept Offer complex microservice
   ###################################
 
+  accept_offer:
+    build:
+      context: ./
+      dockerfile: accept_offer.Dockerfile
+    image: tinggzster/accept_offer:esd
+    restart: always
+    depends_on:
+      - rabbitmq
+      - item
+      - error
+      - twilio_notifs 
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      PYTHONUNBUFFERED: 1
+      item_URL: http://item:5001/item
+      profile_URL: http://profile:5000/profile
 
   ###################################
   #Create Listing: The Create Listing complex microservice
   ###################################
+  create_listing:
+    build:
+      context: ./
+      dockerfile: create_listing.Dockerfile
+    image: tinggzster/create_listing:esd
+    restart: always
+    depends_on:
+      - rabbitmq
+      - item
+      - error
+      - twilio_notifs 
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      PYTHONUNBUFFERED: 1
+      item_URL: http://item:5001/item
+      profile_URL: http://profile:5000/profile
 
 
   ###################################
   #Make Offer: The Make Offer complex microservice
   ###################################
 
+  make_offer: 
+    build:
+      context: ./
+      dockerfile: make_offer.Dockerfile
+    image: tinggzster/make_offer:esd
+    restart: always
+    depends_on:
+      - rabbitmq
+      - twilio_notifs
+      - error
+      - item
+      - profile
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      PYTHONUNBUFFERED: 1
+      item_URL: http://item:5001/item
+      profile_URL: http://profile:5000/profile
+    ports:
+      - "5100:5100" 
+
 
   ###################################
   #Rate Seller: The Rate Seller complex microservice
   ###################################
+
+  rate_seller:
+    build:
+      context: ./
+      dockerfile: rate_seller.Dockerfile
+    image: tinggzster/rate_seller:esd
+    restart: always
+    depends_on:
+      - profile
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      PYTHONUNBUFFERED: 1
+      item_URL: http://item:5001/item
+      profile_URL: http://profile:5000/profile
+    ports:
+      - "5101:5101"
 
 
   ###################################
   #Reject Offer: The Reject Offer complex microservice
   ###################################
 
+  reject_offer:
+    build:
+      context: ./
+      dockerfile: reject_offer.Dockerfile
+    image: tinggzster/reject_offer:esd
+    restart: always
+    depends_on:
+      - rabbitmq
+      - error
+      - twilio_notifs
+      - profile
+      - item
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      PYTHONUNBUFFERED: 1
+      item_URL: http://item:5001/item
+      profile_URL: http://profile:5000/profile
+    ports:
+      - "5102:5102"
+
+  ###################################
+  #Reject Offer: The Reject Offer complex microservice
+  ################################### 
+
+
+  
 
