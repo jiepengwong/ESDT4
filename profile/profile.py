@@ -52,34 +52,32 @@ def find_by_profile_ID(profile_ID):
 @app.route("/profile/ratings/<string:Profile_Id>", methods=["PUT"])
 def update_ratings(Profile_Id):
     if (Profile.query.filter_by(user_id=Profile_Id).first()):
-        db.session.delete(Profile.query.filter_by(user_id=Profile_Id).first())
-        db.session.commit()
 
         data = request.get_json()
-        profile = Profile(Profile_Id, **data)
-        db.session.add(profile)
+        profile = Profile.query.filter_by(user_id=Profile_Id).first()
+        print(profile.mobile)
+        profile.ratings = data['ratings']
         db.session.commit()
         return jsonify({
                 "code":200,
                 "data":profile.json(),
-                "message":"Profile's rating has been sucessfully updated."
+                "message":"Profile's ratings has been updated."
             },200
         )
     return jsonify({
         "code":404,
-        "message":"An error occured while updating the profile rating.Please try again."
+        "message":"An error occured while updating the profile ratings.Please try again."
     })
 
-# We need to update profile/number/<id> 
+# WE NEED TO UPDATE THE PROFILE 
 @app.route("/profile/mobile/<string:Profile_Id>", methods=["PUT"])
 def update_number(Profile_Id):
     if (Profile.query.filter_by(user_id=Profile_Id).first()):
-        db.session.delete(Profile.query.filter_by(user_id=Profile_Id).first())
-        db.session.commit()
 
         data = request.get_json()
-        profile = Profile(Profile_Id, **data)
-        db.session.add(profile)
+        profile = Profile.query.filter_by(user_id=Profile_Id).first()
+        print(profile.mobile)
+        profile.mobile = data['mobile']
         db.session.commit()
         return jsonify({
                 "code":200,
