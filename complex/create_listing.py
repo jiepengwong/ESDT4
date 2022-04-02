@@ -12,6 +12,19 @@ from types import SimpleNamespace
 app = Flask(__name__)
 CORS(app)
 
+# input JSON:
+# listing = 
+# {
+#     "seller_id": this.user_id,             # user_id stored on the browser (user_id)
+#     "item_details": {                      # field input from user from create page
+#         "item_name": "Bag of Carrots ",
+#         "category": "Vegetables",
+#         "description": "Unused packet of carrots. Expires 3 May.",
+#         "location": "80 Kallang Rd #03-26",
+#         "date_time": 2022-04-13 16:30:00
+#     }
+# } 
+
 profile_URL =  "http://localhost:5000/profile/" # requires /:id
 create_item_URL = "http://localhost:5001/createitem"
 
@@ -23,7 +36,7 @@ def create_listing():
             listing = request.get_json()
             print("\nReceived a valid request in JSON:", listing)
 
-            # 1. Send the item information and profile ID - {item}, {user_id}
+            # 1. Send the item information and user ID - {seller_id}, {item_details}
             result = processCreateListing(listing)
             print('\n------------------------')
             print('\nresult: ', result)
@@ -49,19 +62,23 @@ def create_listing():
 
 def processCreateListing(listing):
 
-# invoke profile microservice to create a book
+    # 2. Invoke the profile microservice to retrieve seller details ['GET'] 
+        # a. Send user_id
+        # b. Return name, mobile  
 
-#stringify JSON request
-    # listing_details = json.load(listing_json, object_hook=lambda d: SimpleNamespace(**d))
-    # id = listing_details.user_id
-    # print (id)
-    id = listing['user_id']
+    user_id = listing['seller_id']
+    print('\n\n-----Invoking profile microservice-----')
+    profile_details = invoke_http(profile_URL + user_id, method="GET")
+    name = profile_details['data']['name']
+    mobile = profile_details['data']['mobile']
+    print("\nname:", profile_details['data']['name'])
+    print("\nmobile number:", profile_details['data']['mobile'])
 
+    item_details = listing['item_details']
 
-    profile_details = invoke_http(
-        profile_URL + id, method='GET', 
-        )
-
+    # 3. Invoke the item microservice ['POST']
+        # a. Send the item information, change status and mobile {item}, {mobile}
+        # b. Return 
     # POST back new item_num
     # GET new item_num
 

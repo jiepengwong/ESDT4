@@ -80,6 +80,25 @@ def processCreateListing(listing):
         }
     }
 
+
+        # HTTP Version (Old)
+        # print('\n\n-----Invoking error microservice as offer fails-----')
+        # invoke_http(error_URL, method="POST", json=offer_result)
+        # # result from the invocation is not used
+        # # continue even if this invocation fails
+        # print("Offer status ({:d}) sent to the error microservice:".format(code), offer) #tbc
+
+        # HTTP below
+        # print('\n\n-----Invoking notification microservice-----')
+        # invoke_http(notification_URL, method="POST", json=offer_result)
+        # print("\nOffer sent to notification microservice.\n")
+        # if code not in range(200, 300):
+    #     # Inform the error microservice (AMQP routing_key = 'error.*' )
+    #     print('\n\n-----Invoking error microservice as offer fails-----')
+    #     invoke_http(error_URL, method="POST", json=offer_result)
+    #     # result from the invocation is not used
+    #     # continue even if this invocation fails
+
 if __name__ == "__main__":
     print("This is flask " + os.path.basename(__file__) + " for placing an offer...")
     app.run(host="0.0.0.0", port=5100, debug=True) 
