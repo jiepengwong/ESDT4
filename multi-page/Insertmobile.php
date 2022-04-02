@@ -18,6 +18,136 @@
     </script>
     <meta name="google-signin-client_id" content="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com">
 </head>
+<style>
+        body {
+            background: linear-gradient(90deg, rgba(0,36,4,0.8298669809720763) 0%, rgba(9,121,46,1) 48%, rgba(0,255,170,1) 100%);
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif
+        }
+
+        .container {
+            margin: 50px auto
+        }
+
+        .body {
+            position: relative;
+            width: 720px;
+            height: 440px;
+            margin: 20px auto;
+            border: 1px solid #dddd;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px
+        }
+
+        .box-1 img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover
+        }
+
+        .box-2 {
+            padding: 10px
+        }
+
+        .box-1,
+        .box-2 {
+            width: 50%
+        }
+
+        .h-1 {
+            font-size: 24px;
+            font-weight: 700
+        }
+
+        .text-muted {
+            font-size: 14px
+        }
+
+        .container .box {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid transparent;
+            text-decoration: none;
+            color: #615f5fdd
+        }
+
+        .box:active,
+        .box:visited {
+            border: 2px solid #ee82ee
+        }
+
+        .box:hover {
+            border: 2px solid #ee82ee
+        }
+
+        .btn.btn-primary {
+            background-color: transparent;
+            color: #ee82ee;
+            border: 0px;
+            padding: 0;
+            font-size: 14px
+        }
+
+        .btn.btn-primary .fas.fa-chevron-right {
+            font-size: 12px
+        }
+
+        .footer .p-color {
+            color: #ee82ee
+        }
+
+        .footer.text-muted {
+            font-size: 10px
+        }
+
+        .fas.fa-times {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            height: 20px;
+            width: 20px;
+            background-color: #f3cff379;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .fas.fa-times:hover {
+            color: #ff0000
+        }
+
+        @media (max-width:767px) {
+            body {
+                padding: 10px
+            }
+
+            .body {
+                width: 100%;
+                height: 100%
+            }
+
+            .box-1 {
+                width: 100%
+            }
+
+            .box-2 {
+                width: 100%;
+                height: 440px
+            }
+        }
+</style>
 <body>
 <!-- END OF HEADER ############################################################################################################## -->
 
@@ -25,29 +155,27 @@
         <!-- NAVIGATION BAR ----------------------------------------------------------------------------------------------------- -->
         <navbar></navbar>
         <!-- END OF NAVIGATION BAR ---------------------------------------------------------------------------------------------- -->
-        <div class="container">
-            <div class="row">
-                <img src="./asset/HenesysHome.png" class="img-fluid " style="height:25%;width:25%;  display: block;margin-left: auto;margin-right: auto;">
-            </div>
-            <div class="row">
-                <div class="col-3"></div>
-                <div class="col-6">
-                        <h1 class="h3 mb-3 fw-normal">Before we start, we need your mobile number</h1>
+        <div class="container d-flex justify-content-center mt-5 mb-5">
+            <div class="card p-3 py-4">
+                <div class="text-center"> <img src="./asset/henesysHome.png" width="80" class="rounded-circle">
+                    <h3 class="mt-2">We need your mobile number</h3> <span class="mt-1 clearfix">for notification</span>
 
-                        <div class="input-group mb-3">
+                    <hr class="line"> <small class="mt-4">Our platform is powered by Twilio.</small>
+                    <div class="input-group mb-3">
                             <span class="input-group-text" id="basic-addon1">+65</span>
                             <input type="text" class="form-control" placeholder="Enter your number here!" aria-label="Username" aria-describedby="basic-addon1" v-model="number">
-                        </div>
-
-                        <button class="w-100 btn btn-lg btn-primary" @click="updateMobile" >Update</button>
-                        <span v-if='!number_status' style='color:red; font-size:small'>This is not a valid number!</span>
+                    </div>
+                    <button class="w-100 btn btn-lg btn-success" @click="updateMobile" >Update</button>
+                    <span v-if='!number_status' style='color:red; font-size:small'>This is not a valid number!</span>
                         <span v-if='number_status' style='color:green; font-size:small'>This is a valid number!</span>
 
-                        <p class="mt-5 mb-3 text-muted">&copy; Henesys Grocery MarketPlace</p>
+                    <p class="mt-5 mb-3 text-muted">&copy; Henesys Grocery MarketPlace</p>
+
                 </div>
-                <div class="col-3"></div>
-            </div>  
+            </div>
         </div>
+
+        
 
 
     </div>
