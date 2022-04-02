@@ -22,13 +22,15 @@ class Profile(db.Model):
     email = db.Column(db.String(64), nullable=False)
     mobile = db.Column(db.String(8), nullable=False)
     ratings = db.Column(db.Float(precision=2), nullable = True)
+    counts = db.Column(db.Float(precision=3),nullable=True)
 
-    def __init__(self,user_id,name,email,mobile,ratings):
+    def __init__(self,user_id,name,email,mobile,ratings,counts):
         self.user_id = user_id
         self.name = name
         self.email = email
         self.mobile = mobile
         self.ratings = ratings
+        self.counts = counts
 
     def json(self):
         return {"user_id": self.user_id, "name": self.name, "email": self.email, "mobile": self.mobile,"ratings":self.ratings}
@@ -49,15 +51,27 @@ def find_by_profile_ID(profile_ID):
     }),404
 
 # We need to update profile/rating/:id, this is to update the profile ratings of the user
+# INPUT JSON TO THIS MICROSERVICE, new count + new ratings
+# {"ratings": 5, "count": 1}
+# New User ratings will be 0 and count will be 0. 
 @app.route("/profile/ratings/<string:Profile_Id>", methods=["PUT"])
 def update_ratings(Profile_Id):
     if (Profile.query.filter_by(user_id=Profile_Id).first()):
+        data = request.get_json() 
+        input_ratings = data['ratings']
+        input_count = data['count']
 
-        data = request.get_json()
         profile = Profile.query.filter_by(user_id=Profile_Id).first()
-        print(profile.mobile)
-        profile.ratings = data['ratings']
+        profile.count = input_count
+
+        database_ratings = profile.ratings
+
+        aggregated_count = input_count - 1
+        temporary_formula = ((aggregated_count * database_ratings) + input_ratings)/ input_count
+
+        profile.ratings = temporary_formula
         db.session.commit()
+        
         return jsonify({
                 "code":200,
                 "data":profile.json(),
