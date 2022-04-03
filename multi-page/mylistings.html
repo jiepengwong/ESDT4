@@ -183,9 +183,37 @@
             item_id: itemid
           }
 
+          url = "http://localhost:5300/accept_offer"
+          const options = {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+          }
+
+          try {
+          if (result.ok) {
+            console.log(response)
+            if (response.code == 201){
+              alert("You have accepted the offer successfully")
+
+              window.location.href = "cataloguenew.php";
+            }
+          } 
+        }
+
+        catch(err) {
+
+          console.log(err)
+        
+        }
+
+          
+
       },
 
-      rejectOffer(itemid){
+      async rejectOffer(itemid){
 
       // Fetch post ID TO COMPLEX
         console.log("hi")
@@ -193,6 +221,38 @@
         const payload = {
             item_id: itemid
           }
+        
+      const url = "http://localhost:5400/reject_offer"
+      const options = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                }
+
+      const result = await fetch(url, option)
+
+      const response = await result.json()
+
+
+        try {
+          if (result.ok) {
+            console.log(response)
+            if (response.code == 201){
+              alert("You have rejected the offer successfully")
+
+              window.location.href = "cataloguenew.php";
+            }
+          } 
+        }
+
+        catch(err){
+
+          console.log(err)
+        
+        }
+
 
       },
       removeListing(itemid){
