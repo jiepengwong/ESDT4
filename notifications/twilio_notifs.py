@@ -26,7 +26,10 @@ def processNotifs(Msg):
     print("Printing the notification message:")
     try: 
 
-        data = Msg
+        # data = json.loads(Msg) 
+
+        data = Msg 
+
 
         #complex must send over as     
         # notification_json = {
@@ -60,7 +63,6 @@ def processNotifs(Msg):
                                         ) 
 
         print(message.sid)
-
 
         # print(data)
         # print("--JSON:", notifs

@@ -22,6 +22,9 @@
 - pip install --user virtualenv
 - python -m virtualenv venv
 
+3. Others 
+
+
 
 ## Project Desc
 - Henesys Marketplace is a consumer-to-consumer platform for buying and selling food items that are near expiry. This reduces food waste and builds a “Kampong” spirit of sharing within the community. 
