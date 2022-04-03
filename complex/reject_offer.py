@@ -97,6 +97,7 @@ def processRejectOffer(rejected):  # process the json input of /reject_offer
     if code not in range(200, 300):
         # Inform the error microservice 
         print('\n\n-----Publishing the failed reject offer error message with routing_key= error.reject-----')
+        amqp_setup.check_setup()
         amqp_setup.channel.basic_publish(
         exchange=amqp_setup.exchangename, 
         routing_key="error.reject", 

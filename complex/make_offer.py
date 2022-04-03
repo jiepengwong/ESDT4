@@ -120,6 +120,7 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
     if code not in range(200, 300):
         # Inform the error microservice 
         print('\n\n-----Publishing the failed offer error message with routing_key= error.offer-----')
+        amqp_setup.check_setup()
         amqp_setup.channel.basic_publish(
         exchange=amqp_setup.exchangename, 
         routing_key="error.offer", 
@@ -158,6 +159,7 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
 
         print('The following message will be sent:' + message)
         print('\n\n-----Publishing the successful offer message with routing_key=notify.offer-----')  
+        amqp_setup.check_setup()
         amqp_setup.channel.basic_publish(
         exchange=amqp_setup.exchangename, 
         routing_key="notify.offer", 

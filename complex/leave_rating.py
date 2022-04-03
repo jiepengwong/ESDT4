@@ -14,7 +14,7 @@ CORS(app)
 # rate = 
 # {
 #   "item_id": "XXXXXXXX"   # item being reviewed
-#   "ratings": 4             # input 1-5
+#   "rating": 4             # input 1-5
 # } 
 
 # Make sure the following microservices are running:
@@ -67,14 +67,14 @@ def processLeaveRating(rate):  # process the json input of /leave_rating
 
 
     # 3.  Invoke the profile microservice to update rating ['PUT']
-    ratings = rate['ratings']
+    ratings = rate['rating']
     rating_details = { 
         "ratings": ratings
         }
     
     print('\n-----Invoking profile microservice to update overall ratings of seller-----')
     rating_result = invoke_http(rate_profile_URL + seller_id, method='PUT', json=rating_details)
-    print('\nProfile has been updated with new average rating:', rating_result)
+    print('\nProfile update result:', rating_result)
 
 
 

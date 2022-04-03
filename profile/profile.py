@@ -30,7 +30,7 @@ class Profile(db.Model):
         self.email = email
         self.mobile = mobile
         self.ratings = ratings
-        self.counts = counts
+        self['counts'] = counts
 
     def json(self):
         return {"user_id": self.user_id, "name": self.name, "email": self.email, "mobile": self.mobile,"ratings":self.ratings}
@@ -56,19 +56,18 @@ def find_by_profile_ID(profile_ID):
 # New User ratings will be 0 and count will be 0. 
 @app.route("/profile/ratings/<string:Profile_Id>", methods=["PUT"])
 def update_ratings(Profile_Id):
-    if (Profile.query.filter_by(user_id=Profile_Id).first()):
+    if Profile.query.filter_by(user_id=Profile_Id):
         data = request.get_json() 
         input_ratings = data['ratings']
         
-        profile = Profile.query.filter_by(user_id=Profile_Id).first()
+        profile = Profile.query.filter_by(user_id=Profile_Id)
 
-        aggregated_count = profile.counts
-        new_count = profile.counts + 1
-        profile.counts += 1
+        aggregated_count = profile['counts']
+        new_count = profile['counts'] + 1
+        profile['counts'] += 1
 
         database_ratings = profile.ratings
 
-        
         temporary_formula = ((aggregated_count * database_ratings) + input_ratings)/ new_count
 
         profile.ratings = temporary_formula
@@ -82,7 +81,7 @@ def update_ratings(Profile_Id):
         )
     return jsonify({
         "code":404,
-        "message":"An error occured while updating the profile ratings.Please try again."
+        "message":"An error occured while updating the profile ratings. Please try again."
     })
 
 # WE NEED TO UPDATE THE PROFILE 
