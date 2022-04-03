@@ -18,14 +18,15 @@ def receiveNotification():
 
 def callback(channel, method, properties, body): 
 
-    print("\nReceived a notifcation by " + __file__)
+    # print("\nReceived a notifcation by " + __file__)
     processNotifs(json.loads(body))
     print() # print a new line feed
 
 def processNotifs(Msg):
     print("Printing the notification message:")
     try: 
-        data = json.loads(Msg) 
+
+        data = Msg
 
         #complex must send over as     
         # notification_json = {
@@ -45,7 +46,7 @@ def processNotifs(Msg):
 
 
         noti_message = data['message']
-        mobile_number = '+65' + data['mobile']
+        mobile_number = f"+65{data['mobile']}"
 
         # account_sid = 'TWILIO_ACCOUNT_SID'
         # auth_token = 'TWILIO_AUTH_TOKEN'
@@ -55,13 +56,10 @@ def processNotifs(Msg):
                                         from_='whatsapp:+14155238886',  
                                         body=noti_message,     
                                         # to=user_phone 
-                                        to= mobile_number
+                                        to= 'whatsapp:' + mobile_number
                                         ) 
 
         print(message.sid)
-
-
-
 
 
         # print(data)

@@ -55,7 +55,7 @@ def callback(channel, method, properties, body):
 def processErrors(Msg):
     print("Printing the error message:")
     try: 
-        # notifs = json.loads(Msg) 
+
         errors = Msg
         # print(notifs)
         print(errors)
