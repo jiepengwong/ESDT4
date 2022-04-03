@@ -7,23 +7,39 @@ import requests
 from invokes import invoke_http
 
 import json
-from types import SimpleNamespace
 
 app = Flask(__name__)
 CORS(app)
+
+# input JSON:
+# listing = 
+# {
+#     "seller_id": this.user_id,             # user_id stored on the browser (user_id)
+#     "item_details": {                      # field input from user from create page
+#         "item_name": "Bag of Carrots ",
+#         "category": "Vegetables",
+#         "description": "Unused packet of carrots. Expires 3 May.",
+#         "location": "80 Kallang Rd #03-26",
+#         "date_time": 2022-04-13 16:30:00
+#     }
+# } 
+
+# Make sure the following microservices are running:
+# profile.py        # load profile.sql data
+# item.js           # node installed + MongoDB database
 
 profile_URL =  "http://localhost:5000/profile/" # requires /:id
 create_item_URL = "http://localhost:5001/createitem"
 
 @app.route("/create_listing", methods=['POST'])
-def create_listing():
+def create_listing(): # SELLER invokes this complex to create a new item lising, request = {listing}
     # Check if input format and data of the request are in JSON format
     if request.is_json:
         try:
             listing = request.get_json()
             print("\nReceived a valid request in JSON:", listing)
 
-            # 1. Send the item information and profile ID - {item}, {user_id}
+            # 1. Send the item information and user ID - {seller_id}, {item_details}
             result = processCreateListing(listing)
             print('\n------------------------')
             print('\nresult: ', result)
@@ -49,32 +65,61 @@ def create_listing():
 
 def processCreateListing(listing):
 
-# invoke profile microservice to create a book
+    # 2. Invoke the profile microservice to retrieve seller information ['GET'] 
+        # a. Send user_id
+        # b. Return name, mobile  / error
 
-#stringify JSON request
-    # listing_details = json.load(listing_json, object_hook=lambda d: SimpleNamespace(**d))
-    # id = listing_details.user_id
-    # print (id)
-    id = listing['user_id']
+    user_id = listing['seller_id']
+    print('\n\n-----Invoking profile microservice to get profile information-----')
+    profile_results = invoke_http(profile_URL + user_id, method="GET")
+    name = profile_results['data']['name']
+    mobile = profile_results['data']['mobile']
+    print("\nname:", profile_results['data']['name'])
+    print("\nmobile number:", profile_results['data']['mobile'])
 
 
-    profile_details = invoke_http(
-        profile_URL + id, method='GET', 
-        )
+    # 4. Return error if profile not retrieved
+    code = profile_results['code']
+    if code not in range(200, 300):
+        return {
+            "code": 404,
+            "data": {"profile_results": profile_results},
+            "message": "Error while trying to retrieve profile information"
+        }
 
-    # POST back new item_num
-    # GET new item_num
 
-    # to remove
-    print( "----- invoking profile microservice to get profile details -----" )
-    # print (profile_details)
 
-    # profile_details = json.loads(listing, object_hook=lambda d: SimpleNamespace(**d))
+    # 3. Invoke the item microservice ['POST']
+        # a. Send the item information (incl seller information)
+        # b. Return newly created item / error
 
+    item_details = listing['item_details']
+    # add seller information to item details
+    item_details['seller_id'] = user_id
+    item_details['seller_mobile'] = mobile
+    item_details['seller_name'] = name    
+    print("the following item details will be sent to item microservice:" + item_details)    # for debugging, to remove
+    
+    print('\n\n-----Invoking item microservice to create new item listing-----')
+    listing_results = invoke_http(create_item_URL, method='POST', json=item_details)
+
+
+    # 4. Return error if item not created
+    code = listing_results['code']
+    if code not in range(200, 300):
+        return {
+            "code": 404,
+            "data": {"listing_results": listing_results},
+            "message": "Error while trying to create listing"
+        }
+
+
+
+    # 4. Return the newly created listing
     return {
         "code": 201,
         "data": {
-            "result": profile_details,
+            "result": listing_results,
         }
     }
 
