@@ -25,7 +25,9 @@ def callback(channel, method, properties, body):
 def processNotifs(Msg):
     print("Printing the notification message:")
     try: 
-        data = json.loads(Msg) 
+        # data = json.loads(Msg) 
+
+        data = Msg 
 
         #complex must send over as     
         # notification_json = {
@@ -55,14 +57,10 @@ def processNotifs(Msg):
                                         from_='whatsapp:+14155238886',  
                                         body=noti_message,     
                                         # to=user_phone 
-                                        to= mobile_number
+                                        to= 'whatsapp:' + mobile_number
                                         ) 
 
         print(message.sid)
-
-
-
-
 
         # print(data)
         # print("--JSON:", notifs
