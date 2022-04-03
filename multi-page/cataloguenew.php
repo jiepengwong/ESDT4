@@ -121,7 +121,7 @@
 
 
     async mounted() {
-      // this.checkLogin()
+      this.checkLogin()
       // Fetching from NEW items microservice
       try{
           var getItemUrl = "http://localhost:5001/items"
@@ -159,7 +159,7 @@
           // window.location.replace("/ESD_PROJECT/ESDT4/multi-page/catalogue.php");
         }
         else {
-            window.location.replace("/ESD_PROJECT/ESDT4/multi-page/index.html");
+            window.location.replace("./");
         }
       },
       filterPosts(categoryName){

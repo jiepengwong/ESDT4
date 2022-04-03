@@ -24,7 +24,7 @@ var links1 = [
     // {"link":"cataloguenew.php", "name": "Catalogue"},
     {"link":"myoffers.html", "name": "My Offers"},
     {"link":"mylistings.html", "name": "My Listings"},
-    {'link':"myprofile.html",'name':'My Profile'},
     {"link": "createlisting.php", "name": "Sell"},
+    {'link':"myprofile.html",'name':'My Profile'},
 
     ];

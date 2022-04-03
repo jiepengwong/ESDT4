@@ -5,6 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mobile Insert</title>
+    <!-- External CSS for navbar -->
+    <link rel="stylesheet" href="style.css">
     <!--bootstrap css-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
     <!--axios-->
@@ -20,7 +22,7 @@
 </head>
 <style>
         body {
-            background: linear-gradient(90deg, rgba(0,36,4,0.8298669809720763) 0%, rgba(9,121,46,1) 48%, rgba(0,255,170,1) 100%);
+            background-color: lightgreen
         }
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
@@ -158,16 +160,20 @@
         <div class="container d-flex justify-content-center mt-5 mb-5">
             <div class="card p-3 py-4">
                 <div class="text-center"> <img src="./asset/henesysHome.png" width="80" class="rounded-circle">
-                    <h3 class="mt-2">We need your mobile number</h3> <span class="mt-1 clearfix">for notification</span>
+                    <h3 class="mt-2">Update your mobile number.</h3> <span class="mt-1 clearfix">for notification</span>
 
                     <hr class="line"> <small class="mt-4">Our platform is powered by Twilio.</small>
                     <div class="input-group mb-3">
                             <span class="input-group-text" id="basic-addon1">+65</span>
-                            <input type="text" class="form-control" placeholder="Enter your number here!" aria-label="Username" aria-describedby="basic-addon1" v-model="number">
+                            <input maxlength="8" type="text" class="form-control" placeholder="Enter your number here!" aria-label="Username" aria-describedby="basic-addon1" v-model="number">
                     </div>
-                    <button class="w-100 btn btn-lg btn-success" @click="updateMobile" >Update</button>
-                    <span v-if='!number_status' style='color:red; font-size:small'>This is not a valid number!</span>
-                        <span v-if='number_status' style='color:green; font-size:small'>This is a valid number!</span>
+                    <button v-if ="isDisabled" class="w-100 btn btn-lg btn-success" @click="updateMobile" >Update</button>
+                    <button v-else disabled class="w-100 btn btn-lg btn-success" @click="updateMobile" >Update</button>
+
+                    
+
+                    <span v-if='isDisabled' style='color:green; font-size:small'>{{error}}</span>
+                    <span v-else style='color:red; font-size:small'>{{error}}</span>
 
                     <p class="mt-5 mb-3 text-muted">&copy; Henesys Grocery MarketPlace</p>
 
@@ -182,17 +188,6 @@
 </body>
 <script src="./narbar.js"></script>
 <script>
-
-    function checkLogin() {
-        // If the login variable is initalised, then we will redirect them to 
-        if (localStorage.getItem("id")){
-            // redirect them to login page
-            // window.location.replace("/ESD_PROJECT/ESDT4/multi-page/catalogue.php");
-        }
-        else {
-            window.location.replace("/ESD_PROJECT/ESDT4/multi-page/index.html");
-        }
-    }
 
     const app = Vue.createApp({
         async mounted() {
@@ -229,10 +224,9 @@
                 number: "",
                 id: localStorage.id,
                 number_status: false,
+                error: ""
+
             }
-        },
-        computed : {
-        
         },
         
         methods: {
@@ -243,7 +237,7 @@
                     // window.location.replace("/ESD_PROJECT/ESDT4/multi-page/catalogue.php");
                 }
                 else {
-                    window.location.replace("/ESD_PROJECT/ESDT4/multi-page/index.html");
+                    window.location.replace("./");
                 }
             },
 
@@ -322,6 +316,16 @@
                 else {
                     this.number_status = true
                 }   
+            },
+            isDisabled() {
+                if (this.number.length == 8 && !(/[a-zA-Z]/.test(this.number))) {
+                    this.error = "This is a valid mobile number."
+                    return true
+                }
+                else{
+                    this.error = "Must be valid 8-digit number"
+                    return false
+                }
             }
         },
             },
