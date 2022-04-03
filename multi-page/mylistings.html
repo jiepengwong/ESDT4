@@ -174,7 +174,9 @@
         this.results = this.unfilteredResult
       },
 
-      acceptOffer(itemid){
+      async acceptOffer(itemid){
+
+        
 
         // Fetch post ID TO COMPLEX
           console.log("hi")
@@ -193,6 +195,10 @@
           }
 
           try {
+
+            const result = await fetch(url, option)
+            const response = await result.json()
+            
           if (result.ok) {
             console.log(response)
             if (response.code == 201){
@@ -231,12 +237,12 @@
                     body: JSON.stringify(payload)
                 }
 
-      const result = await fetch(url, option)
-
-      const response = await result.json()
+   
 
 
         try {
+          const result = await fetch(url, option)
+          const response = await result.json()
           if (result.ok) {
             console.log(response)
             if (response.code == 201){
