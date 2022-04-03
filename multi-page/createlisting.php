@@ -77,7 +77,7 @@
                             </div>
 
                             
-                            <button @click="makeoffer()">Create listing</button>
+                            <button @click="makeoffer()" class="text-black">Create listing</button>
 
                         </div>
                     </div>

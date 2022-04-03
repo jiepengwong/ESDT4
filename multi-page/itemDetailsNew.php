@@ -161,6 +161,10 @@
 
               window.location.href = "cataloguenew.php";
             }
+
+            else{
+              alert("You offer has not been placed, please try again later...")
+            }
           } 
         }
 
