@@ -23,7 +23,7 @@ CORS(app)
 # Make sure the following microservices are running:
 # profile.py        # load profile.sql data
 # item.js           # node installed + MongoDB database
-# error.py          # AMQP routing_key = 'error.*'
+# error_new.py          # AMQP routing_key = 'error.*'
 # twilio_notifs.py  # AMQP routing_key = 'notify.*' 
 
 profile_URL =  "http://localhost:5000/profile/" # requires :user_id
@@ -119,7 +119,7 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
         exchange=amqp_setup.exchangename, 
         routing_key="error.offer", 
         body=message, 
-        properties=pika.BasicProperties(delivery_mode = 2) # message is persistent within the matching queues until received by error.py 
+        properties=pika.BasicProperties(delivery_mode = 2) # message is persistent within the matching queues until received by error_new.py 
         ) 
         
         print("\nOffer failure ({:d}) published to the RabbitMQ Exchange:".format(code), offer_result)
