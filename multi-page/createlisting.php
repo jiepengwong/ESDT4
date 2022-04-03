@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Offers</title>
+    <title>Create Listing</title>
+    <!-- External CSS for navbar -->
+    <link rel="stylesheet" href="style.css">
     <!--bootstrap css-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
     <!--axios-->
@@ -24,11 +26,18 @@
         <!-- Navbar goes here -->
         <navbar></navbar>
         <!-- Header -->
-        <header class="masthead bg-success p-5">
-            <div class="container position-relative">
+        <section class="masthead p-5">
+            <div class="container-fluid position-relative">
                 <div class="row justify-content-center">
-                    <div class="col-xl-6">
-                        <div class="text-center text-white">
+
+                    <div class="col text-center">
+                        <img src="asset/lemon.jpg" class="img-fluid">
+                    </div>
+
+                    <div class="col">
+
+                    <div class="col">
+                        <div class="text-center">
                             <!-- Page heading-->
                             <h1 class="mb-5">List your items here.</h1>
                             <div class="mb-3">
@@ -72,10 +81,12 @@
 
                         </div>
                     </div>
+                        
+                    </div>
                 </div>
             </div>
     </div>
-    </header>
+</section>
 
     </div>
 </body>
