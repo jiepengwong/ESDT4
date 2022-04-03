@@ -17,71 +17,50 @@
         onreadystatechange="if (this.readyState === 'complete') this.onload()">
     </script>
     <meta name="google-signin-client_id" content="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com">
+    <style>
+        body {
+            background: linear-gradient(90deg, rgba(0,36,4,0.8298669809720763) 0%, rgba(9,121,46,1) 48%, rgba(0,255,170,1) 100%);
+        }
+        .labels {
+            font-size: 11px
+        }
+    </style>
 </head>
 <body>
     <div id="app">
         <!-- This is where the NAVBAR IS!! ############## -->
         <navbar></navbar>
         <!-- This is where the NAVBAR ENDS!! ############## -->
-
+        
         <!--THIS IS WHERE ThE PROFILE IS..################  -->
-        <div class="bg-light rounded-3 m-2">
-            <div class="fw-light fs-6" style="color:grey; text-align:center">User information</div>
-            
-            <!-- 1st Row -->
-            <!-- {{name}} {{email}} {{mobile}} {{ratings}} -->
-            
-            <div class="row m-2">
-                <div class="col-sm-6">
-                    <label for="username" class="form-label" >ID</label>
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control" id="username" aria-describedby="basic-addon3" v-bind:value="id" readonly>
+        <div class="container rounded bg-white mt-5 mb-5">
+            <div class="row">
+                <div class="col-md-5 border-right">
+                    <div class="d-flex flex-column align-items-center text-center p-3 py-5">
+                        <img class="rounded-circle img-fluid mt-5" src="./asset/profile.jpg">
+                        <span class="font-weight-bold">{{name}}</span><span class="text-black-50">{{email}}</span><span> </span></div>
+                </div>
+                <div class="col-md-7 border-right">
+                    <div class="p-3 py-5">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="text-right">Profile Information</h4>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-md-12"><label class="labels">Id Number</label><input type="text" class="form-control" v-bind:value="id" disabled></div>
+                            <div class="col-md-12"><label class="labels">Your Name</label><input type="text" class="form-control" v-bind:value="name" disabled></div>
+                            <div class="col-md-12"><label class="labels">Email</label><input type="text" class="form-control"  v-bind:value="email" disabled></div>
+                            <div class="col-md-12"><label class="labels">Ratings</label><input type="text" class="form-control" v-bind:value="ratings" disabled></div>
+                            <div class="col-md-12"><label class="labels">Mobile Number</label><input type="text" class="form-control" v-bind:value="mobile" disabled></div>
+                            <div class="col-md-12"><a href="./Insertmobile.php">Update my Mobile Number</a></div>
+                            
+                        </div>
                     </div>
                 </div>
+                
             </div>
-
-
-            <div class="row m-2">
-                <div class="col-sm-6">
-                    <label for="username" class="form-label" >Name</label>
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control" id="username" aria-describedby="basic-addon3" v-bind:value="name" readonly>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 2nd Row  -->
-            <div class="row m-2 mb-4">
-                <div class="col-sm-6">
-                    <label for="birthday" class="form-label">Email</label>
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control" id="birthday" aria-describedby="basic-addon3" v-bind:value="email" readonly>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 3rd Row -->
-            <div class="row m-2 mb-4">
-                <div class="col-sm-6">
-                    <label for="birthday" class="form-label">Ratings</label>
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control" id="birthday" aria-describedby="basic-addon3" v-bind:value="ratings" readonly>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 4th Row -->
-            <div class="row m-2 mb-4">
-                <div class="col-sm-6">
-                    <label for="birthday" class="form-label">Number</label>
-                    <div class="input-group mb-3">
-                        <span class="input-group-text" id="basic-addon3">+65</span>
-                        <input type="text" class="form-control" id="birthday" aria-describedby="basic-addon3" v-bind:value="mobile" readonly>
-                    </div>
-                </div>
-                <a href="./Insertmobile.php">Update my contact information</a>
-            </div>
-
+        </div>
+        </div>
         </div>
     </div>
 </body>
