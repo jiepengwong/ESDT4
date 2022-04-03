@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Offers</title>
+    <title>Create Listing</title>
+    <!-- External CSS for navbar -->
+    <link rel="stylesheet" href="style.css">
     <!--bootstrap css-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
     <!--axios-->
@@ -24,11 +26,18 @@
         <!-- Navbar goes here -->
         <navbar></navbar>
         <!-- Header -->
-        <header class="masthead bg-success p-5">
-            <div class="container position-relative">
+        <section class="masthead p-5">
+            <div class="container-fluid position-relative">
                 <div class="row justify-content-center">
-                    <div class="col-xl-6">
-                        <div class="text-center text-white">
+
+                    <div class="col text-center">
+                        <img src="asset/lemon.jpg" class="img-fluid">
+                    </div>
+
+                    <div class="col">
+
+                    <div class="col">
+                        <div class="text-center">
                             <!-- Page heading-->
                             <h1 class="mb-5">List your items here.</h1>
                             <div class="mb-3">
@@ -72,10 +81,12 @@
 
                         </div>
                     </div>
+                        
+                    </div>
                 </div>
             </div>
     </div>
-    </header>
+</section>
 
     </div>
 </body>
@@ -90,7 +101,8 @@
                 description: "",
                 selectedCategory: "",
                 datetime: "",
-                pickupLocation: ""
+                pickupLocation: "",
+                localStorageData: localStorage.id
                 
                 
             };
@@ -109,44 +121,46 @@
                 }, 
 
             async makeoffer(){
+                // Items to send to the create_offer complex
                 payload = {
                     item_name: this.itemname,
                     description: this.description,
                     category: this.selectedCategory,
                     datetime: this.datetime,
-                    location: this.pickupLocation
+                    location: this.pickupLocation,
+                    user_id: this.localStorageData
                 }
                 // Date time format 
                 // "2022-03-17T13:05"
                 console.log(payload);
                 // Usage of fetch API
                 // Options for fetch API
-                url = "www.google.com/forcreatelistingcomplex"
-                options = {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                }
-                const result = await fetch(url, options );
+                // url = "www.google.com/forcreatelistingcomplex"
+                // options = {
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json'
+                //     },
+                //     body: JSON.stringify(payload)
+                // }
+                // const result = await fetch(url, options );
 
-                const data = await result.json();
+                // const data = await result.json();
 
-                try{
-                    if (result.ok){
-                        console.log(data);
-                        alert("Listing created successfully");
-                    }
-                    else{
-                        console.log(data);
-                        alert("Listing creation failed");
-                    }
+                // try{
+                //     if (result.ok){
+                //         console.log(data);
+                //         alert("Listing created successfully");
+                //     }
+                //     else{
+                //         console.log(data);
+                //         alert("Listing creation failed");
+                //     }
 
-                }
-                catch{
+                // }
+                // catch{
 
-                }
+                // }
                 
             }
 
@@ -160,48 +174,49 @@
 
     });
 
-    app.component("navbar",{
-            template: template1,
-            data() {
-                return{
-                    links: links1,
-                    isSignedIn: localStorage.getItem("id"),
-                }
-
-            },
-
-            methods:{
-                
-                signOut() {
-                    let gapi = window.gapi;
-                    let clientId ="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com";
-                    let apiKey ="AIzaSyC0WtHoYqLnGKgaqLWX6RGkiL0X2C7dll8";
-                    let secretClientId = "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";
-                    let discoveryDocs =["https://www.googleapis.com/discovery/v1/apis/oauth2/v2/rest"];
-                    let scope ="https://www.googleapis.com/auth/userinfo.profile";
-
-                    gapi.load("client:auth2", () => {
-                        gapi.client.init({
-                            apiKey,
-                            clientId,
-                            discoveryDocs,
-                            scope,
-                            secretClientId,})
-
-                            .then(() => {
-                                var GoogleAuthObj = gapi.auth2.getAuthInstance();
-                                this.GoogleAuth = GoogleAuthObj.signOut();
-                                this.isSignedIn = false;
-                            })
-                    })
-                    
-                    localStorage.removeItem("login")
-                    localStorage.removeItem("id")
-                    alert("You have been logged out!")
-                    location.reload()
-        },
+app.component("navbar",{
+        template: template1,
+        data() {
+            return{
+                links: links1,
+                isSignedIn: localStorage.getItem("id"),
             }
-        })
+
+        },
+
+        methods:{
+            
+            signOut() {
+                let gapi = window.gapi;
+                let clientId ="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com";
+                let apiKey ="AIzaSyC0WtHoYqLnGKgaqLWX6RGkiL0X2C7dll8";
+                let secretClientId = "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";
+                let discoveryDocs =["https://www.googleapis.com/discovery/v1/apis/oauth2/v2/rest"];
+                let scope ="https://www.googleapis.com/auth/userinfo.profile";
+
+                gapi.load("client:auth2", () => {
+                    gapi.client.init({
+                        apiKey,
+                        clientId,
+                        discoveryDocs,
+                        scope,
+                        secretClientId,})
+
+                        .then(() => {
+                            var GoogleAuthObj = gapi.auth2.getAuthInstance();
+                            this.GoogleAuth = GoogleAuthObj.signOut();
+                            this.isSignedIn = false;
+                        })
+                })
+                
+                localStorage.removeItem("login")
+                localStorage.removeItem("id")
+                alert("You have been logged out!")
+                location.reload()
+    },
+        }
+    })
+
 
     app.mount("#app");
 </script>

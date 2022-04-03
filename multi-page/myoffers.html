@@ -5,6 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Offers</title>
+    <!-- External CSS for navbar -->
+    <link rel="stylesheet" href="style.css">
     <!--bootstrap css-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
     <!--axios-->
@@ -137,7 +139,7 @@
                             </div>
                             <div class="modal-footer">
                               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                              <button type="button" class="btn btn-primary">Send Rating</button>
+                              <button type="button" class="btn btn-primary" @click="sendReview(result._id)">Send Rating</button>
                             </div>
                           </div>
                         </div>
@@ -176,18 +178,13 @@
     data() {
       return {
           filters: { "All Listings": "All", "Awaiting Reply": "pending", "Accepted Offer": "accepted", "Past Success Offers": "closed"},
-          localStorageData: localStorage.id, //this is from oauth, for now put some dummy data
+          localStorageData: localStorage.id, 
           results: [],
           headercategory: "All",
           unfilteredResult: '',
           filteredTabResults: [],
           picked: ""
       };
-    },
-
-    methods:{
-
-
     },
 
 
@@ -270,46 +267,90 @@
           // Edit the item status to rejected, we will just edit the item status directly, do we need to notify the buyer?
 
           const payload = {
-            buyer_id: null,
-            price: null,
-            item_status: "open"
+            item_id: itemid
           }
           
-          const url = `http://localhost:5001/items/${itemid}`;
+          // const url = `http://localhost:5001/items/${itemid}`;
 
-          const result = await fetch(url, {
-            method: 'PUT',
-            body: JSON.stringify(payload),
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          })
+          // const result = await fetch(url, {
+          //   method: 'PUT',
+          //   body: JSON.stringify(payload),
+          //   headers: {
+          //     'Content-Type': 'application/json'
+          //   }
+          // })
 
-          const response = await result.json();
+          // const response = await result.json();
 
-          try{
+          // try{
 
-            if (result.status === 200){
-              console.log(response)
-              console.log("Item status changed to open")
-              alert("Thank you for rejecting your offer, you will be redirected to the main page")
-              window.location.href= "cataloguenew.php"
-            }
-            else{
-              console.log("Item status not changed")
-            }
-          }
+          //   if (result.status === 200){
+          //     console.log(response)
+          //     console.log("Item status changed to open")
+          //     alert("Thank you for rejecting your offer, you will be redirected to the main page")
+          //     window.location.href= "cataloguenew.php"
+          //   }
+          //   else{
+          //     console.log("Item status not changed")
+          //   }
+          // }
 
-          catch(error){
+          // catch(error){
 
-            console.log(error)
+          //   console.log(error)
 
 
-          }
+          // }
 
 
           
   
+      },
+
+      async sendReview(itemid){
+
+        const payload = {
+          // user_id: this.localStorageData,
+          item_id: itemid,
+          rating: this.picked
+        }
+
+
+        console.log(payload)
+
+        // put the rating into the database
+        // const url = `http://localhost:5001/reviews`;
+
+        // const url = "www.google.com/leavereviewscomplex"
+        //         options = {
+        //             method: 'POST',
+        //             headers: {
+        //                 'Content-Type': 'application/json'
+        //             },
+        //             body: JSON.stringify(payload)
+        //         }
+        //         const result = await fetch(url, options);
+
+        //         const data = await result.json();
+
+        //         try{
+        //             if (result.ok){
+        //                 console.log(data);
+        //                 alert("Listing created successfully");
+        //             }
+        //             else{
+        //                 console.log(data);
+        //                 alert("Listing creation failed");
+        //             }
+
+        //         }
+        //         catch{
+
+        //         }
+
+
+
+        
       }
     },
 

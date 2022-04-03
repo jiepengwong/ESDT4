@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <header>
+        <a href="cataloguenew.php" class="logo"><h2>Henesys Market</h2></a>
+        <nav>
+            <ul class="nav__link">
+
+                <li v-for="link in links">
+                    <a class="hover-underline-animation" :href="link.link">
+                        {{link.name}}
+                    </a>
+                </li>
+                <!-- <li><a class="hover-underline-animation" href="">My Offers</a></li>
+                <li><a class="hover-underline-animation" href="">My Listings</a></li>
+                <li><a class="hover-underline-animation" href="">My Profile</a></li> -->
+
+            </ul>
+        </nav>
+        <a class="cta" href=""><button  id="sign" v-if="isSignedIn" @click="signOut()">Logout</button></a>
+        <a class="cta" href=""><button  v-if="!isSignedIn" @click="googleAuth()"><b>Login</b></button></a>
+
+    </header>
+    
+</body>
+</html>
+
+
+                                        <style>
+                                        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
+
+
+                                        *{
+                                            box-sizing:border-box;
+                                            margin:0;
+                                            padding:0;
+                                            
+                                        }
+
+                                        li,a,button{
+                                            font-family: "Montserrat", sans-serif;
+                                            font-size:1.2rem;
+                                            font-weight:200;
+                                            color: #edf0f1;
+                                            text-decoration: none;
+                                        }
+
+                                        header{
+                                            display: flex;
+                                            justify-content: space-between;
+                                            align-items: center;
+                                            padding: 30px 10%;
+                                            background: rgb(16, 146, 79)
+
+                                        }
+
+                                        .logo{
+                                            cursor: pointer;
+                                            margin-right: auto;
+                                            height: auto;
+                                            width: auto;
+                                            max-height: 72px;
+                                            max-width: 250px;
+                                            position: relative;
+
+
+                                        }
+
+
+                                        .nav__link{
+                                            list-style: none;
+                                        }
+
+                                        .nav__link li{
+                                            display: inline-block;
+                                            padding: 0px 20px;
+                                        }
+
+                                        .nav__link li a{
+                                            transition: all 0.3s ease-in-out;
+                                        }
+
+                                        .nav__link li a:hover{
+                                            color: rgb(252, 169, 14);
+                                            border-radius: 50px;
+
+                                        }
+
+                                        #sign {
+                                            margin-left: 20px;
+                                            padding: 9px 25px;
+                                            background-color: rgb(255, 136, 0);
+                                            border: none;
+                                            border-radius: 50px;
+                                            cursor: pointer;
+                                            transition: all 0.3s ease-in-out;
+
+
+                                        }
+
+                                        #sign:hover{
+                                            background-color: rgba(219, 12, 12, 0.8);
+
+                                        }
+
+                                        .hover-underline-animation {
+                                        display: inline-block;
+                                        position: relative;
+                                        color: white;
+                                        }
+
+                                        .hover-underline-animation:after {
+                                        content: '';
+                                        position: absolute;
+                                        width: 100%;
+                                        transform: scaleX(0);
+                                        height: 2px;
+                                        bottom: 0;
+                                        left: 0;
+                                        background-color: rgb(255, 136, 0);
+                                        transform-origin: bottom right;
+                                        transition: transform 0.25s ease-out;
+                                        }
+
+                                        .hover-underline-animation:hover:after {
+                                        transform: scaleX(1);
+                                        transform-origin: bottom left;
+                                        }
+                                            
+
+
+
+
+                                        </style>

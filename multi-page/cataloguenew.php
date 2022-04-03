@@ -5,27 +5,32 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <!-- Vue Application -->
-    <script src="https://unpkg.com/vue@3"></script>
-    <!--  Bootstrap -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-      crossorigin="anonymous"
-    />
-  </head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalogue</title>
+    <!-- External CSS for navbar -->
+    <link rel="stylesheet" href="style.css">
+    <!--bootstrap css-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <!--axios-->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!--Vue-->
+    <script src="https://unpkg.com/vue@next"></script>
+    <!-- Google Auth0 -->
+    <script async defer src="https://apis.google.com/js/api.js"
+        onload="this.onload=function(){};handleClientLoad()"
+        onreadystatechange="if (this.readyState === 'complete') this.onload()">
+    </script>
+    <meta name="google-signin-client_id" content="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com">
+</head>
   <body>
     <div id="app">
       <!-- Navbar goes here -->
       <navbar></navbar>
       <!-- Header -->
 
-      <header class="masthead bg-success p-5">
+      <section id="landing" class="p-5">
         <div class="container position-relative">
           <div class="row justify-content-center">
             <div class="col-xl-6">
@@ -46,17 +51,19 @@
                   </div>
                 </div>
 
-                <div class="row">
-                  <div v-for="category in categories" :key="category" class="col-sm-2">
-                    <button @click="filterPosts(category)" class="btn btn-success p-3" @click="filter">{{category}}</button>
-                   
-                  </div>
-                </div>
+
               </div>
             </div>
           </div>
         </div>
-      </header>
+
+        <div class="d-flex justify-content-center cataloguefilter">
+            <ul class="catalogue-li" v-for="category in categories"  :key="category" > 
+              <li><button @click="filterPosts(category)" class="catalogue-li" @click="filter">{{category}}</button></li>
+        </ul>
+        </div>
+
+      </section>
 
 
       <section id="listings">
@@ -114,7 +121,7 @@
 
 
     async mounted() {
-      this.loginStatus()
+      // this.checkLogin()
       // Fetching from NEW items microservice
       try{
           var getItemUrl = "http://localhost:5001/items"
@@ -145,10 +152,13 @@
     },
 
     methods:{
-      loginStatus() {
+      checkLogin() {
         // If the login variable is initalised, then we will redirect them to 
-        if (!localStorage.getItem("id")){
-            // redirect them to login page
+        if (localStorage.getItem("id")){
+          // redirect them to login page
+          // window.location.replace("/ESD_PROJECT/ESDT4/multi-page/catalogue.php");
+        }
+        else {
             window.location.replace("/ESD_PROJECT/ESDT4/multi-page/index.html");
         }
       },
@@ -178,6 +188,7 @@
       }
     }
   });
+  
   app.component("navbar",{
             template: template1,
             data() {
@@ -187,7 +198,9 @@
                 }
 
             },
+
             methods:{
+                
                 signOut() {
                     let gapi = window.gapi;
                     let clientId ="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com";
@@ -221,7 +234,74 @@
   app.mount("#app");
 </script>
 
-<style></style>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
+
+
+#landing{
+  background-image: url("asset/marketplacebg.jpg");
+  background: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url("asset/marketplacebg.jpg");
+
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  /* height: 100vh; */
+}
+
+
+.catalogue-li{
+    list-style: none;
+}
+
+.catalogue-li li{
+    display: flex;
+    /* padding: 0px 20px; */
+}
+
+.catalogue-li li a{
+    transition: all 0.3s ease-in-out;
+}
+
+.catalogue-li button{
+  box-sizing: border-box;
+  color: #1cc49d;
+    background-color: #1b2f31;
+    border-radius: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 2em; 
+    width: 7em;
+    /* font-size: large; */
+    /* font-weight: 600; */
+
+} 
+
+
+.catalogue-li button:hover{
+    box-sizing: border-box;
+    color: white;
+    background-color: #1b2f31;
+    border-radius: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 2em; 
+    width: 7em;
+    /* font-size: large; */
+    /* font-weight: 600; */
+
+} 
+.catalogue-li li a:hover{
+    color: rgb(252, 169, 14);
+    border-radius: 50px;
+
+}
+
+.cataloguefilter{
+  margin-top: 20px;
+}
+</style>
 
 <script
   src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
