@@ -98,7 +98,7 @@ def processCreateListing(listing):
     item_details['seller_id'] = user_id
     item_details['seller_mobile'] = mobile
     item_details['seller_name'] = name    
-    print("the following item details will be sent to item microservice:" + item_details)    # for debugging, to remove
+    print("the following item details will be sent to item microservice:" + f'{item_details}')    # for debugging, to remove
     
     print('\n\n-----Invoking item microservice to create new item listing-----')
     listing_results = invoke_http(create_item_URL, method='POST', json=item_details)

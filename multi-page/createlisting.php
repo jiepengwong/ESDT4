@@ -51,7 +51,7 @@
 
                                     <p>Select your category</p>
                                     <div class="form-check" v-for="category in categories">
-                                        <input v-model="selectedCategory" class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+                                        <input v-model="selectedCategory" class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" :value="category" checked>
                                         <label class="form-check-label" for="exampleRadios1">
                                             {{ category }}
                                         </label>
@@ -123,12 +123,15 @@
             async makeoffer(){
                 // Items to send to the create_offer complex
                 payload = {
-                    item_name: this.itemname,
-                    description: this.description,
-                    category: this.selectedCategory,
-                    date_time: this.datetime,
-                    location: this.pickupLocation,
-                    seller_id: this.localStorageData
+                    seller_id: this.localStorageData,
+                    item_details:{
+                        item_name: this.itemname,
+                        description: this.description,
+                        category: this.selectedCategory,
+                        date_time: this.datetime,
+                        location: this.pickupLocation,
+                    }
+                    
                 }
                 // Date time format 
                 // "2022-03-17T13:05"
@@ -143,7 +146,7 @@
                     },
                     body: JSON.stringify(payload)
                 }
-                const result = await fetch(url, options );
+                const result = await fetch(url, options);
 
                 const data = await result.json();
 

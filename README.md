@@ -22,6 +22,9 @@
 - pip install --user virtualenv
 - python -m virtualenv venv
 
+3. Others 
+
+
 
 ## Project Desc
 - Henesys Marketplace is a consumer-to-consumer platform for buying and selling food items that are near expiry. This reduces food waste and builds a “Kampong” spirit of sharing within the community. 
@@ -145,3 +148,9 @@ https://stackoverflow.com/questions/44194427/virtualenv-activate-does-not-work
 
 ## Librairies/Dependencies loaded for SellerView UI
 npm install --save axios sweetalert --> for sellerView UI
+
+
+pip install dnspython 
+**python -m pip install requests**
+
+**python -m pip install flask_cors**

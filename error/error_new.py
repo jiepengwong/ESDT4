@@ -43,6 +43,7 @@ def receiveError():
     channel.basic_consume(queue=queue_name, on_message_callback=callback, auto_ack=True)
     channel.start_consuming() 
 
+
 def callback(channel, method, properties, body): 
 
     print("\nReceived a error by " + __file__)
@@ -51,11 +52,10 @@ def callback(channel, method, properties, body):
     print() # print a new line feed
 
 
-@app.route("/notifs/<string:Notification_ID>") 
 def processErrors(Msg):
     print("Printing the error message:")
     try: 
-        # notifs = json.loads(Msg) 
+
         errors = Msg
         # print(notifs)
         print(errors)
@@ -77,14 +77,10 @@ def saveToDatabase(errorMsg):
 
     #need to edit the field for error
 
-    # one_error = {
-    #     "Notification_ID": errorMsg["Notification_ID"],
-    #     "Seller_ID": errorMsg["Seller_ID"],
-    #     "Buyer_ID": errorMsg["Buyer_ID"],
-    #     "Status":  errorMsg["Status"],
-    #     "Message": errorMsg["Message"],
-    #     "DateTimeSQL": datetime.today()
-    # }
+    one_error = {
+        "code": errorMsg["code"],
+        "Error": errorMsg["Error"]
+    }
 
     ##Insert "one notif' object directly into MongoDB via insert_one
     result = collection.insert_one(errorMsg)
