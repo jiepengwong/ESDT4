@@ -134,7 +134,7 @@
           body: JSON.stringify(requiredObjects)
         }
 
-        url = "http://localhost:5100/make_offer"
+        url = "http://localhost:5200/make_offer"
 
         const result = await fetch(url, option)
 

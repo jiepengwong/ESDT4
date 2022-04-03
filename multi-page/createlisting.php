@@ -126,9 +126,9 @@
                     item_name: this.itemname,
                     description: this.description,
                     category: this.selectedCategory,
-                    datetime: this.datetime,
+                    date_time: this.datetime,
                     location: this.pickupLocation,
-                    user_id: this.localStorageData
+                    seller_id: this.localStorageData
                 }
                 // Date time format 
                 // "2022-03-17T13:05"
