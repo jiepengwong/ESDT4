@@ -51,7 +51,7 @@
 
                                     <p>Select your category</p>
                                     <div class="form-check" v-for="category in categories">
-                                        <input v-model="selectedCategory" class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+                                        <input v-model="selectedCategory" class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" :value="category" checked>
                                         <label class="form-check-label" for="exampleRadios1">
                                             {{ category }}
                                         </label>
