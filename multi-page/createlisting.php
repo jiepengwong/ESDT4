@@ -135,32 +135,34 @@
                 console.log(payload);
                 // Usage of fetch API
                 // Options for fetch API
-                // url = "www.google.com/forcreatelistingcomplex"
-                // options = {
-                //     method: 'POST',
-                //     headers: {
-                //         'Content-Type': 'application/json'
-                //     },
-                //     body: JSON.stringify(payload)
-                // }
-                // const result = await fetch(url, options );
+                url = "http://localhost:5100/create_listing"
+                options = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                }
+                const result = await fetch(url, options );
 
-                // const data = await result.json();
+                const data = await result.json();
 
-                // try{
-                //     if (result.ok){
-                //         console.log(data);
-                //         alert("Listing created successfully");
-                //     }
-                //     else{
-                //         console.log(data);
-                //         alert("Listing creation failed");
-                //     }
+                try{
+                    if (result.ok){
+                        console.log(data);
+                        alert("Listing created successfully");
+                    }
+                    else{
+                        console.log(data);
+                        alert("Listing creation failed");
+                    }
 
-                // }
-                // catch{
+                }
+                catch(error){
 
-                // }
+                    console.log(error)
+
+                }
                 
             }
 
