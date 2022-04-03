@@ -225,7 +225,7 @@
                         // window.location.replace("/ESD_PROJECT/ESDT4/multi-page/catalogue.php");
                     }
                     else {
-                        window.location.replace("/ESD_PROJECT/ESDT4/multi-page/index.html");
+                        window.location.replace("./");
                     }
                 }, 
 
@@ -319,34 +319,32 @@
         console.log(payload)
 
         // put the rating into the database
-        // const url = `http://localhost:5001/reviews`;
+        const url = `http://localhost:5500/leave_rating`;
+                options = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                }
+                const result = await fetch(url, options);
 
-        // const url = "www.google.com/leavereviewscomplex"
-        //         options = {
-        //             method: 'POST',
-        //             headers: {
-        //                 'Content-Type': 'application/json'
-        //             },
-        //             body: JSON.stringify(payload)
-        //         }
-        //         const result = await fetch(url, options);
+                const data = await result.json();
 
-        //         const data = await result.json();
+                try{
+                    if (result.ok){
+                        console.log(data);
+                        alert("Listing created successfully");
+                    }
+                    else{
+                        console.log(data);
+                        alert("Listing creation failed");
+                    }
 
-        //         try{
-        //             if (result.ok){
-        //                 console.log(data);
-        //                 alert("Listing created successfully");
-        //             }
-        //             else{
-        //                 console.log(data);
-        //                 alert("Listing creation failed");
-        //             }
+                }
+                catch{
 
-        //         }
-        //         catch{
-
-        //         }
+                }
 
 
 

@@ -60,22 +60,6 @@
 
 </html>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <script>
   const app = Vue.createApp({
     data() {
@@ -87,12 +71,11 @@
       };
     },
 
-    methods: {
-
-    },
 
 
     async mounted() {
+      this.checkLogin()
+
       const queryString = window.location.search;
 
       if (queryString){
@@ -120,16 +103,21 @@
       else{
         // window.location.href="cataloguenew.php"
       }
-
-
       // Fetching from NEW items microservice, for a particular item.
-
-
-
-
     },
 
     methods: {
+      checkLogin() {
+                // If the login variable is initalised, then we will redirect them to 
+                if (localStorage.getItem("id")){
+                    // redirect them to login page
+                    // window.location.replace("/ESD_PROJECT/ESDT4/multi-page/catalogue.php");
+                }
+                else {
+                    window.location.replace("./");
+                }
+            },
+
       // Invoke the complex microservice here to make an offer
       async makeOffer() {
         console.log("help")
@@ -146,7 +134,7 @@
           body: JSON.stringify(requiredObjects)
         }
 
-        url = "http://localhost:5100/make_offer"
+        url = "http://localhost:5200/make_offer"
 
         const result = await fetch(url, option)
 
