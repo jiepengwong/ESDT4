@@ -22,13 +22,16 @@ CORS(app)
 # }
 
 # Make sure the following microservices are running:
+# profile.py        # load profile.sql data
+# item.js           # node installed + MongoDB database
+# error.py          # AMQP routing_key = 'error.*'
+# twilio_notifs.py  # AMQP routing_key = 'notify.*' 
+
 profile_URL =  "http://localhost:5000/profile/" # requires :user_id
 item_URL = "http://localhost:5001/items/" # requires :item_id
-notification_URL = "http://localhost:5002/twilio_notifs.py" # AMQP routing_key = 'notify.*' 
-error_URL = "http://localhost:5003/error" # AMQP routing_key = 'error.*'
 
 @app.route("/make_offer", methods=['POST']) # pass in offer details
-def make_offer(): # BUYER invokes this complex microservice, request = offer 
+def make_offer(): # BUYER invokes this complex microservice, request = {offer} 
     # First check if input format and data of the request are JSON
     if request.is_json:
         try:
@@ -68,10 +71,11 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
     profile_results = invoke_http(profile_URL + user_id, method="GET")
     name = profile_results['data']['name']
     mobile = profile_results['data']['mobile']
-    print("\nname:", profile_results['data']['name'])
-    print("\nmobile number:", profile_results['data']['mobile'])
+    print("\nRetrieved name:", profile_results['data']['name'])
+    print("\nRetrieved mobile:", profile_results['data']['mobile'])
 
     code = profile_results["code"]
+
 
     # 6. Return error if profile not retrieved
     if code not in range(200, 300):
@@ -82,17 +86,25 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
         }
 
 
-    # 3. Update item details (mobile, buyer_id) using PUT to add new offer details ['PUT']
+
+    # 3. Update item details (mobile, buyer_id) ['PUT']
         # Invoke the item microservice
         # a. Send offer_details (buyer_id, buyer_name, buyer_mobile, item_status)
         # b. Return offer_result / error
 
     item_id = offer['item_id']
     price = offer['price']
-    print('\n-----Invoking item microservice-----')
-    offer_details = { "buyer_id": user_id, "buyer_name": name, "buyer_mobile": mobile, "item_status": 'pending', "price": price}
+    print('\n-----Invoking item microservice to update offer details-----')
+    offer_details = { 
+        "buyer_id": user_id, 
+        "buyer_name": name, 
+        "buyer_mobile": mobile, 
+        "item_status": 'pending', 
+        "price": price
+        }
     offer_result = invoke_http(item_URL + item_id, method='PUT', json=offer_details)
-    print("\nitem updated with buyer information:", offer_details)
+    print("\nItem has been updated with buyer information:", offer_details)
+
 
 
     # 4. Check if the item update failed [AMQP]
@@ -103,17 +115,16 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
 
     if code not in range(200, 300):
         # Inform the error microservice 
-        print('\n\n-----Publishing the failed offer error message with routing_key= error.*-----')
+        print('\n\n-----Publishing the failed offer error message with routing_key= error.offer-----')
         amqp_setup.channel.basic_publish(
         exchange=amqp_setup.exchangename, 
         routing_key="error.offer", 
         body=message, 
-        properties=pika.BasicProperties(delivery_mode = 2)
+        properties=pika.BasicProperties(delivery_mode = 2) # message is persistent within the matching queues until received by error.py 
         ) 
-        # message is persistent within the matching queues until received by notification.py
-        # reply from the invocation is not used;
-        # continue even if this invocation fails        
+        
         print("\nOffer failure ({:d}) published to the RabbitMQ Exchange:".format(code), offer_result)
+
 
         # 6. Return error and end here
         return {
@@ -123,27 +134,33 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
         }
 
 
-    # Publish to notification only when there is no error in making offer 
+    # Publish to twilio_notifs only when there is no error in making offer 
+
     else: 
-        # 5. Send offer success to notification [AMQP]
+        # 5. Send offer success to twilio_notifs [AMQP]
             # a. Send the message and seller mobile number to the notification microservice to inform seller of offer (routing_key = 'notify.*' )
         
         seller_mobile = offer_result['Success']['seller_mobile']
+        item_name = offer_result['Success']['item_name']
+
         data = {
             "seller_mobile": seller_mobile,
-            "seller_message": "You have a new offer. Please check your 'Offers' page to accept or reject the offer" 
+            "seller_message": f"You have a new offer for '{item_name}'. Please check your listings under 'My Listings' in Henesys to accept or reject the offer." 
             }
+        
         message = json.dumps(data)
-        print('The following message is sent:' + message)
-        print('\n\n-----Publishing the successful order message with routing_key=notify.*-----')    
+        print('The following message will be sent:' + message)
+        print('\n\n-----Publishing the successful offer message with routing_key=notify.offer-----')    
         amqp_setup.channel.basic_publish(
         exchange=amqp_setup.exchangename, 
         routing_key="notify.offer", 
         body=message, 
-        properties=pika.BasicProperties(delivery_mode = 2) #TBC on persistence
+        properties=pika.BasicProperties(delivery_mode = 2) # message is persistent within the matching queues until received by twilio_notifs.py 
         )
+        
         print(message)
         print("\nOffer success ({:d}) published to the RabbitMQ Exchange:".format(code), offer_result)
+
 
 
     # 6. Return the updated offer (item) details if successful

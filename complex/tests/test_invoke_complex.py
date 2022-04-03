@@ -101,6 +101,30 @@ def processCreateListing(listing):
 
     # profile_details = json.loads(listing, object_hook=lambda d: SimpleNamespace(**d))
 
+
+    
+    # @app.route('/')
+    # def healthcheck():
+    #     return 'Accept Offer is up and running!';
+
+    #wt: tHE following is used for testing 
+
+    # @app.route('/test')
+    # def test():
+    #     one_notif = {
+    #         "Notification_ID": 12345,
+    #         "Seller_ID": "1",
+    #         "Buyer_ID": "1",
+    #         "Status": "1",
+    #         "Message": "I am ok",
+    #         "DateTimeSQL": 12345
+    #     }
+    #     amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="order.error", 
+    #     body=one_notif, properties=pika.BasicProperties(delivery_mode = 2)) 
+
+
+    ##TEtsing stops here 
+
 if __name__ == "__main__":
     print("This is flask " + os.path.basename(__file__) + " for placing an offer...")
     app.run(host="0.0.0.0", port=5100, debug=True) 

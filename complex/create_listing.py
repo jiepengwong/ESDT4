@@ -25,6 +25,10 @@ CORS(app)
 #     }
 # } 
 
+# Make sure the following microservices are running:
+# profile.py        # load profile.sql data
+# item.js           # node installed + MongoDB database
+
 profile_URL =  "http://localhost:5000/profile/" # requires /:id
 create_item_URL = "http://localhost:5001/createitem"
 
@@ -67,12 +71,13 @@ def processCreateListing(listing):
         # b. Return name, mobile  / error
 
     user_id = listing['seller_id']
-    print('\n\n-----Invoking profile microservice-----')
+    print('\n\n-----Invoking profile microservice to get profile information-----')
     profile_results = invoke_http(profile_URL + user_id, method="GET")
     name = profile_results['data']['name']
     mobile = profile_results['data']['mobile']
     print("\nname:", profile_results['data']['name'])
     print("\nmobile number:", profile_results['data']['mobile'])
+
 
     # 4. Return error if profile not retrieved
     code = profile_results['code']
@@ -84,6 +89,7 @@ def processCreateListing(listing):
         }
 
 
+
     # 3. Invoke the item microservice ['POST']
         # a. Send the item information (incl seller information)
         # b. Return newly created item / error
@@ -93,20 +99,22 @@ def processCreateListing(listing):
     item_details['seller_id'] = user_id
     item_details['seller_mobile'] = mobile
     item_details['seller_name'] = name    
-    # to remove
-    print("item details sent to item micro:" + item_details)
+    print("the following item details will be sent to item microservice:" + item_details)    # for debugging, to remove
     
-    listing_results = invoke_http(create_item_URL, method='POST')
+    print('\n\n-----Invoking item microservice to create new item listing-----')
+    listing_results = invoke_http(create_item_URL, method='POST', json=item_details)
 
 
     # 4. Return error if item not created
-    code = profile_results['code']
+    code = listing_results['code']
     if code not in range(200, 300):
         return {
             "code": 404,
             "data": {"listing_results": listing_results},
             "message": "Error while trying to create listing"
         }
+
+
 
     # 4. Return the newly created listing
     return {
