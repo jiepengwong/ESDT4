@@ -3,144 +3,157 @@ from flask_cors import CORS
 
 import os, sys
 
+import json
 import requests
 from invokes import invoke_http
+
+import amqp_setup
+import pika
+import json
 
 app = Flask(__name__)
 CORS(app)
 
+# input JSON:
+# reject = 
+# {
+#   "item_id": "XXXXXXXX" 
+# } 
 
-# import pika
-# import amqp_setup
+# Make sure the following microservices are running:
+# profile.py        # load profile.sql data
+# item.js           # node installed + MongoDB database
+# error.py          # AMQP routing_key = 'error.*'
+# twilio_notifs.py  # AMQP routing_key = 'notify.*' 
 
-# make sure the following microservices are running:
-# offer_URL = "http://localhost:5000/offer"
-item_URL = "http://localhost:5000/item" # need to change port for multiple URLs (?)
-# error_URL = "http://localhost:5004/error"
-# notificatio_URL = "http://localhost:5004/notification" # requires AMQP
-
-# @app.route('/')
-# def healthcheck():
-#     return 'Accept Offer is up and running!';
-
-#wt: tHE following is used for testing 
-
-# @app.route('/test')
-# def test():
-#     one_notif = {
-#         "Notification_ID": 12345,
-#         "Seller_ID": "1",
-#         "Buyer_ID": "1",
-#         "Status": "1",
-#         "Message": "I am ok",
-#         "DateTimeSQL": 12345
-#     }
-#     amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="order.error", 
-#     body=one_notif, properties=pika.BasicProperties(delivery_mode = 2)) 
+profile_URL =  "http://localhost:5000/profile/" # requires :user_id
+item_URL = "http://localhost:5001/items/" # requires :item_id
 
 
-##TEtsing stops here 
+@app.route("/reject_offer", methods=['POST'])
+def reject_offer(): # SELLER invokes this complex microservice to reject an offer, request = {reject} 
+    # Simple check of input format and data of the request are JSON
+    if request.is_json:
+        try:
+            rejected = request.get_json()
+            print("\nReceived rejected item in JSON:", rejected)
 
-# @app.route("/accept_offer", methods=['POST'])
-# def accept_offer(): # SELLER SIDE
-#     # Simple check of input format and data of the request are JSON
-#     if request.is_json:
-#         try:
-#             offer = request.get_json()
-#             print("\nReceived an offer in JSON:", offer)
+            # 1. Send rejected item info {reject}
+            result = processRejectOffer(rejected)
+            return jsonify(result), result["code"]
 
-#             # do the actual work
-#             # 1. Send offer info {offer details}
-#             result = processAcceptOffer(offer)
-#             return jsonify(result), result["code"]
+        except Exception as e:
+            # Unexpected error in code
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            ex_str = str(e) + " at " + str(exc_type) + ": " + fname + ": line " + str(exc_tb.tb_lineno)
+            print(ex_str)
 
-#         except Exception as e:
-#             # Unexpected error in code
-#             exc_type, exc_obj, exc_tb = sys.exc_info()
-#             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-#             ex_str = str(e) + " at " + str(exc_type) + ": " + fname + ": line " + str(exc_tb.tb_lineno)
-#             print(ex_str)
+            return jsonify({
+                "code": 500,
+                "message": "reject_offer.py internal error: " + ex_str
+            }), 500
 
-#             return jsonify({
-#                 "code": 500,
-#                 "message": "accept_offer.py internal error: " + ex_str
-#             }), 500
-
-#     # if reached here, not a JSON request.
-#     return jsonify({
-#         "code": 400,
-#         "message": "Invalid JSON input: " + str(request.get_data())
-#     }), 400
+    # if reached here, not a JSON request.
+    return jsonify({
+        "code": 400,
+        "message": "Invalid JSON input: " + str(request.get_data())
+    }), 400
 
 
-# def processAcceptOffer(offer):  # process the json input of /accept_offer (SELLER)
+def processRejectOffer(rejected):  # process the json input of /reject_offer
 
-#     # TBC on the logical flow
+    # 2.  Invoke the item microservice to get item details ['GET']
+    item_id = rejected['item_id']
+    print('\n-----Invoking item microservice to get item details-----')
+    item_result = invoke_http(item_URL + item_id)
 
-#     # 0. Get items based on offer (unless filtered once clicked)
-
-#     # 1. Send the accepted offer info {items} ?
-#     # Invoke the offer microservice
-#     # print('\n-----Invoking offer microservice-----')
-#     # offer_result = invoke_http(offer_URL, method='POST', json=offer)
-#     # print('offer_result:', offer_result)
-
-#     # 2. Record new offer (if we are doing an activity log microservice)
-#     # record the activity log anyway
-#     # print('\n\n-----Invoking activity_log microservice-----')
-#     # invoke_http(activity_log_URL, method="POST", json=offer_result)
-#     # print("\nOffer sent to activity log.\n")
-#     # - reply from the invocation is not used;
-#     # continue even if this invocation fails
-
-#     # 3. Check the offer result (AMQP?); if a failure, send it to the error microservice.
-#     # code = offer_result["code"]
-#     # if code not in range(200, 300):
-#         # Inform the error microservice
-#         # print('\n\n-----Invoking error microservice as offer fails-----')
-#         # invoke_http(error_URL, method="POST", json=offer_result)
-#         # - reply from the invocation is not used; 
-#         # continue even if this invocation fails
-#         # print("Offer status ({:d}) sent to the error microservice:".format(
-#         #     code), offer_result)
-
-#         # 7. Return error
-#         # return {
-#         #     "code": 500,
-#         #     "data": {"offer_result": offer_result},
-#         #     "message": "Offer creation failure sent for error handling."
-#         # }
-
-#     # 5.Check the offer result (AMQP?); if success/fail, Send this notification result to BUYER [make offer complex ms]
-#     # Invoke the notification microservice - need to check AMQP
-#     # print('\n\n-----Invoking notification microservice-----')
-#     # notification_result = invoke_http(
-#     #     notification_URL, method="POST", json=offer_result['data'])
-#     # print("notification_result:", notification_result, '\n')
+    # store item details for notification later
+    buyer_mobile = item_result['Success']['buyer_mobile']
+    price = item_result['Success']['price']
 
 
-#     # 7. Return created offer, notification of result
-#     # return {
-#     #     "code": 201,
-#     #     "data": {
-#     #         "offer_result": offer_result,
-#     #         "notification_result": notification_result
-#     #     }
-#     # }
-#     return {} # to remove
 
+    # 3.  Invoke the item microservice to update item_status ['PUT']
+    rejected_details = {
+        "item_status": 'open',
+        "buyer_id": None, # reset to null
+        "buyer_name": None,
+        "buyer_mobile": None,
+        "price": None
+        }
+    print('\n-----Invoking item microservice to update item status-----')
+    reject_result = invoke_http(item_URL + item_id, method='PUT', json=rejected_details)
+    print('\nItem details has been reset to remove buyer offer. Item status changed back to open:', reject_result)
+
+
+
+    # 4. Check if the reject of item has failed [AMQP]
+        # a. Send the error to the error microservice to log this failure (routing_key = 'error.reject')
+
+    code = reject_result["code"]
+    message = json.dumps(reject_result)
+
+    if code not in range(200, 300):
+        # Inform the error microservice 
+        print('\n\n-----Publishing the failed reject offer error message with routing_key= error.reject-----')
+        amqp_setup.channel.basic_publish(
+        exchange=amqp_setup.exchangename, 
+        routing_key="error.reject", 
+        body=message, 
+        properties=pika.BasicProperties(delivery_mode = 2)
+        ) 
+        # message is persistent within the matching queues until received by notification.py        
+        print("\n Item reject failure ({:d}) published to the RabbitMQ Exchange:".format(code), reject_result)
+
+        # 6. Return error and end here
+        return {
+            "code": 500,
+            "data": {"reject_result": reject_result},
+            "message": "reject offer failure is sent for error handling."
+        }
+
+
+    # Publish to twilio_notifs only when there is no error in rejecting offer 
+
+    else: 
+        # 5. Send reject offer success to twilio_notifs [AMQP]
+            # a. Send the message and buyer mobile number to the notification microservice to inform buyer of rejected offer (routing_key = 'notify.reject')
+        
+        seller_name = reject_result['Success']['seller_name']
+        item_name = reject_result['Success']['item_name']
+        
+        data = {
+            "mobile": buyer_mobile,
+            "message": f"Your offer for '{item_name}' has been rejected by {seller_name}. Your previous offer was ${price}. Please make another offer for the item if it is still available." # item is placed back to catalogue
+            }
+        
+        message = json.dumps(data)
+        print('The following message will be sent:' + message)
+        print('\n\n-----Publishing the successful rejected offer message with routing_key=notify.reject-----')    
+        amqp_setup.channel.basic_publish(
+        exchange=amqp_setup.exchangename, 
+        routing_key="notify.reject", 
+        body=message, 
+        properties=pika.BasicProperties(delivery_mode = 2) # message is persistent within the matching queues until received by twilio_notifs.py 
+        )
+        
+        print(message)
+        print("\nOffer rejectance ({:d}) published to the RabbitMQ Exchange:".format(code), reject_result)
+
+
+
+    # 6. Return the details of rejected offer if successful
+    return {
+        "code": 201,
+        "data": {
+            f"Offer for {item_name} has sucessfully been rejected": reject_result, # confirmation for seller
+        }
+    }
 
 
 # Execute this program if it is run as a main script (not by 'import')
 if __name__ == "__main__":
-    print("This is flask " + os.path.basename(__file__) + " for placing an offer...")
-    app.run(host="0.0.0.0", port=5100, debug=True)
+    print("This is flask " + os.path.basename(__file__) + " for placing an rejected...")
+    app.run(host="0.0.0.0", port=5400, debug=True)
     
-    # Notes for the parameters:
-    # - debug=True will reload the program automatically if a change is detected;
-    #   -- it in fact starts two instances of the same flask program,
-    #       and uses one of the instances to monitor the program changes;
-    # - host="0.0.0.0" allows the flask program to accept requests sent from any IP/host (in addition to localhost),
-    #   -- i.e., it gives permissions to hosts with any IP to access the flask program,
-    #   -- as long as the hosts can already reach the machine running the flask program along the network;
-    #   -- it doesn't mean to use http://0.0.0.0 to access the flask program.

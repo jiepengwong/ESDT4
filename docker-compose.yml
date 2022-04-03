@@ -91,7 +91,7 @@ services:
     restart: always
     environment:
       dbURI: mongodb+srv://esdt4:esdt4@nodejstutoriallearning.xssjk.mongodb.net/itemdb?retryWrites=true&w=majority
-      # PYTHONUNBUFFERED: 1
+      # PYTHONUNBUFFERED: 1]
 
   ###################################
   #profile microservice: The Item microservice
