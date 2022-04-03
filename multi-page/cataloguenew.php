@@ -157,6 +157,12 @@
         if (localStorage.getItem("id")){
           // redirect them to login page
           // window.location.replace("/ESD_PROJECT/ESDT4/multi-page/catalogue.php");
+          var jsondata = JSON.parse(localStorage.login)
+          var mobile = jsondata['mobile']
+          console.log(mobile)
+          if (mobile == "" || mobile == "0" || mobile == 0) {
+            window.location.replace("./Insertmobile.php");
+          }
         }
         else {
             window.location.replace("./");
