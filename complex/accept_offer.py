@@ -6,141 +6,133 @@ import os, sys
 import requests
 from invokes import invoke_http
 
+import amqp_setup
+import pika
+import json
+
 app = Flask(__name__)
 CORS(app)
 
+# input JSON:
+# accept = 
+# {
+#   "item_id": "XXXXXXXX" 
+# } 
 
-# import pika
-# import amqp_setup
+# Make sure the following microservices are running:
+# profile.py        # load profile.sql data
+# item.js           # node installed + MongoDB database
+# error.py          # AMQP routing_key = 'error.*'
+# twilio_notifs.py  # AMQP routing_key = 'notify.*' 
 
-# make sure the following microservices are running:
-# offer_URL = "http://localhost:5000/offer"
-item_URL = "http://localhost:5000/item" # need to change port for multiple URLs (?)
-# error_URL = "http://localhost:5004/error"
-# notificatio_URL = "http://localhost:5004/notification" # requires AMQP
-
-# @app.route('/')
-# def healthcheck():
-#     return 'Accept Offer is up and running!';
-
-#wt: tHE following is used for testing 
-
-# @app.route('/test')
-# def test():
-#     one_notif = {
-#         "Notification_ID": 12345,
-#         "Seller_ID": "1",
-#         "Buyer_ID": "1",
-#         "Status": "1",
-#         "Message": "I am ok",
-#         "DateTimeSQL": 12345
-#     }
-#     amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="order.error", 
-#     body=one_notif, properties=pika.BasicProperties(delivery_mode = 2)) 
+profile_URL =  "http://localhost:5000/profile/" # requires :user_id
+item_URL = "http://localhost:5001/items/" # requires :item_id
 
 
-##TEtsing stops here 
+@app.route("/accept_offer", methods=['POST'])
+def accept_offer(): # SELLER invokes this complex microservice to accept an offer, request = {accept} 
+    # Simple check of input format and data of the request are JSON
+    if request.is_json:
+        try:
+            accepted = request.get_json()
+            print("\nReceived accepted item in JSON:", accepted)
 
-# @app.route("/accept_offer", methods=['POST'])
-# def accept_offer(): # SELLER SIDE
-#     # Simple check of input format and data of the request are JSON
-#     if request.is_json:
-#         try:
-#             offer = request.get_json()
-#             print("\nReceived an offer in JSON:", offer)
+            # 1. Send accepted item info {accept}
+            result = processAcceptOffer(accepted)
+            return jsonify(result), result["code"]
 
-#             # do the actual work
-#             # 1. Send offer info {offer details}
-#             result = processAcceptOffer(offer)
-#             return jsonify(result), result["code"]
+        except Exception as e:
+            # Unexpected error in code
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            ex_str = str(e) + " at " + str(exc_type) + ": " + fname + ": line " + str(exc_tb.tb_lineno)
+            print(ex_str)
 
-#         except Exception as e:
-#             # Unexpected error in code
-#             exc_type, exc_obj, exc_tb = sys.exc_info()
-#             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-#             ex_str = str(e) + " at " + str(exc_type) + ": " + fname + ": line " + str(exc_tb.tb_lineno)
-#             print(ex_str)
+            return jsonify({
+                "code": 500,
+                "message": "accept_offer.py internal error: " + ex_str
+            }), 500
 
-#             return jsonify({
-#                 "code": 500,
-#                 "message": "accept_offer.py internal error: " + ex_str
-#             }), 500
-
-#     # if reached here, not a JSON request.
-#     return jsonify({
-#         "code": 400,
-#         "message": "Invalid JSON input: " + str(request.get_data())
-#     }), 400
+    # if reached here, not a JSON request.
+    return jsonify({
+        "code": 400,
+        "message": "Invalid JSON input: " + str(request.get_data())
+    }), 400
 
 
-# def processAcceptOffer(offer):  # process the json input of /accept_offer (SELLER)
+def processAcceptOffer(accepted):  # process the json input of /accept_offer
 
-#     # TBC on the logical flow
+    # 2.  Invoke the item microservice to update item_status ['PUT']
+    item_id = accepted['item_id']
+    print('\n-----Invoking item microservice to update item status-----')
+    accepted_details = {"item_status": 'accepted'}
+    accept_result = invoke_http(item_URL + item_id, method='PUT', json=accepted_details)
+    print('\nItem status has been successfully updated to accepted:', accept_result)
 
-#     # 0. Get items based on offer (unless filtered once clicked)
+    # 3. Check if acceptance of item failed [AMQP]
+        # a. Send the error to the error microservice to log this failure (routing_key = 'error.*' )
 
-#     # 1. Send the accepted offer info {items} ?
-#     # Invoke the offer microservice
-#     # print('\n-----Invoking offer microservice-----')
-#     # offer_result = invoke_http(offer_URL, method='POST', json=offer)
-#     # print('offer_result:', offer_result)
+    code = accept_result["code"]
+    message = json.dumps(accept_result)
 
-#     # 2. Record new offer (if we are doing an activity log microservice)
-#     # record the activity log anyway
-#     # print('\n\n-----Invoking activity_log microservice-----')
-#     # invoke_http(activity_log_URL, method="POST", json=offer_result)
-#     # print("\nOffer sent to activity log.\n")
-#     # - reply from the invocation is not used;
-#     # continue even if this invocation fails
+    if code not in range(200, 300):
+        # Inform the error microservice 
+        print('\n\n-----Publishing the failed accept offer error message with routing_key= error.accept-----')
+        amqp_setup.channel.basic_publish(
+        exchange=amqp_setup.exchangename, 
+        routing_key="error.accept", 
+        body=message, 
+        properties=pika.BasicProperties(delivery_mode = 2)
+        ) 
+        # message is persistent within the matching queues until received by notification.py        
+        print("\n Item accept failure ({:d}) published to the RabbitMQ Exchange:".format(code), accept_result)
 
-#     # 3. Check the offer result (AMQP?); if a failure, send it to the error microservice.
-#     # code = offer_result["code"]
-#     # if code not in range(200, 300):
-#         # Inform the error microservice
-#         # print('\n\n-----Invoking error microservice as offer fails-----')
-#         # invoke_http(error_URL, method="POST", json=offer_result)
-#         # - reply from the invocation is not used; 
-#         # continue even if this invocation fails
-#         # print("Offer status ({:d}) sent to the error microservice:".format(
-#         #     code), offer_result)
+        # 5. Return error and end here
+        return {
+            "code": 500,
+            "data": {"accept_result": accept_result},
+            "message": "Accept offer failure is sent for error handling."
+        }
 
-#         # 7. Return error
-#         # return {
-#         #     "code": 500,
-#         #     "data": {"offer_result": offer_result},
-#         #     "message": "Offer creation failure sent for error handling."
-#         # }
+    # Publish to twilio_notifs only when there is no error in accepting offer 
+    else: 
+        # 4. Send accept offer success to twilio_notifs [AMQP]
+            # a. Send the message and buyer mobile number to the notification microservice to inform seller of accepted offer (routing_key = 'notify.*' )
+        
+        buyer_mobile = accept_result['Success']['buyer_mobile']
+        seller_name = accept_result['Success']['seller_name']
+        item_name = accept_result['Success']['item_name']
+        
+        data = {
+            "mobile": buyer_mobile,
+            "message": f"Your offer for '{item_name}' has been accepted by {seller_name}. Please check your offers under 'My Offers' page in Henesys to view the confirmed details." # collection date, time, location, price will be displayed there
+            }
+        
+        message = json.dumps(data)
+        print('The following message will be sent:' + message)   # for debugging, to remove
+        print('\n\n-----Publishing the successful accepted offer message with routing_key=notify.accept-----')    
+        amqp_setup.channel.basic_publish(
+        exchange=amqp_setup.exchangename, 
+        routing_key="notify.accept", 
+        body=message, 
+        properties=pika.BasicProperties(delivery_mode = 2) # message is persistent within the matching queues until received by twilio_notifs.py 
+        )
+        
+        print(message)
+        print("\nOffer acceptance ({:d}) published to the RabbitMQ Exchange:".format(code), accept_result)
 
-#     # 5.Check the offer result (AMQP?); if success/fail, Send this notification result to BUYER [make offer complex ms]
-#     # Invoke the notification microservice - need to check AMQP
-#     # print('\n\n-----Invoking notification microservice-----')
-#     # notification_result = invoke_http(
-#     #     notification_URL, method="POST", json=offer_result['data'])
-#     # print("notification_result:", notification_result, '\n')
 
-
-#     # 7. Return created offer, notification of result
-#     # return {
-#     #     "code": 201,
-#     #     "data": {
-#     #         "offer_result": offer_result,
-#     #         "notification_result": notification_result
-#     #     }
-#     # }
-#     return {} # to remove
-
+    # 5. Return the details of accepted offer if successful
+    return {
+        "code": 201,
+        "data": {
+            f"Offer for {item_name} has sucessfully been accepted": accept_result, # confirmation for seller
+        }
+    }
 
 
 # Execute this program if it is run as a main script (not by 'import')
 if __name__ == "__main__":
-    print("This is flask " + os.path.basename(__file__) + " for placing an offer...")
-    app.run(host="0.0.0.0", port=5100, debug=True)
-    
-    # Notes for the parameters:
-    # - debug=True will reload the program automatically if a change is detected;
-    #   -- it in fact starts two instances of the same flask program,
-    #       and uses one of the instances to monitor the program changes;
-    # - host="0.0.0.0" allows the flask program to accept requests sent from any IP/host (in addition to localhost),
-    #   -- i.e., it gives permissions to hosts with any IP to access the flask program,
-    #   -- as long as the hosts can already reach the machine running the flask program along the network;
-    #   -- it doesn't mean to use http://0.0.0.0 to access the flask program.
+    print("This is flask " + os.path.basename(__file__) + " for placing an accepted...")
+    app.run(host="0.0.0.0", port=5300, debug=True)
+

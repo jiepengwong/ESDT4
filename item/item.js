@@ -174,10 +174,10 @@ app.get("/items/myoffers/buyer/:buyer_id",(req,res) =>{
 
 })
 
-// UI side to include (My-listings (For Open Status), Outstanding offers (For Pending status), Awaiting for payment (For Closed Status), Completed (For Paid Status))
+// UI side to include 
 // We get all the items from seller_id and display them.
 // Method: [GET] offers made by a particular buyer
-// This would include  (Open, Pending, Paid)
+// This would include  (Open, Pending, Accepted, Closed)
 // URL: /items/myoffers/:buyer_id
 
 
