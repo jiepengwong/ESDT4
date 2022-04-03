@@ -7,6 +7,8 @@
     <title>My Profile</title>
     <!-- External CSS for navbar -->
     <link rel="stylesheet" href="style.css">
+    <!-- External CSS for navbar -->
+    <link rel="stylesheet" href="style.css">
     <!--bootstrap css-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
     <!--axios-->
@@ -21,7 +23,7 @@
     <meta name="google-signin-client_id" content="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com">
     <style>
         body {
-            background: linear-gradient(90deg, rgba(0,36,4,0.8298669809720763) 0%, rgba(9,121,46,1) 48%, rgba(0,255,170,1) 100%);
+            background-color: lightgreen;
         }
         .labels {
             font-size: 11px
@@ -128,11 +130,11 @@
                 // If the login variable is initalised, then we will redirect them to 
                 if (localStorage.getItem("id")){
                     // redirect them to login page
-                    // window.location.replace("/ESD_PROJECT/ESDT4/multi-page/catalogue.php");
+                    // window.location.replace("./catalogue.php");
                 }
                 else {
                     console.log("i need to route")
-                    window.location.replace("/ESD_PROJECT/ESDT4/multi-page/index.html");
+                    window.location.replace("./multi-page/index.html");
 
                 }
             },
