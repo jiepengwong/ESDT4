@@ -31,7 +31,7 @@ item_URL = "http://localhost:5001/items/" # requires :item_id
 
 
 @app.route("/reject_offer", methods=['POST'])
-def reject_offer(): # BUYER invokes this complex microservice, request = {reject} 
+def reject_offer(): # SELLER invokes this complex microservice to reject an offer, request = {reject} 
     # Simple check of input format and data of the request are JSON
     if request.is_json:
         try:
@@ -63,8 +63,7 @@ def reject_offer(): # BUYER invokes this complex microservice, request = {reject
 
 def processRejectOffer(rejected):  # process the json input of /reject_offer
 
-
-    #2.  Invoke the item microservice to get item details ['GET']
+    # 2.  Invoke the item microservice to get item details ['GET']
     item_id = rejected['item_id']
     print('\n-----Invoking item microservice to get item details-----')
     item_result = invoke_http(item_URL + item_id)
@@ -75,7 +74,7 @@ def processRejectOffer(rejected):  # process the json input of /reject_offer
 
 
 
-    #3.  Invoke the item microservice to update item_status ['PUT']
+    # 3.  Invoke the item microservice to update item_status ['PUT']
     rejected_details = {
         "item_status": 'open',
         "buyer_id": None, # reset to null

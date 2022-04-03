@@ -33,7 +33,7 @@ profile_URL =  "http://localhost:5000/profile/" # requires /:id
 create_item_URL = "http://localhost:5001/createitem"
 
 @app.route("/create_listing", methods=['POST'])
-def create_listing():
+def create_listing(): # SELLER invokes this complex to create a new item lising, request = {listing}
     # Check if input format and data of the request are in JSON format
     if request.is_json:
         try:

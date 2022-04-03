@@ -31,7 +31,7 @@ item_URL = "http://localhost:5001/items/" # requires :item_id
 
 
 @app.route("/accept_offer", methods=['POST'])
-def accept_offer(): # BUYER invokes this complex microservice, request = {accept} 
+def accept_offer(): # SELLER invokes this complex microservice to accept an offer, request = {accept} 
     # Simple check of input format and data of the request are JSON
     if request.is_json:
         try:
@@ -63,7 +63,7 @@ def accept_offer(): # BUYER invokes this complex microservice, request = {accept
 
 def processAcceptOffer(accepted):  # process the json input of /accept_offer
 
-    #2.  Invoke the item microservice to update item_status ['PUT']
+    # 2.  Invoke the item microservice to update item_status ['PUT']
     item_id = accepted['item_id']
     print('\n-----Invoking item microservice to update item status-----')
     accepted_details = {"item_status": 'accepted'}
