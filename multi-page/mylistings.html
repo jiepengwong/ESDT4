@@ -196,7 +196,7 @@
 
           try {
 
-            const result = await fetch(url, option)
+            const result = await fetch(url, options)
             const response = await result.json()
             
           if (result.ok) {
@@ -241,7 +241,7 @@
 
 
         try {
-          const result = await fetch(url, option)
+          const result = await fetch(url, options)
           const response = await result.json()
           if (result.ok) {
             console.log(response)
