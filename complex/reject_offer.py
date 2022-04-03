@@ -124,8 +124,8 @@ def processRejectOffer(rejected):  # process the json input of /reject_offer
         item_name = reject_result['Success']['item_name']
         
         data = {
-            "buyer_mobile": buyer_mobile,
-            "buyer_message": f"Your offer for '{item_name}' has been rejected by {seller_name}. Your previous offer was ${price}. Please make another offer for the item if it is still available." # item is placed back to catalogue
+            "mobile": buyer_mobile,
+            "message": f"Your offer for '{item_name}' has been rejected by {seller_name}. Your previous offer was ${price}. Please make another offer for the item if it is still available." # item is placed back to catalogue
             }
         
         message = json.dumps(data)
@@ -155,5 +155,5 @@ def processRejectOffer(rejected):  # process the json input of /reject_offer
 # Execute this program if it is run as a main script (not by 'import')
 if __name__ == "__main__":
     print("This is flask " + os.path.basename(__file__) + " for placing an rejected...")
-    app.run(host="0.0.0.0", port=5100, debug=True)
+    app.run(host="0.0.0.0", port=5400, debug=True)
     

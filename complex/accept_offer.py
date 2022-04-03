@@ -3,7 +3,6 @@ from flask_cors import CORS
 
 import os, sys
 
-import json
 import requests
 from invokes import invoke_http
 
@@ -105,8 +104,8 @@ def processAcceptOffer(accepted):  # process the json input of /accept_offer
         item_name = accept_result['Success']['item_name']
         
         data = {
-            "buyer_mobile": buyer_mobile,
-            "buyer_message": f"Your offer for '{item_name}' has been accepted by {seller_name}. Please check your offers under 'My Offers' page in Henesys to view the confirmed details." # collection date, time, location, price will be displayed there
+            "mobile": buyer_mobile,
+            "message": f"Your offer for '{item_name}' has been accepted by {seller_name}. Please check your offers under 'My Offers' page in Henesys to view the confirmed details." # collection date, time, location, price will be displayed there
             }
         
         message = json.dumps(data)
@@ -135,5 +134,5 @@ def processAcceptOffer(accepted):  # process the json input of /accept_offer
 # Execute this program if it is run as a main script (not by 'import')
 if __name__ == "__main__":
     print("This is flask " + os.path.basename(__file__) + " for placing an accepted...")
-    app.run(host="0.0.0.0", port=5100, debug=True)
+    app.run(host="0.0.0.0", port=5300, debug=True)
 

@@ -123,7 +123,13 @@ def processCreateListing(listing):
     #     body=one_notif, properties=pika.BasicProperties(delivery_mode = 2)) 
 
 
-    ##TEtsing stops here 
+    """A simple wrapper for requests methods.
+       url: the url of the http service;
+       method: the http method;
+       data: the JSON input when needed by the http method;
+       return: the JSON reply content from the http service if the call succeeds;
+            otherwise, return a JSON object with a "code" name-value pair.
+    """
 
 if __name__ == "__main__":
     print("This is flask " + os.path.basename(__file__) + " for placing an offer...")

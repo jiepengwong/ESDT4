@@ -7,7 +7,6 @@ import requests
 from invokes import invoke_http
 
 import json
-from types import SimpleNamespace
 
 app = Flask(__name__)
 CORS(app)

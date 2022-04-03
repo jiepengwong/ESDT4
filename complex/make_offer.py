@@ -2,7 +2,6 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 import os, sys
-import json
 import requests
 from invokes import invoke_http
 
@@ -144,8 +143,8 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
         item_name = offer_result['Success']['item_name']
 
         data = {
-            "seller_mobile": seller_mobile,
-            "seller_message": f"You have a new offer for '{item_name}'. Please check your listings under 'My Listings' in Henesys to accept or reject the offer." 
+            "mobile": seller_mobile,
+            "message": f"You have a new offer for '{item_name}'. Please check your listings under 'My Listings' in Henesys to accept or reject the offer." 
             }
         
         message = json.dumps(data)
@@ -174,4 +173,4 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
 # Execute this program if it is run as a main script and not by 'import'
 if __name__ == "__main__":
     print("This is flask " + os.path.basename(__file__) + " for making an offer...")
-    app.run(host="0.0.0.0", port=5100, debug=True) 
+    app.run(host="0.0.0.0", port=5200, debug=True) 

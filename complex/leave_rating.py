@@ -7,10 +7,6 @@ import json
 import requests
 from invokes import invoke_http
 
-import amqp_setup
-import pika
-import json
-
 app = Flask(__name__)
 CORS(app)
 
@@ -94,4 +90,4 @@ def processLeaveRating(rate):  # process the json input of /leave_rating
 
 if __name__ == "__main__":
     print("This is flask " + os.path.basename(__file__) + " for placing an offer...")
-    app.run(host="0.0.0.0", port=5100, debug=True) 
+    app.run(host="0.0.0.0", port=5500, debug=True) 
