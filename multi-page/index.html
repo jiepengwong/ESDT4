@@ -20,7 +20,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
         body {
-            background: linear-gradient(90deg, rgba(0,36,4,0.8298669809720763) 0%, rgba(9,121,46,1) 48%, rgba(0,255,170,1) 100%);
+            background-color: lightgreen;
         }
         * {
             margin: 0;
@@ -161,7 +161,7 @@
                         <p class="mb-1 h-1">Login to Henesys Marketplace.</p>
                         <p class="text-muted mb-2">Buy. Sell. In our Marketplace.</p>
                         <div class="d-flex flex-column ">
-                            <p class="text-muted mb-2">Continue with...</p>
+                            <p class="text-muted mb-2">Continue with:</p>
                             <div class="d-flex align-items-center">
                                 <button @click="googleAuthtry()" type="button" class="btn btn-success btn-floating mx-1" >
                                     Google
@@ -173,7 +173,7 @@
                         </div>
                     </div>
                     <div class="mt-auto">
-                        <p class="footer text-muted mb-0 mt-md-0 mt-4">By register you agree with our <span class="p-color me-1">terms and conditions</span>and <span class="p-color ms-1">privacy policy</span> </p>
+                        <p class="footer text-muted mb-0 mt-md-0 mt-4">By registering, you will agree with our <span class="p-color me-1">terms and conditions</span>and <span class="p-color ms-1">privacy policy</span> </p>
                     </div>
                 </div>
             </div>
@@ -213,7 +213,7 @@
         // If the login variable is initalised, then we will redirect them to 
         if (localStorage.getItem("id")){
             // redirect them to login page
-            window.location.replace("/ESD_PROJECT/ESDT4/multi-page/cataloguenew.php");
+            window.location.replace("./cataloguenew.php");
         }
     }
 
