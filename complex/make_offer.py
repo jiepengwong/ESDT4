@@ -23,7 +23,7 @@ CORS(app)
 # Make sure the following microservices are running:
 # profile.py        # load profile.sql data
 # item.js           # node installed + MongoDB database
-# error.py          # AMQP routing_key = 'error.*'
+# error_new.py          # AMQP routing_key = 'error.*'
 # twilio_notifs.py  # AMQP routing_key = 'notify.*' 
 
 profile_URL =  "http://localhost:5000/profile/" # requires :user_id
@@ -103,6 +103,8 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
         }
     offer_result = invoke_http(item_URL + item_id, method='PUT', json=offer_details)
     print("\nItem has been updated with buyer information:", offer_details)
+    print("\nOffer result:", offer_result)
+
 
 
 
@@ -112,6 +114,9 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
     code = offer_result["code"]
     message = json.dumps(offer_result)
 
+    print('This is the message to error')
+    print(type(message))
+
     if code not in range(200, 300):
         # Inform the error microservice 
         print('\n\n-----Publishing the failed offer error message with routing_key= error.offer-----')
@@ -119,7 +124,7 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
         exchange=amqp_setup.exchangename, 
         routing_key="error.offer", 
         body=message, 
-        properties=pika.BasicProperties(delivery_mode = 2) # message is persistent within the matching queues until received by error.py 
+        properties=pika.BasicProperties(delivery_mode = 2) # message is persistent within the matching queues until received by error_new.py 
         ) 
         
         print("\nOffer failure ({:d}) published to the RabbitMQ Exchange:".format(code), offer_result)
@@ -143,13 +148,16 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
         item_name = offer_result['Success']['item_name']
 
         data = {
-            "mobile": seller_mobile,
-            "message": f"You have a new offer for '{item_name}'. Please check your listings under 'My Listings' in Henesys to accept or reject the offer." 
+            'mobile': seller_mobile,
+            'message': f"You have a new offer for '{item_name}'. Please check your listings under 'My Listings' in Henesys to accept or reject the offer." 
             }
         
         message = json.dumps(data)
+        print('This is the message to notif')
+        print(type(message))
+
         print('The following message will be sent:' + message)
-        print('\n\n-----Publishing the successful offer message with routing_key=notify.offer-----')    
+        print('\n\n-----Publishing the successful offer message with routing_key=notify.offer-----')  
         amqp_setup.channel.basic_publish(
         exchange=amqp_setup.exchangename, 
         routing_key="notify.offer", 

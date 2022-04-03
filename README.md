@@ -148,3 +148,9 @@ https://stackoverflow.com/questions/44194427/virtualenv-activate-does-not-work
 
 ## Librairies/Dependencies loaded for SellerView UI
 npm install --save axios sweetalert --> for sellerView UI
+
+
+pip install dnspython 
+**python -m pip install requests**
+
+**python -m pip install flask_cors**
