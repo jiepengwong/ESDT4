@@ -90,7 +90,8 @@
                 description: "",
                 selectedCategory: "",
                 datetime: "",
-                pickupLocation: ""
+                pickupLocation: "",
+                localStorageData: localStorage.id
                 
                 
             };
@@ -109,44 +110,46 @@
                 }, 
 
             async makeoffer(){
+                // Items to send to the create_offer complex
                 payload = {
                     item_name: this.itemname,
                     description: this.description,
                     category: this.selectedCategory,
                     datetime: this.datetime,
-                    location: this.pickupLocation
+                    location: this.pickupLocation,
+                    user_id: this.localStorageData
                 }
                 // Date time format 
                 // "2022-03-17T13:05"
                 console.log(payload);
                 // Usage of fetch API
                 // Options for fetch API
-                url = "www.google.com/forcreatelistingcomplex"
-                options = {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                }
-                const result = await fetch(url, options );
+                // url = "www.google.com/forcreatelistingcomplex"
+                // options = {
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json'
+                //     },
+                //     body: JSON.stringify(payload)
+                // }
+                // const result = await fetch(url, options );
 
-                const data = await result.json();
+                // const data = await result.json();
 
-                try{
-                    if (result.ok){
-                        console.log(data);
-                        alert("Listing created successfully");
-                    }
-                    else{
-                        console.log(data);
-                        alert("Listing creation failed");
-                    }
+                // try{
+                //     if (result.ok){
+                //         console.log(data);
+                //         alert("Listing created successfully");
+                //     }
+                //     else{
+                //         console.log(data);
+                //         alert("Listing creation failed");
+                //     }
 
-                }
-                catch{
+                // }
+                // catch{
 
-                }
+                // }
                 
             }
 

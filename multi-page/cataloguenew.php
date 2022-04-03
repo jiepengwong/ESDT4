@@ -29,7 +29,7 @@
       <navbar></navbar>
       <!-- Header -->
 
-      <header class="masthead bg-success p-5">
+      <section id="landing" class="p-5">
         <div class="container position-relative">
           <div class="row justify-content-center">
             <div class="col-xl-6">
@@ -50,17 +50,19 @@
                   </div>
                 </div>
 
-                <div class="row">
-                  <div v-for="category in categories" :key="category" class="col-sm-2">
-                    <button @click="filterPosts(category)" class="btn btn-success p-3" @click="filter">{{category}}</button>
-                   
-                  </div>
-                </div>
+
               </div>
             </div>
           </div>
         </div>
-      </header>
+
+        <div class="d-flex justify-content-center cataloguefilter">
+            <ul class="catalogue-li" v-for="category in categories"  :key="category" > 
+              <li><button @click="filterPosts(category)" class="catalogue-li" @click="filter">{{category}}</button></li>
+        </ul>
+        </div>
+
+      </section>
 
 
       <section id="listings">
@@ -118,7 +120,7 @@
 
 
     async mounted() {
-      this.checkLogin()
+      // this.checkLogin()
       // Fetching from NEW items microservice
       try{
           var getItemUrl = "http://localhost:5001/items"
@@ -231,7 +233,74 @@
   app.mount("#app");
 </script>
 
-<style></style>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
+
+
+#landing{
+  background-image: url("asset/marketplacebg.jpg");
+  background: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url("asset/marketplacebg.jpg");
+
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  /* height: 100vh; */
+}
+
+
+.catalogue-li{
+    list-style: none;
+}
+
+.catalogue-li li{
+    display: flex;
+    /* padding: 0px 20px; */
+}
+
+.catalogue-li li a{
+    transition: all 0.3s ease-in-out;
+}
+
+.catalogue-li button{
+  box-sizing: border-box;
+  color: #1cc49d;
+    background-color: #1b2f31;
+    border-radius: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 2em; 
+    width: 7em;
+    /* font-size: large; */
+    /* font-weight: 600; */
+
+} 
+
+
+.catalogue-li button:hover{
+    box-sizing: border-box;
+    color: white;
+    background-color: #1b2f31;
+    border-radius: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 2em; 
+    width: 7em;
+    /* font-size: large; */
+    /* font-weight: 600; */
+
+} 
+.catalogue-li li a:hover{
+    color: rgb(252, 169, 14);
+    border-radius: 50px;
+
+}
+
+.cataloguefilter{
+  margin-top: 20px;
+}
+</style>
 
 <script
   src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
