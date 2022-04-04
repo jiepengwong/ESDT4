@@ -19,119 +19,75 @@
         onreadystatechange="if (this.readyState === 'complete') this.onload()">
     </script>
     <meta name="google-signin-client_id" content="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com">
-    <link rel="stylesheet" href="./createlisting.css">
-    <link rel="icon" href="./asset/HenesysSmallLogo.png">
-
-
 </head>
 
-<style>
-    body {background-color: rgb(239, 239, 239);}
-</style>
 <body>
     <div id="app">
         <!-- Navbar goes here -->
         <navbar></navbar>
         <!-- Header -->
-        <section class="timeline_area section_padding_130 mt-5 mb-5">
-            <div class="container">
+        <section class="masthead p-5">
+            <div class="container-fluid position-relative">
                 <div class="row justify-content-center">
-                    <div class="col-12 col-sm-8 col-lg-6">
-                        <!-- Section Heading-->
-                        <div class="section_heading text-center">
+
+                    <div class="col text-center">
+                        <img src="asset/lemon.jpg" class="img-fluid">
+                    </div>
+
+                    <div class="col">
+
+                    <div class="col">
+                        <div class="text-center">
+                            <!-- Page heading-->
+                            <h1 class="mb-5">List your items here.</h1>
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <label for="description" class="form-label">Item Name</label>
+                                    <input  v-model="itemname" type="text" class="form-control" id="description">
+                                </div>
+
+
+                                <div class="mb-3">
+
+                                    <p>Select your category</p>
+                                    <div class="form-check" v-for="category in categories">
+                                        <input v-model="selectedCategory" class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" :value="category" checked>
+                                        <label class="form-check-label" for="exampleRadios1">
+                                            {{ category }}
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-check">
+                                    <label for="description" class="form-label">Description</label>
+                                    <input v-model="description" type="text" class="form-control" id="description">
+                                </div>
+
+                                <div class="form-check">
+                                    <label for="description" class="form-label">Pick Up Location</label>
+                                    <input v-model="pickupLocation" type="text" class="form-control" id="description">
+                                </div>
+
+                                <div class="form-check">
+                                    <label for="description" class="form-label">Select your date time</label>
+                                    <input v-model="datetime" type="datetime-local">
+                                </div>
+                                
+
+                            </div>
+
                             
-                            <h3>Create your listing.</h3>
-                            <div class="line"></div>
+                            <button @click="makeoffer()" class="text-black">Create listing</button>
+
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-12">
-                        <!-- Timeline Area-->
-                        <div class="apland-timeline-area">
-                            <!-- Single Timeline Content-->
-                            <div class="single-timeline-area">
-                                <div class="timeline-date wow fadeInLeft" data-wow-delay="0.1s" style="visibility: visible; animation-delay: 0.1s; animation-name: fadeInLeft;">
-                                    <p>Item Information</p>
-                                </div>
-                                <div class="row">
-                                    <div class="col-12 ">
-                                        <div class="single-timeline-content wow fadeInLeft" data-wow-delay="0.3s" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInLeft;">
-                                            <div class="timeline-icon"><i class="fa fa-address-card" aria-hidden="true"></i></div>
-                                            <div class="timeline-text">
-                                                <div class="">
-                                                    <label for="description" class="form-label d-flex">Item Name</label>
-                                                    <input  v-model="itemname" type="text" class="form-control" id="description">
-                                                </div>
-                                                <div class="">
-                                                    <label for="description" class="form-label">Description</label>
-                                                    <input v-model="description" type="text" class="form-control" id="description">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-
-                                </div>
-                            </div>
-                            <!-- Single Timeline Content-->
-                            <div class="single-timeline-area">
-                                <div class="timeline-date wow fadeInLeft" data-wow-delay="0.1s" style="visibility: visible; animation-delay: 0.1s; animation-name: fadeInLeft;">
-                                    <p>Item Category</p>
-                                </div>
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="single-timeline-content  wow fadeInLeft" data-wow-delay="0.3s" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInLeft;">
-                                            <div class="timeline-icon"><i class="fa fa-briefcase" aria-hidden="true"></i></div>
-                                            <div class="mb-3">
-
-                                                <p>Select your category</p>
-                                                <div class="form-check" v-for="category in categories">
-                                                    <input v-model="selectedCategory" class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
-                                                    <label class="form-check-label" for="exampleRadios1">
-                                                        {{ category }}
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                </div>
-                            </div>
-                            <!-- Single Timeline Content-->
-                            <div class="single-timeline-area">
-                                <div class="timeline-date wow fadeInLeft" data-wow-delay="0.1s" style="visibility: visible; animation-delay: 0.1s; animation-name: fadeInLeft;">
-                                    <p>Pick Up</p>
-                                </div>
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="single-timeline-content  wow fadeInLeft" data-wow-delay="0.3s" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInLeft;">
-                                            <div class="timeline-icon"><i class="fa fa-id-card" aria-hidden="true"></i></div>
-                                            <div class="timeline-text">
-                                                <div class="form-check">
-                                                    <label for="description" class="form-label">Pick Up Location</label>
-                                                    <input v-model="pickupLocation" type="text" class="form-control" id="description">
-                                                </div>
-                                                <hr>
-                                                <div class="form-check">
-                                                    <label for="description" class="form-label">Select your date time: </label>
-                                                    <div>
-                                                        <input v-model="datetime" type="datetime-local">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <button type="button" class="btn btn-success" @click="makeoffer()">Create Listing</button>
-                                    
-                                </div>
-                            </div>
-                        </div>
+                        
                     </div>
                 </div>
             </div>
-        </section>
-        <!-- Testing New page -->
+    </div>
+</section>
+
     </div>
 </body>
 
@@ -158,12 +114,6 @@
                     if (localStorage.getItem("id")){
                         // redirect them to login page
                         // window.location.replace("/ESD_PROJECT/ESDT4/multi-page/catalogue.php");
-                        var jsondata = JSON.parse(localStorage.login)
-                        var mobile = jsondata['mobile']
-                        console.log(mobile)
-                        if (mobile == "" || mobile == "0" || mobile == 0) {
-                            window.location.replace("./Insertmobile.php");
-                        }
                     }
                     else {
                         window.location.replace("./");
@@ -173,44 +123,49 @@
             async makeoffer(){
                 // Items to send to the create_offer complex
                 payload = {
-                    item_name: this.itemname,
-                    description: this.description,
-                    category: this.selectedCategory,
-                    datetime: this.datetime,
-                    location: this.pickupLocation,
-                    user_id: this.localStorageData
+                    seller_id: this.localStorageData,
+                    item_details:{
+                        item_name: this.itemname,
+                        description: this.description,
+                        category: this.selectedCategory,
+                        date_time: this.datetime,
+                        location: this.pickupLocation,
+                    }
+                    
                 }
                 // Date time format 
                 // "2022-03-17T13:05"
                 console.log(payload);
                 // Usage of fetch API
                 // Options for fetch API
-                // url = "www.google.com/forcreatelistingcomplex"
-                // options = {
-                //     method: 'POST',
-                //     headers: {
-                //         'Content-Type': 'application/json'
-                //     },
-                //     body: JSON.stringify(payload)
-                // }
-                // const result = await fetch(url, options );
+                url = "http://localhost:5100/create_listing"
+                options = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                }
+                const result = await fetch(url, options);
 
-                // const data = await result.json();
+                const data = await result.json();
 
-                // try{
-                //     if (result.ok){
-                //         console.log(data);
-                //         alert("Listing created successfully");
-                //     }
-                //     else{
-                //         console.log(data);
-                //         alert("Listing creation failed");
-                //     }
+                try{
+                    if (result.ok){
+                        console.log(data);
+                        alert("Listing created successfully");
+                    }
+                    else{
+                        console.log(data);
+                        alert("Listing creation failed, try again");
+                    }
 
-                // }
-                // catch{
+                }
+                catch(error){
 
-                // }
+                    console.log(error)
+
+                }
                 
             }
 

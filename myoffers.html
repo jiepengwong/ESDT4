@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Offers</title>
+    <!-- External CSS for navbar -->
+    <link rel="stylesheet" href="style.css">
+    <!--bootstrap css-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <!--axios-->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!--Vue-->
+    <script src="https://unpkg.com/vue@next"></script>
+    <!-- Google Auth0 -->
+    <script async defer src="https://apis.google.com/js/api.js"
+        onload="this.onload=function(){};handleClientLoad()"
+        onreadystatechange="if (this.readyState === 'complete') this.onload()">
+    </script>
+    <meta name="google-signin-client_id" content="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com">
+    <link rel="icon" href="./asset/HenesysSmallLogo.png">
+
+</head>
+<body>
+    <div id="app">
+        <!-- Navbar goes here -->
+        <navbar></navbar>
+        <!-- Header -->
+  
+        <header class="masthead bg-success p-5">
+          <div class="container position-relative">
+            <div class="row justify-content-center">
+              <div class="col-xl-6">
+                <div class="text-center text-white">
+                  <!-- Page heading-->
+                  <h1 class="mb-5">My Offers</h1>
+                  <div class="row justify-content-center">
+                    <div v-for="(value,key) in filters"  class="col-sm-2">
+
+                        <div class="d-flex">
+                            <button @click="filterListings(value)" class="btn btn-success p-3">{{key}}</button>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+  
+  
+        <section id="listings">
+  
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-12 m-4 ">
+                <!-- <h2 v-if="headercategory == 'All'">Offers (All)</h2>
+                <h2 v-if="headercategory == 'pending'" >Offers (Pending)</h2>
+                <h2 v-if="headercategory == 'accepted'" >Offers (Accepted)</h2>
+                <h2 v-if="headercategory == 'closed'" >Offers (Closed)</h2> -->
+                <h5 class="m-1">Filtered Results: {{results.length}}</h5>
+
+
+              </div>
+            </div>
+            <div class="row">
+     
+
+            <!-- <div class="col-md-3">
+              <div class="card-sl">
+                  <div class="card-heading">
+                      <h4>Audi Q8</h4>
+                  </div>
+                  <div class="card-text">
+                      Audi Q8 is a full-size luxury crossover SUV coupé made by Audi that was launched in 2018.
+                  </div>
+
+                  <hr/>
+
+                  <div class="card-text">
+                    <b>Location:</b> asd
+                </div>
+
+                <div class="card-text">
+                  <b>Time:</b> asd
+              </div>
+
+                  <div class="card-text">
+                    <b>Price:</b> $67,400
+                  </div>
+                  <button class="card-button-reject">Reject</button>
+                  <button v-if="result.item_status == 'accepted'" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        Leave Rating
+                      </button>
+              </div>
+
+            </div> -->
+            
+            <div v-for="result in results" :key="result" class="col-md-3">
+
+              <div  >
+                <div class="card-sl">
+                    <div class="card-heading">
+                        <h5 class="text-center">{{result.item_name}}</h5>
+                        <hr/>
+                    </div>
+                    <div class="card-text">
+                      "<i>{{result.description}}</i>"
+  
+                      <p class="mt-3">Seller Name: <b>{{result.seller_name}}</b></p>
+                      <div>
+                        <h5 class="text-success font-weight-bold" v-if="result.item_status == 'accepted'">Accepted</h6>
+                        <h5 class="text-warning font-weight-bold" v-if="result.item_status == 'pending'">Pending</h6>
+                        <h5 class="text-secondary font-weight-bold" v-if="result.item_status == 'closed'">Closed</h6>
+  
+                      </div>
+                    </div>
+  
+                    <hr/>
+  
+                    <div class="card-text">
+                      <b>Location: </b> {{result.location}}
+                  </div>
+  
+                  <div class="card-text">
+                    <b>Time: </b> {{result.date_time}}
+                </div>
+  
+                    <div v-if="result.price != null"class="card-text">
+                      <b>Price:</b> {{result.price}} SGD
+                    </div>
+                    <button v-if="result.item_status == 'pending'" @click="buyerReject(result._id)" class="card-button-reject">Remove</button>
+                    <button v-if="result.item_status == 'accepted'" type="button" class="card-button-accept" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                      Leave Rating
+                    </button>
+                </div>
+
+              </div>
+
+
+              <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">Ratings</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <p>Please leave your ratings for the seller: {{result.seller_name}}</p>
+  
+  
+                      <!-- <div class="stars">
+                        <a>⭐</a>
+                        <a>⭐</a>
+                        <a>⭐</a>
+                        <a>⭐</a>
+                        <a>⭐</a>
+                      </div> -->
+  
+                      <div class="ratings d-flex justify-content-around">
+                        <input class="form-check-input" type="radio" id="one" value="1" v-model="picked">
+                        <label class="form-check-label" for="one">1</label>
+  
+                        <input  class="form-check-input" type="radio" id="two" value="2" v-model="picked">
+                        <label class="form-check-label" for="two">2</label>
+  
+                        <input class="form-check-input" type="radio" id="three" value="3" v-model="picked">
+                        <label class="form-check-label" for="three">3</label>
+  
+                        <input class="form-check-input" type="radio" id="four" value="4" v-model="picked">
+                        <label class="form-check-label" for="four">4</label>
+  
+                        <input class="form-check-input" type="radio" id="five" value="5" v-model="picked">
+                        <label class="form-check-label" for="five">5</label>
+  
+                        <!-- {{picked}} -->
+                        
+                      </div>
+  
+  
+                      
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-primary" @click="sendReview(result._id)">Send Rating</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>                
+                
+                
+                <!-- Modal -->
+                <!-- ======================================================================================== -->
+                
+
+              
+
+
+  
+          </div>
+  
+  
+        </section>
+  
+  
+      </div>
+    
+</body>
+</html>
+
+
+<script src="./narbar.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script>
+    const app = Vue.createApp({
+    data() {
+      return {
+          filters: { "All Offers": "All", "Pending Offers": "pending", "Accepted Offers": "accepted", "Offers Reviewed": "closed"},
+          localStorageData: localStorage.id, 
+          results: [],
+          headercategory: "All",
+          unfilteredResult: '',
+          filteredTabResults: [],
+          picked: ""
+      };
+    },
+
+
+    async mounted() {
+      this.checkLogin();
+      // Fetching from NEW items microservice
+      try{
+        //   this.localStorageData = localStorage.getItem("user_id"); -> When it is actually implemented try this
+
+          var getItemUrl = `http://localhost:5001/items/myoffers/buyer/${this.localStorageData}`;
+          
+          var databaseitems = await fetch(getItemUrl)
+          const databaseitemsJson = await databaseitems.json()
+
+          if (databaseitems.status === 200){
+            console.log(databaseitemsJson)
+            // Get all the databases 
+            this.results = databaseitemsJson.Success;
+            this.unfilteredResult = databaseitemsJson.Success;
+            console.log(this.results)
+
+          }
+          else{
+            console.log("Database not connected")
+          }
+          }
+
+          catch(error) {
+            console.log(error)
+          }
+    },
+
+    methods:{
+      checkLogin() {
+                // If the login variable is initalised, then we will redirect them to 
+                    if (localStorage.getItem("id")){
+                        // redirect them to login page
+                        // window.location.replace("/ESD_PROJECT/ESDT4/multi-page/catalogue.php");
+                        var jsondata = JSON.parse(localStorage.login)
+                        var mobile = jsondata['mobile']
+                        console.log(mobile)
+                        if (mobile == "" || mobile == "0" || mobile == 0) {
+                            window.location.replace("./Insertmobile.php");
+                        }
+                    }
+                    else {
+                        window.location.replace("./");
+                    }
+                }, 
+
+      filterListings(categoryName){
+        console.log("hi")
+        this.resetPosts()
+        console.log(categoryName)
+        console.log(this.results)
+        if (categoryName !== "All"){
+          this.headercategory = categoryName
+          this.results = this.results.filter((result) => {
+            // console.log(result.Category)
+            return result.item_status === categoryName;
+          })
+        }
+
+        else{
+          this.headercategory = "All"
+        }
+
+
+
+      },
+
+      resetPosts(){
+        this.results = this.unfilteredResult
+      },
+
+      acceptOffer(itemid){
+
+        // Fetch post ID TO COMPLEX
+          console.log("hi")
+          console.log(itemid)
+
+      },
+
+      async buyerReject(itemid){
+          
+          // Edit the item status to rejected, we will just edit the item status directly, do we need to notify the buyer?
+
+          const payload = {
+            item_id: itemid
+          }
+          // TBC remove_offer
+          // const url = `http://localhost:5400/reject_offer`;
+
+          const option = {
+            method: 'POST',
+            body: JSON.stringify(payload),
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }
+
+          const result = await fetch(url, option)
+
+          const response = await result.json();
+
+          try{
+
+            if (result.status === 201 ){
+              console.log(response)
+              console.log("Item status changed to open")
+              alert("Thank you for removing your offer, you will be redirected to the main page")
+              window.location.href= "cataloguenew.php"
+            }
+            else{
+              console.log("Item status not changed")
+            }
+          }
+
+          catch(error){
+
+            console.log(error)
+
+
+          }
+
+
+          
+  
+      },
+
+      async sendReview(itemid){
+
+        const payload = {
+          // user_id: this.localStorageData,
+          item_id: itemid,
+          ratings: this.picked
+        }
+
+
+        console.log(payload)
+
+        // put the rating into the database
+        const url = `http://localhost:5500/leave_rating`;
+                options = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                }
+                const result = await fetch(url, options);
+
+                const data = await result.json();
+
+                try{
+                    if (result.ok){
+                        console.log(data);
+                        alert("Review has been sent and updated to the buyer! Thanks!");
+                    }
+                    else{
+                        console.log(data);
+                        alert("Review did not pull through, please try again");
+                    }
+
+                }
+                catch(error){
+                  console.log(error)
+
+                }
+
+
+
+        
+      }
+    },
+
+    computed:{
+    
+    }
+  });
+
+  app.component("navbar",{
+            template: template1,
+            data() {
+                return{
+                    links: links1,
+                    isSignedIn: localStorage.getItem("id"),
+                }
+
+            },
+
+            methods:{
+                
+                signOut() {
+                    let gapi = window.gapi;
+                    let clientId ="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com";
+                    let apiKey ="AIzaSyC0WtHoYqLnGKgaqLWX6RGkiL0X2C7dll8";
+                    let secretClientId = "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";
+                    let discoveryDocs =["https://www.googleapis.com/discovery/v1/apis/oauth2/v2/rest"];
+                    let scope ="https://www.googleapis.com/auth/userinfo.profile";
+
+                    gapi.load("client:auth2", () => {
+                        gapi.client.init({
+                            apiKey,
+                            clientId,
+                            discoveryDocs,
+                            scope,
+                            secretClientId,})
+
+                            .then(() => {
+                                var GoogleAuthObj = gapi.auth2.getAuthInstance();
+                                this.GoogleAuth = GoogleAuthObj.signOut();
+                                this.isSignedIn = false;
+                            })
+                    })
+                    
+                    localStorage.removeItem("login")
+                    localStorage.removeItem("id")
+                    alert("You have been logged out!")
+                    location.reload()
+        },
+            }
+        })
+
+  app.mount("#app");
+
+</script>
+
+
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
+
+  .stars{
+    display:flex
+  }
+  .stars a{
+    opacity:50%;
+    cursor: "pointer";
+    padding: 5px;
+  }
+
+  .stars:hover a{
+    opacity:100%;
+    
+    cursor: "pointer";
+
+    /* cursor: "pointer" */
+  }
+
+  .stars a:hover{
+    opacity:100%;
+    cursor: "pointer"
+  }
+
+  .stars a:hover ~ a{
+    opacity:50%;
+    cursor: "pointer"
+  }
+
+  .card-sl {
+        border-radius: 8px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        font-family: "Montserrat", sans-serif;
+    }
+
+    .card-image img {
+        max-height: 100%;
+        max-width: 100%;
+        border-radius: 8px 8px 0px 0;
+    }
+
+    .card-action {
+        position: relative;
+        float: right;
+        margin-top: -25px;
+        margin-right: 20px;
+        z-index: 2;
+        color: #E26D5C;
+        background: #fff;
+        border-radius: 100%;
+        padding: 15px;
+        font-size: 15px;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 1px 2px 0 rgba(0, 0, 0, 0.19);
+    }
+
+    .card-action:hover {
+        color: #fff;
+        background: #E26D5C;
+        -webkit-animation: pulse 1.5s infinite;
+    }
+
+    .card-heading {
+        font-size: 18px;
+        font-weight: bold;
+        background: #fff;
+        padding: 10px 15px;
+    }
+
+    .card-text {
+        padding: 10px 15px;
+        background: #fff;
+        font-size: 14px;
+        color: #636262;
+    }
+
+    .card-button-reject {
+        display: flex;
+        justify-content: center;
+        padding: 10px 0;
+        width: 100%;
+        background-color: #dc2323;
+        color: #fff;
+        border-radius: 0 0 8px 8px;
+        font: "Montserrat", sans-serif;
+    }
+
+    .card-button-reject:hover {
+        text-decoration: none;
+        background-color: #960303;
+        color: #fff;
+
+    }
+
+    .card-button-accept {
+        display: flex;
+        justify-content: center;
+        padding: 10px 0;
+        width: 100%;
+        background-color: #04b30d;
+        color: #fff;
+        border-radius: 0 0 8px 8px;
+        font: "Montserrat", sans-serif;
+    }
+
+    .card-button-accept:hover {
+        text-decoration: none;
+        background-color: #197901;
+        color: #fff;
+
+    }
+
+
+</style>
