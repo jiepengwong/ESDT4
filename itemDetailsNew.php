@@ -239,7 +239,7 @@
 
         var itemid = queryString.split("=")[1];
         try {
-          var getItemUrl = `http://item:5001/items/${itemid}`
+          var getItemUrl = `http://localhost:5001/items/${itemid}`
           var databaseitems = await fetch(getItemUrl)
           const databaseitemsJson = await databaseitems.json()
   
@@ -302,7 +302,7 @@
           body: JSON.stringify(requiredObjects)
         }
 
-        url = "http://make_offer:5200/make_offer"
+        url = "http://localhost:5200/make_offer"
 
         const result = await fetch(url, option)
 

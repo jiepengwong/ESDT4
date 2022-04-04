@@ -257,7 +257,7 @@
       try{
         //   this.localStorageData = localStorage.getItem("user_id"); -> When it is actually implemented try this
 
-          var getItemUrl = `http://item:5001/items/mylistings/seller/${this.localStorageData}`;
+          var getItemUrl = `http://localhost:5001/items/mylistings/seller/${this.localStorageData}`;
           
           var databaseitems = await fetch(getItemUrl)
           const databaseitemsJson = await databaseitems.json()
@@ -350,7 +350,7 @@
             item_id: itemid
           }
 
-          url = "http://accept_offer:5300/accept_offer"
+          url = "http://localhost:5300/accept_offer"
           const options = {
             method: 'POST',
             headers: {
@@ -393,7 +393,7 @@
             item_id: itemid
           }
         
-      const url = "http://reject_offer:5400/reject_offer"
+      const url = "http://localhost:5400/reject_offer"
       const options = {
                     method: 'POST',
                     headers: {
@@ -429,7 +429,7 @@
       removeListing(itemid){
                   console.log("hi")
                   console.log(itemid)
-                  var deleteItemUrl = `http://item:5001/items/delete/${itemid}`;
+                  var deleteItemUrl = `http://localhost:5001/items/delete/${itemid}`;
                   const options = {
                     method: 'DELETE',
                     headers: {

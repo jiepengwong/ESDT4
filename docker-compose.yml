@@ -69,10 +69,10 @@ services:
     environment:
       dbURI: mongodb+srv://esdt4:esdt4@nodejstutoriallearning.xssjk.mongodb.net/itemdb?retryWrites=true&w=majority
     ports:
-      - "5000:5000"
+      - "5001:5001"
 
   ###################################
-  #profile microservice: The Item microservice
+  #profile microservice: The Profile microservice
   ###################################
 
   profile:
@@ -82,10 +82,10 @@ services:
     image: tinggzster/profile:esd
     restart: always
     environment:
-      dbURL: mysql+mysqlconnector://root@host.docker.internal:3306/profile
+      dbURL: mysql+mysqlconnector://ESDT4@host.docker.internal:3306/profile
       PYTHONUNBUFFERED: 1
     ports:
-      - "5001:5001"
+      - "5000:5000"
 
   ###################################
   #Accept Offer: The Accept Offer complex microservice
