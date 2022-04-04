@@ -304,7 +304,10 @@
             if (response.code == 201){
               alert("Your offer has been made successfully, you will be redirected to the catalog page shortly...")
 
-              window.location.href = "cataloguenew.php";
+              window.location.href = "myoffers.html";
+            }
+            else{
+              alert("Your offer has not been made successfully, please try again later...")
             }
           } 
         }
