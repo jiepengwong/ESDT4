@@ -26,8 +26,8 @@ CORS(app)
 # error_new.py          # AMQP routing_key = 'error.*'
 # twilio_notifs.py  # AMQP routing_key = 'notify.*' 
 
-profile_URL =  "http://localhost:5000/profile/" # requires :user_id
-item_URL = "http://localhost:5001/items/" # requires :item_id
+profile_URL =  "http://profile:5000/profile/" # requires :user_id
+item_URL = "http://items:5001/items/" # requires :item_id
 
 @app.route("/make_offer", methods=['POST']) # pass in offer details
 def make_offer(): # BUYER invokes this complex microservice, request = {offer} 

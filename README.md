@@ -160,3 +160,7 @@ pip install dnspython
 
 **python -m pip install flask_cors**
 npm install -g nodemon
+
+
+
+docker-compose up

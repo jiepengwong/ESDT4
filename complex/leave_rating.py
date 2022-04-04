@@ -21,8 +21,8 @@ CORS(app)
 # profile.py        # load profile.sql data
 # item.js           # node installed + MongoDB database
 
-rate_profile_URL =  "http://localhost:5000/profile/ratings/" # requires :seller_id
-item_URL = "http://localhost:5001/items/" # requires :item_id
+rate_profile_URL =  "http://profile:5000/profile/ratings/" # requires :seller_id
+item_URL = "http://item:5001/items/" # requires :item_id
 
 @app.route("/leave_rating", methods=['POST'])
 def leave_rating(): # BUYER invokes this complex microservice to review seller of item, request = {rate} 

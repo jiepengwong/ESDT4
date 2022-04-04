@@ -28,8 +28,8 @@ CORS(app)
 # profile.py        # load profile.sql data
 # item.js           # node installed + MongoDB database
 
-profile_URL =  "http://localhost:5000/profile/" # requires /:id
-create_item_URL = "http://localhost:5001/createitem"
+profile_URL =  "http://profile:5000/profile/" # requires /:id
+create_item_URL = "http://item:5001/createitem"
 
 @app.route("/create_listing", methods=['POST'])
 def create_listing(): # SELLER invokes this complex to create a new item lising, request = {listing}
