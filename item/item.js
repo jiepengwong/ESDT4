@@ -256,35 +256,57 @@ app.put("/items/:id",(req,res) =>{
     // console.log(req.params.id);
 
     // Filter and update
-    Item.findByIdAndUpdate({ "_id": req.params.id},updateDetails, {new: true})  
-    
-    .then((result)=>{
+    Item.find({ "_id": req.params.id})
+    .then((result) =>{
+        // console.log(result);
+        // console.log(req.params.id)
         console.log(result)
+        console.log(result[0].seller_id)
+        console.log(updateDetails.buyer_id)
 
-        // Check if buyer_id == to seller_id (This is not possible)
-
-        if (result["buyer_id"] == result["seller_id"]){
+        if (result[0].seller_id == updateDetails.buyer_id){
             res.status(404).json({"code": 404,"Error": "Not updated, buyer_id cannot be the same as seller_id. TRY again"});
         }
-
         else{
-            for (value in updateDetails){
-                console.log(value)
-                // Check if update is successful here
-                if (result[value] != updateDetails[value]){
-                    console.log("Unsuccessful update")
-                    return res.status(404).json({"code": 404,"Error": "Not updated, check the data type of the parameters"});
+
+            Item.findByIdAndUpdate({ "_id": req.params.id}, updateDetails, {new: true})  
+            
+            .then((result)=>{
+                // console.log(result)
+        
+                // Check if buyer_id == to seller_id (This is not possible)
+        
+                if (result["buyer_id"] == result["seller_id"]){
+                    res.status(404).json({"code": 404,"Error": "Not updated, buyer_id cannot be the same as seller_id. TRY again"});
                 }
-            }
-
-            return res.status(200).json({"code": 200,"Success" : result});
+        
+                else{
+                    for (value in updateDetails){
+                        console.log(value)
+                        // Check if update is successful here
+                        if (result[value] != updateDetails[value]){
+                            console.log("Unsuccessful update")
+                            return res.status(404).json({"code": 404,"Error": "Not updated, check the data type of the parameters"});
+                        }
+                    }
+        
+                    return res.status(200).json({"code": 200,"Success" : result});
+                }
+        
+        
+        
+            })
+            .catch((err)=>{
+                res.status(404).json({"code": 404,"Error": `${err}`});
+            })
         }
-
-
+        // res.status(200).json({"code": 200,"Success" : result});
+        // Check if the item exists
+     
 
     })
-    .catch((err)=>{
-        res.status(404).json({"code": 404,"Error": `${err}`});
+    .catch((error) =>{
+        res.json({"code": 404,"Error": error}).status(404);
     })
 })
 
