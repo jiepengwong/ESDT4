@@ -25,7 +25,10 @@
 3. Others 
 - npm install -g nodemon
 
-
+## Twilio Configurations
+- Note: ESD G5 T2 would need to add your number into the twilio account first as a verified number in order for a notification to be received 
+- send 'join wood-fought' to the number: +14155238886 
+- the above service only last around 2-3 days hence it is best to send "join wood-fought" everytime Henesys Marketplace is run 
 
 
 ## Project Desc
