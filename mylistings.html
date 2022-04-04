@@ -100,6 +100,62 @@
               </div>
 
             </div> -->
+
+            <!-- <div v-if="headerCategory == 'All'">
+              <div>
+                <h5>Pending</h5>
+                <div v-for="(key,value) in AllFilters['open']">
+                  <div class="card-sl">
+                      <div class="card-heading">
+                          <h4>{{value.item_name}}</h4>
+                      </div>
+                      <div class="card-text">
+                          {{value.item_description}}
+                      </div>
+
+                      <hr/>
+
+                      <div class="card-text">
+                        <b>Location:</b> {{value.item_location}}
+                    </div>
+
+                    <div class="card-text">
+                      <b>Time:</b> {{value.item_time}}
+                  </div>
+
+                      <div class="card-text">
+                        <b>Price:</b> ${{value.item_price}}
+                      </div>
+                      <button class="card-button-reject">Reject</button>
+                      <button v-if="value.item_status == 'accepted'" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Leave Rating
+                          </button>
+                  </div>
+                </div>
+
+              </div>
+          
+
+
+              <div>
+                <h5>Open</h5>
+
+                
+              </div>
+
+              <div>
+                <h5>Accepted</h5>
+
+                
+              </div>
+
+              <div>
+                <h5>Closed</h5>
+              </div>
+            </div> -->
+
+                
+            
             
             <div v-for="result in results" :key="result" class="col-md-3">
 
@@ -182,7 +238,12 @@
           localStorageData: localStorage.id, //this is from oauth, for now put some dummy data
           results: [],
           unfilteredResult: '',
-          filteredTabResults: []
+          AllFilter:  {
+              "open": [],
+              "pending": [],
+              "accepted": [],
+              "closed": []
+            }
 
      
       };
@@ -204,6 +265,26 @@
             // Get all the databases 
             this.results = databaseitemsJson.Success;
             this.unfilteredResult = databaseitemsJson.Success;
+            // this.results = []
+
+            for (item of results){
+              if (item.item_status == 'open'){
+                this.AllFilter.open.push(item);
+              }
+              if (item.item_status == 'pending'){
+                this.AllFilter.pending.push(item);
+              }
+              if (item.item_status == 'accepted'){
+                this.AllFilter.accepted.push(item);
+              }
+              if (item.item_status == 'closed'){
+                this.AllFilter.closed.push(item);
+              }
+
+            }
+            
+            console.log(results)
+          
             console.log(this.results)
 
           }
