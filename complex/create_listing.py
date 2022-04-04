@@ -77,7 +77,6 @@ def processCreateListing(listing):
     print("\nname:", profile_results['data']['name'])
     print("\nmobile number:", profile_results['data']['mobile'])
 
-
     # 4. Return error if profile not retrieved
     code = profile_results['code']
     if code not in range(200, 300):
@@ -103,12 +102,11 @@ def processCreateListing(listing):
     print('\n\n-----Invoking item microservice to create new item listing-----')
     listing_results = invoke_http(create_item_URL, method='POST', json=item_details)
 
-
     # 4. Return error if item not created
     code = listing_results['code']
     if code not in range(200, 300):
         return {
-            "code": 404,
+            "code": 500,
             "data": {"listing_results": listing_results},
             "message": "Error while trying to create listing"
         }

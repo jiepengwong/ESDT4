@@ -75,7 +75,6 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
 
     code = profile_results["code"]
 
-
     # 6. Return error if profile not retrieved
     if code not in range(200, 300):
         return {
@@ -89,7 +88,7 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
     # 3. Update item details (mobile, buyer_id) ['PUT']
         # Invoke the item microservice
         # a. Send offer_details (buyer_id, buyer_name, buyer_mobile, item_status)
-        # b. Return offer_result / error
+        # b. Return offer_result / error - if error, send to error microservice in next step
 
     item_id = offer['item_id']
     price = offer['price']
@@ -107,15 +106,11 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
 
 
 
-
     # 4. Check if the item update failed [AMQP]
         # a. Send the error to the error microservice to log failure (routing_key = 'error.*' )
 
     code = offer_result["code"]
     message = json.dumps(offer_result)
-
-    print('This is the message to error')
-    print(type(message))
 
     if code not in range(200, 300):
         # Inform the error microservice 
@@ -129,7 +124,6 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
         ) 
         
         print("\nOffer failure ({:d}) published to the RabbitMQ Exchange:".format(code), offer_result)
-
 
         # 6. Return error and end here
         return {
@@ -154,10 +148,8 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
             }
         
         message = json.dumps(data)
-        print('This is the message to notif')
-        print(type(message))
 
-        print('The following message will be sent:' + message)
+        print('The following message will be sent to the user:' + message)
         print('\n\n-----Publishing the successful offer message with routing_key=notify.offer-----')  
         amqp_setup.check_setup()
         amqp_setup.channel.basic_publish(

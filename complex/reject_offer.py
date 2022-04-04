@@ -72,6 +72,15 @@ def processRejectOffer(rejected):  # process the json input of /reject_offer
     buyer_mobile = item_result['Success']['buyer_mobile']
     price = item_result['Success']['price']
 
+    # 6. Return error if invocation fails
+    code = item_result["code"]
+    if code not in range(200, 300):
+        return {
+            "code": 500,
+            "data": {"item_result": item_result},
+            "message": "Unable to get item details."
+        }
+
 
 
     # 3.  Invoke the item microservice to update item_status ['PUT']
@@ -148,7 +157,7 @@ def processRejectOffer(rejected):  # process the json input of /reject_offer
     return {
         "code": 201,
         "data": {
-            f"Offer for {item_name} has sucessfully been rejected": reject_result, # confirmation for seller
+            f"reject_result": reject_result, # confirmation for seller
         }
     }
 

@@ -122,7 +122,6 @@ def processLeaveRating(rate):  # Process the JSON input of /leave_rating
         "code": 201,
         "data": {
             "rating_result": rating_result,
-        "message": "Success. Profile has been updated with a new overall rating."
         }
     }
 
