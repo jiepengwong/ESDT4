@@ -100,11 +100,12 @@
               </div>
 
             </div> -->
-
-            <!-- <div v-if="headerCategory == 'All'">
+            {{headercategory}}
+            <!-- {{AllFilter}} -->
+            <!-- <div v-if="headercategory == 'All'">
               <div>
                 <h5>Pending</h5>
-                <div v-for="(key,value) in AllFilters['open']">
+                <div v-for="(key,value) in AllFilter['open']">
                   <div class="card-sl">
                       <div class="card-heading">
                           <h4>{{value.item_name}}</h4>
@@ -243,7 +244,8 @@
               "pending": [],
               "accepted": [],
               "closed": []
-            }
+            },
+          headercategory: "All"
 
      
       };
@@ -267,18 +269,18 @@
             this.unfilteredResult = databaseitemsJson.Success;
             // this.results = []
 
-            for (item of results){
-              if (item.item_status == 'open'){
-                this.AllFilter.open.push(item);
+            for (item of this.results){
+              if (item["item_status"] == 'open'){
+                this.AllFilter["open"].push(item);
               }
               if (item.item_status == 'pending'){
-                this.AllFilter.pending.push(item);
+                this.AllFilter["pending"].push(item);
               }
               if (item.item_status == 'accepted'){
-                this.AllFilter.accepted.push(item);
+                this.AllFilter["accepted"].push(item);
               }
               if (item.item_status == 'closed'){
-                this.AllFilter.closed.push(item);
+                this.AllFilter["closed"].push(item);
               }
 
             }
@@ -318,6 +320,7 @@
 
 
       filterListings(categoryName){
+        this.headercategory = categoryName
         console.log("hi")
         this.resetPosts()
         console.log(categoryName)
