@@ -31,7 +31,7 @@ item_URL = "http://localhost:5001/items/" # requires :item_id
 
 @app.route("/accept_offer", methods=['POST'])
 def accept_offer(): # SELLER invokes this complex microservice to accept an offer, request = {accept} 
-    # Simple check of input format and data of the request are JSON
+    # Check that input format of the request is in JSON
     if request.is_json:
         try:
             accepted = request.get_json()

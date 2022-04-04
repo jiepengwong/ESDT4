@@ -31,7 +31,7 @@ item_URL = "http://localhost:5001/items/" # requires :item_id
 
 @app.route("/make_offer", methods=['POST']) # pass in offer details
 def make_offer(): # BUYER invokes this complex microservice, request = {offer} 
-    # First check if input format and data of the request are JSON
+    # Check that input format of the request is in JSON
     if request.is_json:
         try:
             offer = request.get_json() 

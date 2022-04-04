@@ -32,7 +32,7 @@ item_URL = "http://localhost:5001/items/" # requires :item_id
 
 @app.route("/reject_offer", methods=['POST'])
 def reject_offer(): # SELLER invokes this complex microservice to reject an offer, request = {reject} 
-    # Simple check of input format and data of the request are JSON
+    #  Check that input format of the request is in JSON
     if request.is_json:
         try:
             rejected = request.get_json()
