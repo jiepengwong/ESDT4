@@ -23,6 +23,8 @@
 - python -m virtualenv venv
 
 3. Others 
+- npm install -g nodemon
+
 
 
 
