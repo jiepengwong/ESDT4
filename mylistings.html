@@ -135,7 +135,7 @@
                 </div>
   
                   
-                    <button v-if="result.item_status == 'open'" @click="buyerReject(result._id)" class="card-button-reject">Remove</button>
+                    <button v-if="result.item_status == 'open'" @click="removeListing(result._id)" class="card-button-reject">Remove</button>
 
                     <div class="d-flex">
                       <button v-if="result.item_status == 'pending'" type="button" class="card-button-accept" @click="acceptOffer(result._id)">
@@ -178,7 +178,7 @@
     const app = Vue.createApp({
     data() {
       return {
-          filters: { "All": "All Listings", "open": "My Listings (Open)", "pending": "Incoming Offers (Pending)", "accepted": "Awaiting Collection (Accepted)", "closed": "Reviews (Closed)"},
+          filters: { "All": "All Listings", "open": "Open Listings", "pending": "Pending Listings", "accepted": "Accepted Listings", "closed": "Closed Listings"},
           localStorageData: localStorage.id, //this is from oauth, for now put some dummy data
           results: [],
           unfilteredResult: '',
@@ -357,6 +357,7 @@
                     if (response.status === 200) {
                       alert("Item has been removed!")
                       location.reload()
+                      
                     }
                     else {
                       alert("Item could not be removed!")

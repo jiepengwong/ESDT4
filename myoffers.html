@@ -315,8 +315,8 @@
           const payload = {
             item_id: itemid
           }
-          
-          const url = `http://localhost:5400/reject_offer`;
+          // TBC remove_offer
+          // const url = `http://localhost:5400/reject_offer`;
 
           const option = {
             method: 'POST',
@@ -360,7 +360,7 @@
         const payload = {
           // user_id: this.localStorageData,
           item_id: itemid,
-          rating: this.picked
+          ratings: this.picked
         }
 
 
@@ -382,15 +382,16 @@
                 try{
                     if (result.ok){
                         console.log(data);
-                        alert("Listing created successfully");
+                        alert("Review has been sent and updated to the buyer! Thanks!");
                     }
                     else{
                         console.log(data);
-                        alert("Listing creation failed");
+                        alert("Review did not pull through, please try again");
                     }
 
                 }
-                catch{
+                catch(error){
+                  console.log(error)
 
                 }
 
