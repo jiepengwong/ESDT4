@@ -68,7 +68,7 @@ def update_ratings(Profile_Id):
 
         temp_formula = ((aggregated_count * database_ratings) + input_ratings)/ new_count
 
-        profile.ratings = temp_formula
+        profile.ratings = round(temp_formula, 2)
         db.session.commit()
 
         return jsonify(
@@ -76,8 +76,8 @@ def update_ratings(Profile_Id):
                 "code":200,
                 "data":profile.json(),
                 "message":"Profile's ratings has been updated."
-            },200
-        )
+            }
+        ),200
 
     return jsonify(
         {
@@ -104,12 +104,13 @@ def update_number(Profile_Id):
                 "code":200,
                 "data":profile.json(),
                 "message":"Profile's number has been updated."
-            },200
-        )
+            }
+        ),200
+    
     return jsonify({
         "code":404,
         "message":"An error occured while updating the profile number.Please try again."
-    })
+    }), 404
 
 
 
@@ -144,7 +145,7 @@ def create_account(Profile_Id):
     return jsonify({
         "code":200,
         "data":profile.json()
-    })
+    }), 200
 
 
 if __name__ == "__main__":

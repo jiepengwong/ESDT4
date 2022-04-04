@@ -19,6 +19,7 @@ CORS(app)
 
 # Make sure the following microservices are running:
 # profile.py        # load profile.sql data
+# item.js           # node installed + MongoDB database
 
 rate_profile_URL =  "http://localhost:5000/profile/ratings/" # requires :seller_id
 item_URL = "http://localhost:5001/items/" # requires :item_id
@@ -107,7 +108,7 @@ def processLeaveRating(rate):  # Process the JSON input of /leave_rating
     print('\nProfile update result:', rating_result)
 
     # 5. Return error if invocation fails
-    code = rating_result[0]["code"]
+    code = rating_result["code"]
     if code not in range(200, 300):
         return {
             "code": 500,
@@ -128,5 +129,5 @@ def processLeaveRating(rate):  # Process the JSON input of /leave_rating
 
 
 if __name__ == "__main__":
-    print("This is flask " + os.path.basename(__file__) + " for placing an offer...")
+    print("This is flask " + os.path.basename(__file__) + " for leaving a review...")
     app.run(host="0.0.0.0", port=5500, debug=True) 

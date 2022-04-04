@@ -148,6 +148,6 @@ def processAcceptOffer(accepted):  # process the json input of /accept_offer
 
 # Execute this program if it is run as a main script (not by 'import')
 if __name__ == "__main__":
-    print("This is flask " + os.path.basename(__file__) + " for placing an accepted...")
+    print("This is flask " + os.path.basename(__file__) + " for rejecting an offer...")
     app.run(host="0.0.0.0", port=5300, debug=True)
 

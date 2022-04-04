@@ -73,7 +73,7 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
     print("\nRetrieved name:", profile_results['data']['name'])
     print("\nRetrieved mobile:", profile_results['data']['mobile'])
 
-    code = profile_results[0]["code"]
+    code = profile_results["code"]
 
     # 6. Return error if profile not retrieved
     if code not in range(200, 300):

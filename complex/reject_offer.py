@@ -3,7 +3,6 @@ from flask_cors import CORS
 
 import os, sys
 
-import json
 import requests
 from invokes import invoke_http
 
@@ -164,6 +163,6 @@ def processRejectOffer(rejected):  # process the json input of /reject_offer
 
 # Execute this program if it is run as a main script (not by 'import')
 if __name__ == "__main__":
-    print("This is flask " + os.path.basename(__file__) + " for placing an rejected...")
+    print("This is flask " + os.path.basename(__file__) + " for rejecting an offer...")
     app.run(host="0.0.0.0", port=5400, debug=True)
     

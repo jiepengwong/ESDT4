@@ -78,7 +78,7 @@ def processCreateListing(listing):
     print("\nmobile number:", profile_results['data']['mobile'])
 
     # 4. Return error if profile not retrieved
-    code = profile_results[0]['code']
+    code = profile_results['code']
     if code not in range(200, 300):
         return {
             "code": 404,
@@ -122,5 +122,5 @@ def processCreateListing(listing):
     }
 
 if __name__ == "__main__":
-    print("This is flask " + os.path.basename(__file__) + " for placing an offer...")
+    print("This is flask " + os.path.basename(__file__) + " for creating a listing")
     app.run(host="0.0.0.0", port=5100, debug=True) 
