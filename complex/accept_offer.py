@@ -8,7 +8,9 @@ from invokes import invoke_http
 
 import amqp_setup
 import pika
+
 import json
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -116,10 +118,20 @@ def processAcceptOffer(accepted):  # process the json input of /accept_offer
         buyer_mobile = accept_result['Success']['buyer_mobile']
         seller_name = accept_result['Success']['seller_name']
         item_name = accept_result['Success']['item_name']
+        location = accept_result['Success']['location']
+        date_time = accept_result['Success']['date_time']
+        date = date_time[:10]
+        time = date_time[11:]
+        mydate = datetime.strptime(date, "%Y-%m-%d")
+        weekday = mydate.strftime("%A")
+        day = mydate.strftime("%d")
+        month = mydate.strftime("%B")
+        year = mydate.strftime("%Y")
+
         
         data = {
             "mobile": buyer_mobile,
-            "message": f"Your offer for '{item_name}' has been accepted by {seller_name}. Please check your offers under 'My Offers' page in Henesys to view the confirmed details." # collection date, time, location, price will be displayed there
+            "message": f"Your offer for '{item_name}' has been accepted by {seller_name}. \n\nPlease meet your buyer at {location} on {weekday}, {day} {month} {year} at {time}.\n\nYou can view the confirmed item details under 'My Offers' page in Henesys."
             }
         
         message = json.dumps(data)

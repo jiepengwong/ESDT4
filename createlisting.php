@@ -92,6 +92,7 @@
                                                         {{ category }}
                                                     </label>
                                                 </div>
+                                                {{selectedCategory}}
                                             </div>
                                         </div>
                                     </div>

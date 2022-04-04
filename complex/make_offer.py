@@ -101,7 +101,7 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
         "price": price
         }
     offer_result = invoke_http(item_URL + item_id, method='PUT', json=offer_details)
-    print("\nItem has been updated with buyer information:", offer_details)
+    print("\nItem update result:", offer_details)
     print("\nOffer result:", offer_result)
 
 
