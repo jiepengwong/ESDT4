@@ -151,7 +151,6 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
 
         print('The following message will be sent to the user:' + message)
         print('\n\n-----Publishing the successful offer message with routing_key=notify.offer-----')  
-        amqp_setup.check_setup()
         amqp_setup.channel.basic_publish(
         exchange=amqp_setup.exchangename, 
         routing_key="notify.offer", 
