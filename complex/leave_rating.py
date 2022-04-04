@@ -78,26 +78,7 @@ def processLeaveRating(rate):  # Process the JSON input of /leave_rating
 
 
 
-    # 3.  Invoke the item microservice to update item_status ['PUT']
-    print('\n-----Invoking item microservice to update item status-----')
-    new_status = {
-        "item_status": "closed"
-    }
-    item_update = invoke_http(item_URL + item_id, method='PUT', json=new_status)
-    print('\nItem update result:', item_update)
-
-    # 5. Return error if invocation fails
-    code = item_update["code"]
-    if code not in range(200, 300):
-        return {
-            "code": 500,
-            "data": {"item_update": item_update},
-            "message": "Unable to update item."
-        }
-
-
-
-    # 4.  Invoke the profile microservice to update rating ['PUT']
+    # 3.  Invoke the profile microservice to update rating ['PUT']
     ratings = rate['rating']
     rating_details = { 
         "ratings": ratings
@@ -114,6 +95,25 @@ def processLeaveRating(rate):  # Process the JSON input of /leave_rating
             "code": 500,
             "data": {"rating_result": rating_result},
             "message": "Unable to update profile rating."
+        }
+
+
+
+    # 4.  Invoke the item microservice to update item_status ['PUT']
+    print('\n-----Invoking item microservice to update item status-----')
+    new_status = {
+        "item_status": "closed"
+    }
+    item_update = invoke_http(item_URL + item_id, method='PUT', json=new_status)
+    print('\nItem update result:', item_update)
+
+    # 5. Return error if invocation fails
+    code = item_update["code"]
+    if code not in range(200, 300):
+        return {
+            "code": 500,
+            "data": {"item_update": item_update},
+            "message": "Unable to update item."
         }
 
 
