@@ -12,6 +12,9 @@ var template1 = `
           <!-- <li><a class="hover-underline-animation" href="">My Offers</a></li>
           <li><a class="hover-underline-animation" href="">My Listings</a></li>
           <li><a class="hover-underline-animation" href="">My Profile</a></li> -->
+
+          <a class="cta" href="createlisting.php" ><button id="sign">Sell Item</button></a>
+
           
           <a class="cta" href=""><button  id="sign" v-if="isSignedIn" @click="signOut()">Logout</button></a>
           <a class="cta" href=""><button  v-if="!isSignedIn" @click="googleAuth()"><b>Login</b></button></a>
@@ -21,10 +24,10 @@ var template1 = `
 
   </header>`;
 var links1 = [
-    // {"link":"cataloguenew.php", "name": "Catalogue"},
+    {"link":"cataloguenew.php", "name": "Market"},
     {"link":"myoffers.html", "name": "My Offers"},
     {"link":"mylistings.html", "name": "My Listings"},
-    {"link": "createlisting.php", "name": "Sell"},
+    // {"link": "createlisting.php", "name": "Sell"},
     {'link':"myprofile.html",'name':'My Profile'},
 
     ];

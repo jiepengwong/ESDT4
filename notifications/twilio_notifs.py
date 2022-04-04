@@ -64,15 +64,6 @@ def processNotifs(Msg):
 
         print(message.sid)
 
-        # print(data)
-        # print("--JSON:", notifs
-        #to insert into DB here 
-
-        # data = request.get_json()
-        # notifications_msg = Notifications(Notification_ID, **data)
-        # db.session.add(notifs)
-        # db.session.commit()
-
     except Exception as e:
         print("--NOT JSON:", e)
         print("--DATA:", Msg)
@@ -82,21 +73,6 @@ if __name__ == "__main__":  # execute this program only if it is run as a script
     print("\nThis is " + os.path.basename(__file__), end='')
     print(": monitoring routing key '{}' in exchange '{}' ...".format(notifsBindingKey, amqp_setup.exchangename))
     receiveNotification()
-
-
-# from twilio.rest import Client 
-
-# account_sid = 'ACc2ba82a67c14ae8f185741f5aafc560a' 
-# auth_token = '[AuthToken]' 
-# client = Client(account_sid, auth_token) 
-
-# message = client.messages.create( 
-#                               from_='whatsapp:+14155238886',  
-#                               body='Your order has been accepted. Please make your payment. ',      
-#                               to='whatsapp:+6591127531' 
-#                           ) 
-
-# print(message.sid)
 
 
 ###Response Message

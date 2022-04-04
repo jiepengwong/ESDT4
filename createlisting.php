@@ -20,8 +20,14 @@
     </script>
     <meta name="google-signin-client_id" content="616186403576-ofsdqf0tp3r19t60rmflus3l3h9p25vo.apps.googleusercontent.com">
     <link rel="stylesheet" href="./createlisting.css">
+    <link rel="icon" href="./asset/HenesysSmallLogo.png">
+
+
 </head>
 
+<style>
+    body {background-color: rgb(239, 239, 239);}
+</style>
 <body>
     <div id="app">
         <!-- Navbar goes here -->
@@ -126,8 +132,6 @@
             </div>
         </section>
         <!-- Testing New page -->
-        
-
     </div>
 </body>
 
@@ -154,6 +158,12 @@
                     if (localStorage.getItem("id")){
                         // redirect them to login page
                         // window.location.replace("/ESD_PROJECT/ESDT4/multi-page/catalogue.php");
+                        var jsondata = JSON.parse(localStorage.login)
+                        var mobile = jsondata['mobile']
+                        console.log(mobile)
+                        if (mobile == "" || mobile == "0" || mobile == 0) {
+                            window.location.replace("./Insertmobile.php");
+                        }
                     }
                     else {
                         window.location.replace("./");
