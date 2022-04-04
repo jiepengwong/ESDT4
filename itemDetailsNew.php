@@ -48,7 +48,7 @@
         .body {
             position: relative;
             width: 720px;
-            height: 440px;
+            height: 100%;
             margin: 20px auto;
             border: 1px solid #dddd;
             border-radius: 18px;
@@ -157,7 +157,7 @@
 
             .box-2 {
                 width: 100%;
-                height: 440px
+                height: 100%
             }
         }
 </style>
@@ -178,14 +178,15 @@
 
 
                 </div>
-                <div class=" box-2 d-flex flex-column h-100">
+                <div class=" box-2 d-flex flex-column">
                     <div class="mt-5">
                       
                         <p class="mb-1 h-1">{{results.item_name}}</p>
                         <p class="mb-5">{{results.description}}</p>
                         <p class="mb-1 fs-6">Category: {{results.category}}</p>
                         <p class="mb-1 fs-6">Pick-up location: {{results.location}}</p>
-                        <p class="mb-1 fs-6">Date Time: {{results.date_time}}</p>
+                        <p class="mb-1 fs-6">Date: {{date}}</p>
+                        <p class="mb-1 fs-6">Time: {{time}}</p>
 
                         <div class="d-flex flex-column mt-5">
                            Enter Your Offer Price: 
@@ -217,7 +218,10 @@
       return {
         results: [],
         price: 0,
-        buyerid: localStorage.id //Taken from yuxiang side
+        buyerid: localStorage.id, //Taken from yuxiang side
+        time: "",
+        date:"",
+
 
       };
     },
@@ -241,7 +245,11 @@
             console.log(databaseitemsJson)
             // Get all the databases 
             this.results = databaseitemsJson.Success;
-            console.log(this.results)
+            var datelisting = this.results.date_time.split("T")
+            this.time = datelisting[1]
+            this.date = datelisting[0]
+            console.log(this.time)
+            console.log(datelisting)
   
           } else {
             console.log("Database not connected")
@@ -258,6 +266,7 @@
     },
 
     methods: {
+
       checkLogin() {
                 // If the login variable is initalised, then we will redirect them to 
                 if (localStorage.getItem("id")){

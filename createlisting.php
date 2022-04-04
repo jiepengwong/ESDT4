@@ -61,11 +61,11 @@
                                             <div class="timeline-text">
                                                 <div class="">
                                                     <label for="description" class="form-label d-flex">Item Name</label>
-                                                    <input  v-model="itemname" type="text" class="form-control" id="description">
+                                                    <input  v-model="itemname" type="text" class="form-control" id="description" maxlength="15">
                                                 </div>
                                                 <div class="">
                                                     <label for="description" class="form-label">Description</label>
-                                                    <input v-model="description" type="text" class="form-control" id="description">
+                                                    <input v-model="description" type="text" class="form-control" id="description" maxlength="20">
                                                 </div>
                                             </div>
                                         </div>
@@ -110,7 +110,7 @@
                                             <div class="timeline-text">
                                                 <div class="form-check">
                                                     <label for="description" class="form-label">Pick Up Location</label>
-                                                    <input v-model="pickupLocation" type="text" class="form-control" id="description">
+                                                    <input v-model="pickupLocation" type="text" class="form-control" id="description" maxlength="20">
                                                 </div>
                                                 <hr>
                                                 <div class="form-check">
