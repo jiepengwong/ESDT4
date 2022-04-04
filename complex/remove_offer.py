@@ -21,8 +21,8 @@ CORS(app)
 # item.js           # node installed + MongoDB database
 
 
-profile_URL =  "http://localhost:5000/profile/" # requires :user_id
-item_URL = "http://localhost:5001/items/" # requires :item_id
+profile_URL =  "http://profile:5000/profile/" # requires :user_id
+item_URL = "http://item:5001/items/" # requires :item_id
 
 
 @app.route("/remove_offer", methods=['POST'])
