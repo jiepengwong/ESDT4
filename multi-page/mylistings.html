@@ -57,39 +57,113 @@
   
           <div class="container">
             <div class="row">
-              <div class="col-lg-12">
-                <h2 class="mb-5 py-5">Listings</h2>
+              <div class="col-lg-12 m-4 ">
+                <h2 v-if="headercategory == 'All'">Offers (All)</h2>
+                <h2 v-if="headercategory == 'pending'" >Offers (Pending)</h2>
+                <h2 v-if="headercategory == 'accepted'" >Offers (Accepted)</h2>
+                <h2 v-if="headercategory == 'closed'" >Offers (Closed)</h2>
+                <h5 class="m-1">Filtered Results: {{results.length}}</h5>
+
+
               </div>
             </div>
             <div class="row">
-              <div v-for="result in results" :key="result" class="col-lg-4 col-md-6 mb-4">
-                <div class="card h-100">
-                  <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt="" /></a>
-                  <div class="card-body">
-                    <h4 class="card-title">
-                      <a href="#">{{result.item_name}}</a>
-                    </h4>
-                    <p class="card-text">{{result.description}}</p>
-                    
-                    <button v-if="result.item_status == 'open'"e class="btn btn-danger" @click="removeListing(result._id)">Remove</button>
+     
 
-                    <button v-if="result.item_status == 'pending'" class="btn btn-success" @click="acceptOffer(result._id)">Accept</button>
-                    <button v-if="result.item_status == 'pending'" class="btn btn-danger mx-2" @click="rejectOffer(result._id)">Reject</button>
-
-
+            <!-- <div class="col-md-3">
+              <div class="card-sl">
+                  <div class="card-heading">
+                      <h4>Audi Q8</h4>
                   </div>
-                  <div class="card-footer">
-                    <small class="text-muted">Item status: {{result.item_status}}</small>
+                  <div class="card-text">
+                      Audi Q8 is a full-size luxury crossover SUV coupé made by Audi that was launched in 2018.
                   </div>
+
+                  <hr/>
+
+                  <div class="card-text">
+                    <b>Location:</b> asd
                 </div>
+
+                <div class="card-text">
+                  <b>Time:</b> asd
               </div>
 
-              {{localStorageData}}
+                  <div class="card-text">
+                    <b>Price:</b> $67,400
+                  </div>
+                  <button class="card-button-reject">Reject</button>
+                  <button v-if="result.item_status == 'accepted'" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        Leave Rating
+                      </button>
+              </div>
+
+            </div> -->
+            
+            <div v-for="result in results" :key="result" class="col-md-3">
+
+              <div  >
+                <div class="card-sl">
+                    <div class="card-heading">
+                        <h5 class="text-center">{{result.item_name}}</h5>
+                        <hr/>
+
+                    </div>
+                    <div class="card-text">
+                      <p  v-if="result.buyer_name != null"class="mt-3">Buyer Name: <b>{{result.buyer_name}}</b></p>
+                      <p v-if="result.buyer_name == null">There are no existing offers yet!</p>
+                      <p v-if="result.price != null">Buyer's offer: <b><u class="text-success">{{result.price}} SGD </u></b></p>
+                      <div>
+                        <h5 class="text-primary font-weight-bold" v-if="result.item_status == 'open'">Open</h6>
+                        <h5 class="text-success font-weight-bold" v-if="result.item_status == 'accepted'">Accepted</h6>
+                        <h5 class="text-warning font-weight-bold" v-if="result.item_status == 'pending'">Pending</h6>
+                        <h5 class="text-secondary font-weight-bold" v-if="result.item_status == 'closed'">Closed</h6>
+                          
+  
+                      </div>
+                    </div>
+  
+                    <hr v-if="result.item_status == 'accepted'"/>
+  
+                    <div v-if="result.item_status == 'accepted'" class="card-text">
+                      <b>Location: </b> {{result.location}}
+                  </div>
+  
+                  <div v-if="result.item_status == 'accepted'" class="card-text">
+                    <b>Time: </b> {{result.date_time}}
+                </div>
+  
+                  
+                    <button v-if="result.item_status == 'open'" @click="buyerReject(result._id)" class="card-button-reject">Remove</button>
+
+                    <div class="d-flex">
+                      <button v-if="result.item_status == 'pending'" type="button" class="card-button-accept" @click="acceptOffer(result._id)">
+                        Accept
+                      </button>
+                      <button v-if="result.item_status == 'pending'" type="button" class="card-button-reject" @click="rejectOffer(result._id)">
+                        Reject
+                      </button>
+                    </div>
+                </div>
+
+              </div>
+
+            </div>                
+                
+                
+                <!-- Modal -->
+                <!-- ======================================================================================== -->
+                
+
+              
+
+
   
           </div>
   
   
         </section>
+  
   
   
       </div>
@@ -384,5 +458,92 @@
 
 
 <style>
+
+.card-sl {
+        border-radius: 8px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        font-family: "Montserrat", sans-serif;
+        margin:10px;
+        box-sizing: border-box;
+
+    }
+
+    .card-image img {
+        max-height: 100%;
+        max-width: 100%;
+        border-radius: 8px 8px 0px 0;
+    }
+
+    .card-action {
+        position: relative;
+        float: right;
+        margin-top: -25px;
+        margin-right: 20px;
+        z-index: 2;
+        color: #E26D5C;
+        background: #fff;
+        border-radius: 100%;
+        padding: 15px;
+        font-size: 15px;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 1px 2px 0 rgba(0, 0, 0, 0.19);
+    }
+
+    .card-action:hover {
+        color: #fff;
+        background: #E26D5C;
+        -webkit-animation: pulse 1.5s infinite;
+    }
+
+    .card-heading {
+        font-size: 18px;
+        font-weight: bold;
+        background: #fff;
+        padding: 10px 15px;
+        box-sizing: border-box;
+
+    }
+
+    .card-text {
+        padding: 10px 15px;
+        background: #fff;
+        font-size: 14px;
+        color: #636262;
+    }
+
+    .card-button-reject {
+        display: flex;
+        justify-content: center;
+        padding: 10px 0;
+        width: 100%;
+        background-color: #dc2323;
+        color: #fff;
+        border-radius: 0 0 8px 8px;
+        font: "Montserrat", sans-serif;
+    }
+
+    .card-button-reject:hover {
+        text-decoration: none;
+        background-color: #960303;
+        color: #fff;
+
+    }
+
+    .card-button-accept {
+        display: flex;
+        justify-content: center;
+        padding: 10px 0;
+        width: 100%;
+        background-color: #04b30d;
+        color: #fff;
+        border-radius: 0 0 8px 8px;
+        font: "Montserrat", sans-serif;
+    }
+
+    .card-button-accept:hover {
+        text-decoration: none;
+        background-color: #197901;
+        color: #fff;
+
+    }
 
 </style>

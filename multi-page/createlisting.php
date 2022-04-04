@@ -157,7 +157,7 @@
                     }
                     else{
                         console.log(data);
-                        alert("Listing creation failed");
+                        alert("Listing creation failed, try again");
                     }
 
                 }

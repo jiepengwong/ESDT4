@@ -33,9 +33,6 @@
                 <div class="text-center text-white">
                   <!-- Page heading-->
                   <h1 class="mb-5">My Offers</h1>
-  
-                
-
                   <div class="row justify-content-center">
                     <div v-for="(value,key) in filters"  class="col-sm-2">
 
@@ -55,11 +52,12 @@
   
           <div class="container">
             <div class="row">
-              <div class="col-lg-12">
-                <h2 v-if="headercategory == 'All'" class="mb-5 py-5">Offers (All)</h2>
-                <h2 v-if="headercategory == 'pending'" class="mb-5 py-5">Offers (Pending)</h2>
-                <h2 v-if="headercategory == 'accepted'" class="mb-5 py-5">Offers (Accepted)</h2>
-                <h2 v-if="headercategory == 'closed'" class="mb-5 py-5">Offers (Closed)</h2>
+              <div class="col-lg-12 m-4 ">
+                <!-- <h2 v-if="headercategory == 'All'">Offers (All)</h2>
+                <h2 v-if="headercategory == 'pending'" >Offers (Pending)</h2>
+                <h2 v-if="headercategory == 'accepted'" >Offers (Accepted)</h2>
+                <h2 v-if="headercategory == 'closed'" >Offers (Closed)</h2> -->
+                <h5 class="m-1">Filtered Results: {{results.length}}</h5>
 
 
               </div>
@@ -96,37 +94,48 @@
               </div>
 
             </div> -->
-
+            
             <div v-for="result in results" :key="result" class="col-md-3">
-              <div class="card-sl">
-                  <div class="card-heading">
-                      <h4>{{result.item_name}}</h4>
+
+              <div  >
+                <div class="card-sl">
+                    <div class="card-heading">
+                        <h5 class="text-center">{{result.item_name}}</h5>
+                        <hr/>
+                    </div>
+                    <div class="card-text">
+                      "<i>{{result.description}}</i>"
+  
+                      <p class="mt-3">Seller Name: <b>{{result.seller_name}}</b></p>
+                      <div>
+                        <h5 class="text-success font-weight-bold" v-if="result.item_status == 'accepted'">Accepted</h6>
+                        <h5 class="text-warning font-weight-bold" v-if="result.item_status == 'pending'">Pending</h6>
+                        <h5 class="text-secondary font-weight-bold" v-if="result.item_status == 'closed'">Closed</h6>
+  
+                      </div>
+                    </div>
+  
+                    <hr/>
+  
+                    <div class="card-text">
+                      <b>Location: </b> {{result.location}}
                   </div>
+  
                   <div class="card-text">
-                    "<i>{{result.description}}</i>"
-
-
-                    <p class="mt-3"> - {{result.seller_name}}</p>
-                  </div>
-
-                  <hr/>
-
-                  <div class="card-text">
-                    <b>Location: </b> {{result.location}}
+                    <b>Time: </b> {{result.date_time}}
+                </div>
+  
+                    <div v-if="result.price != null"class="card-text">
+                      <b>Price:</b> {{result.price}} SGD
+                    </div>
+                    <button v-if="result.item_status == 'pending'" @click="buyerReject(result._id)" class="card-button-reject">Remove</button>
+                    <button v-if="result.item_status == 'accepted'" type="button" class="card-button-accept" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                      Leave Rating
+                    </button>
                 </div>
 
-                <div class="card-text">
-                  <b>Time: </b> {{result.date_time}}
               </div>
 
-                  <div class="card-text">
-                    <b>Price:</b> $67,400
-                  </div>
-                  <button v-if="result.item_status == 'pending'" @click="buyerReject(result._id)" class="card-button-reject">Reject</button>
-                  <button v-if="result.item_status == 'accepted'" type="button" class="card-button-accept" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                    Leave Rating
-                  </button>
-              </div>
 
               <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -206,7 +215,7 @@
     const app = Vue.createApp({
     data() {
       return {
-          filters: { "All Listings": "All", "Awaiting Reply": "pending", "Accepted Offer": "accepted", "Past Success Offers": "closed"},
+          filters: { "All Offers": "All", "Pending Offers": "pending", "Accepted Offers": "accepted", "Offers Reviewed": "closed"},
           localStorageData: localStorage.id, 
           results: [],
           headercategory: "All",
@@ -299,37 +308,39 @@
             item_id: itemid
           }
           
-          // const url = `http://localhost:5001/items/${itemid}`;
+          const url = `http://localhost:5400/reject_offer`;
 
-          // const result = await fetch(url, {
-          //   method: 'PUT',
-          //   body: JSON.stringify(payload),
-          //   headers: {
-          //     'Content-Type': 'application/json'
-          //   }
-          // })
+          const option = {
+            method: 'POST',
+            body: JSON.stringify(payload),
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }
 
-          // const response = await result.json();
+          const result = await fetch(url, option)
 
-          // try{
+          const response = await result.json();
 
-          //   if (result.status === 200){
-          //     console.log(response)
-          //     console.log("Item status changed to open")
-          //     alert("Thank you for rejecting your offer, you will be redirected to the main page")
-          //     window.location.href= "cataloguenew.php"
-          //   }
-          //   else{
-          //     console.log("Item status not changed")
-          //   }
-          // }
+          try{
 
-          // catch(error){
+            if (result.status === 201 ){
+              console.log(response)
+              console.log("Item status changed to open")
+              alert("Thank you for removing your offer, you will be redirected to the main page")
+              window.location.href= "cataloguenew.php"
+            }
+            else{
+              console.log("Item status not changed")
+            }
+          }
 
-          //   console.log(error)
+          catch(error){
+
+            console.log(error)
 
 
-          // }
+          }
 
 
           
@@ -437,7 +448,6 @@
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
-
 
   .stars{
     display:flex
