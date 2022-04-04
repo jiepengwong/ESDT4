@@ -1,14 +1,6 @@
-# from tokenize import String
-# from matplotlib import collections
-
-#connecting to mongoDB
-
-# from hashlib import new
-# from sqlite3 import Date
 import pymongo
 from pymongo import MongoClient
-from datetime import datetime, timezone
-# from datetime import timedelta
+
 
 #defining the connection to the database/cluster
 # cluster = pymongo.MongoClient("mongodb+srv://tingz:rS21GYaQ7snuxaTK@wtesd.azs8r.mongodb.net/ESDnotifs?retryWrites=true&w=majority")
@@ -20,20 +12,13 @@ cluster = pymongo.MongoClient("mongodb+srv://tingz:C1e3RbVUrvmAkDzl@wtesd.azs8r.
 db = cluster["ESDnotifs"]
 collection = db['error_micro']
 
-
 import json
 import os
 import amqp_setup
-import requests
-import secrets
-from flask import Flask, app, request, jsonify
-from os import environ
-from flask_cors import CORS
+
 
 errorBindingKey = 'error.*'
 
-app = Flask(__name__)
-CORS(app)
 
 def receiveError():
 

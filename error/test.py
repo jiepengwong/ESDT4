@@ -1,4 +1,6 @@
 import pymongo
+
+print("Mongo version",pymongo.__version__)
 from pymongo import MongoClient
 
 cluster = pymongo.MongoClient("mongodb+srv://tingz:C1e3RbVUrvmAkDzl@wtesd.azs8r.mongodb.net/ESDnotifs?retryWrites=true&w=majority")
