@@ -7,9 +7,10 @@ from os import environ
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] =  environ.get('dbURL')
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://ESDT4@ost.docker.internal:3306/profile'
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@host.docker.internal:3306/profile'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://ESDT4@host.docker.internal:3306/profile'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/profile'
 
+# For Deployment:
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://bee21b1837f0c3:e0021dda@us-cdbr-east-05.cleardb.net:3306/heroku_7e762db5c043985'
 # mysql://bee21b1837f0c3:e0021dda@us-cdbr-east-05.cleardb.net/heroku_7e762db5c043985?reconnect=true
 # The SQLAlchemy Database URI format is: dialect+driver://username:password@host:port/database
@@ -20,7 +21,7 @@ db = SQLAlchemy(app)
 CORS(app)
 
 class Profile(db.Model):
-    __tablename__ = "Profile_details"
+    __tablename__ = "profile_details"
 
     user_id = db.Column(db.String(64), primary_key=True)
     name = db.Column(db.String(64), nullable = False)
@@ -155,4 +156,4 @@ def create_account(Profile_Id):
 
 
 if __name__ == "__main__":
-    app.run(port=5000, debug = True)
+    app.run(host="0.0.0.0", port=5000, debug=True) 
