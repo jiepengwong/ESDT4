@@ -107,7 +107,7 @@ def processLeaveRating(rate):  # Process the JSON input of /leave_rating
     print('\nProfile update result:', rating_result)
 
     # 5. Return error if invocation fails
-    code = rating_result["code"]
+    code = rating_result[0]["code"]
     if code not in range(200, 300):
         return {
             "code": 500,

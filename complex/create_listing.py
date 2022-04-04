@@ -78,7 +78,7 @@ def processCreateListing(listing):
     print("\nmobile number:", profile_results['data']['mobile'])
 
     # 4. Return error if profile not retrieved
-    code = profile_results['code']
+    code = profile_results[0]['code']
     if code not in range(200, 300):
         return {
             "code": 404,
