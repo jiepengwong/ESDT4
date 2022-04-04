@@ -31,7 +31,7 @@ item_URL = "http://localhost:5001/items/" # requires :item_id
 
 @app.route("/accept_offer", methods=['POST'])
 def accept_offer(): # SELLER invokes this complex microservice to accept an offer, request = {accept} 
-    # Simple check of input format and data of the request are JSON
+    # Check that input format of the request is in JSON
     if request.is_json:
         try:
             accepted = request.get_json()
@@ -67,7 +67,18 @@ def processAcceptOffer(accepted):  # process the json input of /accept_offer
     print('\n-----Invoking item microservice to update item status-----')
     accepted_details = {"item_status": 'accepted'}
     accept_result = invoke_http(item_URL + item_id, method='PUT', json=accepted_details)
-    print('\nItem status has been successfully updated to accepted:', accept_result)
+    print('\nItem status:', accept_result)
+
+    # 5. Return error if invocation fails
+    code = accept_result["code"]
+    if code not in range(200, 300):
+        return {
+            "code": 500,
+            "data": {"accept_result": accept_result},
+            "message": "Unable to update/accept item."
+        }
+
+
 
     # 3. Check if acceptance of item failed [AMQP]
         # a. Send the error to the error microservice to log this failure (routing_key = 'error.*' )
@@ -78,6 +89,7 @@ def processAcceptOffer(accepted):  # process the json input of /accept_offer
     if code not in range(200, 300):
         # Inform the error microservice 
         print('\n\n-----Publishing the failed accept offer error message with routing_key= error.accept-----')
+        amqp_setup.check_setup()
         amqp_setup.channel.basic_publish(
         exchange=amqp_setup.exchangename, 
         routing_key="error.accept", 
@@ -93,6 +105,8 @@ def processAcceptOffer(accepted):  # process the json input of /accept_offer
             "data": {"accept_result": accept_result},
             "message": "Accept offer failure is sent for error handling."
         }
+
+
 
     # Publish to twilio_notifs only when there is no error in accepting offer 
     else: 
@@ -122,17 +136,18 @@ def processAcceptOffer(accepted):  # process the json input of /accept_offer
         print("\nOffer acceptance ({:d}) published to the RabbitMQ Exchange:".format(code), accept_result)
 
 
+
     # 5. Return the details of accepted offer if successful
     return {
         "code": 201,
         "data": {
-            f"Offer for {item_name} has sucessfully been accepted": accept_result, # confirmation for seller
+            f"accept_result:": accept_result, # confirmation for seller
         }
     }
 
 
 # Execute this program if it is run as a main script (not by 'import')
 if __name__ == "__main__":
-    print("This is flask " + os.path.basename(__file__) + " for placing an accepted...")
+    print("This is flask " + os.path.basename(__file__) + " for rejecting an offer...")
     app.run(host="0.0.0.0", port=5300, debug=True)
 

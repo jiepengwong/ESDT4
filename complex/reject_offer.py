@@ -3,7 +3,6 @@ from flask_cors import CORS
 
 import os, sys
 
-import json
 import requests
 from invokes import invoke_http
 
@@ -32,7 +31,7 @@ item_URL = "http://localhost:5001/items/" # requires :item_id
 
 @app.route("/reject_offer", methods=['POST'])
 def reject_offer(): # SELLER invokes this complex microservice to reject an offer, request = {reject} 
-    # Simple check of input format and data of the request are JSON
+    #  Check that input format of the request is in JSON
     if request.is_json:
         try:
             rejected = request.get_json()
@@ -72,6 +71,15 @@ def processRejectOffer(rejected):  # process the json input of /reject_offer
     buyer_mobile = item_result['Success']['buyer_mobile']
     price = item_result['Success']['price']
 
+    # 6. Return error if invocation fails
+    code = item_result["code"]
+    if code not in range(200, 300):
+        return {
+            "code": 500,
+            "data": {"item_result": item_result},
+            "message": "Unable to get item details."
+        }
+
 
 
     # 3.  Invoke the item microservice to update item_status ['PUT']
@@ -97,6 +105,7 @@ def processRejectOffer(rejected):  # process the json input of /reject_offer
     if code not in range(200, 300):
         # Inform the error microservice 
         print('\n\n-----Publishing the failed reject offer error message with routing_key= error.reject-----')
+        amqp_setup.check_setup()
         amqp_setup.channel.basic_publish(
         exchange=amqp_setup.exchangename, 
         routing_key="error.reject", 
@@ -147,13 +156,13 @@ def processRejectOffer(rejected):  # process the json input of /reject_offer
     return {
         "code": 201,
         "data": {
-            f"Offer for {item_name} has sucessfully been rejected": reject_result, # confirmation for seller
+            f"reject_result": reject_result, # confirmation for seller
         }
     }
 
 
 # Execute this program if it is run as a main script (not by 'import')
 if __name__ == "__main__":
-    print("This is flask " + os.path.basename(__file__) + " for placing an rejected...")
+    print("This is flask " + os.path.basename(__file__) + " for rejecting an offer...")
     app.run(host="0.0.0.0", port=5400, debug=True)
     
