@@ -188,7 +188,7 @@
                 console.log(payload);
                 // Usage of fetch API
                 // Options for fetch API
-                url = "http://localhost:5100/create_listing"
+                url = "http://create_listing:5100/create_listing"
                 options = {
                     method: 'POST',
                     headers: {

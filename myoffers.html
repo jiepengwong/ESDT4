@@ -234,7 +234,7 @@
       try{
         //   this.localStorageData = localStorage.getItem("user_id"); -> When it is actually implemented try this
 
-          var getItemUrl = `http://localhost:5001/items/myoffers/buyer/${this.localStorageData}`;
+          var getItemUrl = `http://item:5001/items/myoffers/buyer/${this.localStorageData}`;
           
           var databaseitems = await fetch(getItemUrl)
           const databaseitemsJson = await databaseitems.json()
@@ -316,7 +316,7 @@
             item_id: itemid
           }
           // TBC remove_offer
-          const url = `http://localhost:5600/remove_offer`;
+          const url = `http://remove_offer:5600/remove_offer`;
 
           const option = {
             method: 'POST',
@@ -367,7 +367,7 @@
         console.log(payload)
 
         // put the rating into the database
-        const url = `http://localhost:5500/leave_rating`;
+        const url = `http://leave_rating:5500/leave_rating`;
                 options = {
                     method: 'POST',
                     headers: {

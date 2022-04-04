@@ -131,7 +131,7 @@
       this.checkLogin()
       // Fetching from NEW items microservice
       try{
-          var getItemUrl = "http://localhost:5001/items"
+          var getItemUrl = "http://item:5001/items"
           
           var databaseitems = await fetch(getItemUrl)
           const databaseitemsJson = await databaseitems.json()

@@ -195,7 +195,7 @@
             this.checkLogin()
 
             try{
-                var getItemUrl = "http://localhost:5000/profile/" + localStorage.id
+                var getItemUrl = "http://profile:5000/profile/" + localStorage.id
                 console.log(getItemUrl)
                 
                 var databaseitems = await fetch(getItemUrl)

@@ -82,7 +82,7 @@ services:
     image: tinggzster/profile:esd
     restart: always
     environment:
-      dbURL: mysql+mysqlconnector://root@localhost:3306/profile
+      dbURL: mysql+mysqlconnector://root@host.docker.internal:3306/profile
       PYTHONUNBUFFERED: 1
     ports:
       - "5001:5001"
@@ -100,14 +100,15 @@ services:
     depends_on:
       - rabbitmq
       - item
+      - profile
       - error
       - twilio_notifs 
     environment:
       rabbit_host: rabbitmq
       rabbit_port: 5672
       PYTHONUNBUFFERED: 1
-      item_URL: http://item:5001/item
-      profile_URL: http://profile:5000/profile
+      item_URL: http://item:5001/items/
+      profile_URL: http://profile:5000/profile/
     ports:
       - "5300:5300"
 
@@ -121,16 +122,12 @@ services:
     image: tinggzster/create_listing:esd
     restart: always
     depends_on:
-      - rabbitmq
       - item
-      - error
-      - twilio_notifs 
+      - profile
     environment:
-      rabbit_host: rabbitmq
-      rabbit_port: 5672
       PYTHONUNBUFFERED: 1
-      item_URL: http://item:5001/item
-      profile_URL: http://profile:5000/profile
+      create_item_URL: http://item:5001/createitem
+      profile_URL: http://profile:5000/profile/
     ports:
       - "5100:5100" 
 
@@ -155,8 +152,8 @@ services:
       rabbit_host: rabbitmq
       rabbit_port: 5672
       PYTHONUNBUFFERED: 1
-      item_URL: http://item:5001/item
-      profile_URL: http://profile:5000/profile
+      item_URL: http://item:5001/items/
+      profile_URL: http://profile:5000/profile/
     ports:
       - "5200:5200" 
 
@@ -172,14 +169,12 @@ services:
     image: tinggzster/leave_rating:esd
     restart: always
     depends_on:
-      - rabbitmq
-      - error
       - profile
+      - item
     environment:
-      rabbit_host: rabbitmq
-      rabbit_port: 5672
       PYTHONUNBUFFERED: 1
-      profile_URL: http://profile:5000/profile
+      rate_profile_URL: http://profile:5000/profile/ratings/
+      item_URL: http://item:5001/items/
     ports:
       - "5500:5500" 
 
@@ -203,8 +198,8 @@ services:
       rabbit_host: rabbitmq
       rabbit_port: 5672
       PYTHONUNBUFFERED: 1
-      item_URL: http://item:5001/item
-      profile_URL: http://profile:5000/profile
+      item_URL: http://item:5001/items/
+      profile_URL: http://profile:5000/profile/
     ports:
       - "5400:5400"
 
@@ -219,17 +214,12 @@ services:
     image: tinggzster/remove_offer:esd
     restart: always
     depends_on:
-      - rabbitmq
-      - error
-      - twilio_notifs
       - profile
       - item
     environment:
-      rabbit_host: rabbitmq
-      rabbit_port: 5672
       PYTHONUNBUFFERED: 1
-      item_URL: http://item:5001/item
-      profile_URL: http://profile:5000/profile
+      item_URL: http://item:5001/items/
+      profile_URL: http://profile:5000/profile/
     ports:
       - "5600:5600"
 
