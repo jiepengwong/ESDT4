@@ -65,98 +65,127 @@
               </div>
             </div>
             <div class="row">
-              <div v-for="result in results" :key="result" class="col-lg-4 col-md-6 mb-4">
+     
 
-                <div class="card h-100">
-                  <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt="" /></a>
-                  <div class="card-body">
-                    <h4 class="card-title">
-                      <a href="#">{{result.item_name}}</a>
-                    </h4>
-                    <p class="card-text">{{result.description}}</p>
+            <!-- <div class="col-md-3">
+              <div class="card-sl">
+                  <div class="card-heading">
+                      <h4>Audi Q8</h4>
+                  </div>
+                  <div class="card-text">
+                      Audi Q8 is a full-size luxury crossover SUV coupé made by Audi that was launched in 2018.
+                  </div>
 
-                    <div class="row">
+                  <hr/>
 
-                      <!-- <div class="col text-center">
-                        <button v-if="result.item_status == 'pending'" class="btn btn-success" @click="acceptOffer(result._id)">Accept</button>
-
-                      </div> -->
-
-                      <div class="col text-center">
-                        <button v-if="result.item_status == 'pending'" class="btn btn-primary btn-danger" @click="buyerReject(result._id)">Reject</button>
-
-                      </div>
-                      <!-- <button v-else class="btn btn-primary" disabled>Accept</button> -->
-                      <!-- <a class="btn btn-primary" v-if="result.item_status == 'accepted'" :href="`reviewpage.html?itemid=${result._id}`">Review</a> -->
-
-                      <!-- Button trigger modal -->
-                      <button v-if="result.item_status == 'accepted'" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                        Leave Rating
-                      </button>
-
-                      <!-- Modal -->
-                      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h5 class="modal-title" id="exampleModalLabel">Ratings</h5>
-                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                              <p>Please leave your ratings for the seller: {{result.seller_name}}</p>
-
-
-                              <!-- <div class="stars">
-                                <a>⭐</a>
-                                <a>⭐</a>
-                                <a>⭐</a>
-                                <a>⭐</a>
-                                <a>⭐</a>
-                              </div> -->
-
-                              <div class="ratings d-flex justify-content-around">
-                                <input class="form-check-input" type="radio" id="one" value="1" v-model="picked">
-                                <label class="form-check-label" for="one">1</label>
-
-                                <input  class="form-check-input" type="radio" id="two" value="2" v-model="picked">
-                                <label class="form-check-label" for="two">2</label>
-
-                                <input class="form-check-input" type="radio" id="three" value="3" v-model="picked">
-                                <label class="form-check-label" for="three">3</label>
-
-                                <input class="form-check-input" type="radio" id="four" value="4" v-model="picked">
-                                <label class="form-check-label" for="four">4</label>
-
-                                <input class="form-check-input" type="radio" id="five" value="5" v-model="picked">
-                                <label class="form-check-label" for="five">5</label>
-
-                                <!-- {{picked}} -->
-                                
-                              </div>
-
-
-                              
-                            </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                              <button type="button" class="btn btn-primary" @click="sendReview(result._id)">Send Rating</button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <!-- ======================================================================================== -->
-
-                    </div>
-                    <div class="card-footer">
-                      <small class="text-muted">Item status: {{result.item_status}}</small>
-
-                    </div>
+                  <div class="card-text">
+                    <b>Location:</b> asd
                 </div>
 
-
+                <div class="card-text">
+                  <b>Time:</b> asd
               </div>
 
-              {{localStorageData}}
+                  <div class="card-text">
+                    <b>Price:</b> $67,400
+                  </div>
+                  <button class="card-button-reject">Reject</button>
+                  <button v-if="result.item_status == 'accepted'" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        Leave Rating
+                      </button>
+              </div>
+
+            </div> -->
+
+            <div v-for="result in results" :key="result" class="col-md-3">
+              <div class="card-sl">
+                  <div class="card-heading">
+                      <h4>{{result.item_name}}</h4>
+                  </div>
+                  <div class="card-text">
+                    "<i>{{result.description}}</i>"
+
+
+                    <p class="mt-3"> - {{result.seller_name}}</p>
+                  </div>
+
+                  <hr/>
+
+                  <div class="card-text">
+                    <b>Location: </b> {{result.location}}
+                </div>
+
+                <div class="card-text">
+                  <b>Time: </b> {{result.date_time}}
+              </div>
+
+                  <div class="card-text">
+                    <b>Price:</b> $67,400
+                  </div>
+                  <button v-if="result.item_status == 'pending'" @click="buyerReject(result._id)" class="card-button-reject">Reject</button>
+                  <button v-if="result.item_status == 'accepted'" type="button" class="card-button-accept" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    Leave Rating
+                  </button>
+              </div>
+
+              <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">Ratings</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <p>Please leave your ratings for the seller: {{result.seller_name}}</p>
+  
+  
+                      <!-- <div class="stars">
+                        <a>⭐</a>
+                        <a>⭐</a>
+                        <a>⭐</a>
+                        <a>⭐</a>
+                        <a>⭐</a>
+                      </div> -->
+  
+                      <div class="ratings d-flex justify-content-around">
+                        <input class="form-check-input" type="radio" id="one" value="1" v-model="picked">
+                        <label class="form-check-label" for="one">1</label>
+  
+                        <input  class="form-check-input" type="radio" id="two" value="2" v-model="picked">
+                        <label class="form-check-label" for="two">2</label>
+  
+                        <input class="form-check-input" type="radio" id="three" value="3" v-model="picked">
+                        <label class="form-check-label" for="three">3</label>
+  
+                        <input class="form-check-input" type="radio" id="four" value="4" v-model="picked">
+                        <label class="form-check-label" for="four">4</label>
+  
+                        <input class="form-check-input" type="radio" id="five" value="5" v-model="picked">
+                        <label class="form-check-label" for="five">5</label>
+  
+                        <!-- {{picked}} -->
+                        
+                      </div>
+  
+  
+                      
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-primary" @click="sendReview(result._id)">Send Rating</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>                
+                
+                
+                <!-- Modal -->
+                <!-- ======================================================================================== -->
+                
+
+              
+
 
   
           </div>
@@ -407,6 +436,8 @@
 
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
+
 
   .stars{
     display:flex
@@ -434,5 +465,88 @@
     opacity:50%;
     cursor: "pointer"
   }
+
+  .card-sl {
+        border-radius: 8px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        font-family: "Montserrat", sans-serif;
+    }
+
+    .card-image img {
+        max-height: 100%;
+        max-width: 100%;
+        border-radius: 8px 8px 0px 0;
+    }
+
+    .card-action {
+        position: relative;
+        float: right;
+        margin-top: -25px;
+        margin-right: 20px;
+        z-index: 2;
+        color: #E26D5C;
+        background: #fff;
+        border-radius: 100%;
+        padding: 15px;
+        font-size: 15px;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 1px 2px 0 rgba(0, 0, 0, 0.19);
+    }
+
+    .card-action:hover {
+        color: #fff;
+        background: #E26D5C;
+        -webkit-animation: pulse 1.5s infinite;
+    }
+
+    .card-heading {
+        font-size: 18px;
+        font-weight: bold;
+        background: #fff;
+        padding: 10px 15px;
+    }
+
+    .card-text {
+        padding: 10px 15px;
+        background: #fff;
+        font-size: 14px;
+        color: #636262;
+    }
+
+    .card-button-reject {
+        display: flex;
+        justify-content: center;
+        padding: 10px 0;
+        width: 100%;
+        background-color: #dc2323;
+        color: #fff;
+        border-radius: 0 0 8px 8px;
+        font: "Montserrat", sans-serif;
+    }
+
+    .card-button-reject:hover {
+        text-decoration: none;
+        background-color: #960303;
+        color: #fff;
+
+    }
+
+    .card-button-accept {
+        display: flex;
+        justify-content: center;
+        padding: 10px 0;
+        width: 100%;
+        background-color: #04b30d;
+        color: #fff;
+        border-radius: 0 0 8px 8px;
+        font: "Montserrat", sans-serif;
+    }
+
+    .card-button-accept:hover {
+        text-decoration: none;
+        background-color: #197901;
+        color: #fff;
+
+    }
+
 
 </style>
