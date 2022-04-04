@@ -65,7 +65,7 @@
                                                 </div>
                                                 <div class="">
                                                     <label for="description" class="form-label">Description</label>
-                                                    <input v-model="description" type="text" class="form-control" id="description" maxlength="20">
+                                                    <input v-model="description" type="text" class="form-control" id="description" maxlength="60">
                                                 </div>
                                             </div>
                                         </div>
@@ -87,12 +87,11 @@
 
                                                 <p>Select your category</p>
                                                 <div class="form-check" v-for="category in categories">
-                                                    <input v-model="selectedCategory" class="form-check-input" type="radio" name="exampleRadios" :id="category" :value="category" checked>
+                                                    <input v-model="selectedCategory" class="form-check-input" type="radio" name="exampleRadios" :id="category" :value="category">
                                                     <label class="form-check-label" :for="category">
                                                         {{ category }}
                                                     </label>
                                                 </div>
-                                                {{selectedCategory}}
                                             </div>
                                         </div>
                                     </div>
@@ -111,7 +110,7 @@
                                             <div class="timeline-text">
                                                 <div class="form-check">
                                                     <label for="description" class="form-label">Pick Up Location</label>
-                                                    <input v-model="pickupLocation" type="text" class="form-control" id="description" maxlength="20">
+                                                    <input v-model="pickupLocation" type="text" class="form-control" id="description" maxlength="60">
                                                 </div>
                                                 <hr>
                                                 <div class="form-check">
@@ -144,7 +143,7 @@
                 categories: ["Fruits", "Vegetable", "Meat", "Dairy", "Wheat"],
                 itemname: "",
                 description: "",
-                selectedCategory: "",
+                selectedCategory: "Fruits",
                 datetime: "",
                 pickupLocation: "",
                 localStorageData: localStorage.id
