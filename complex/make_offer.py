@@ -144,7 +144,7 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
 
         data = {
             'mobile': seller_mobile,
-            'message': f"You have a new offer for '{item_name}'. Please check your listings under 'My Listings' in Henesys to accept or reject the offer." 
+            'message': f"You have a new offer for '{item_name}': ${price}. Please check your listings under 'My Listings' in Henesys to accept or reject the offer." 
             }
         
         message = json.dumps(data)
