@@ -5,7 +5,7 @@ from flask_cors import CORS
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/profile'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://bee21b1837f0c3:e0021dda@us-cdbr-east-05.cleardb.net/heroku_7e762db5c043985?reconnect=true'
 # The SQLAlchemy Database URI format is: dialect+driver://username:password@host:port/database
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
