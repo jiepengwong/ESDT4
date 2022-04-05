@@ -58,21 +58,6 @@ services:
       dbURI: mongodb+srv://tingz:C1e3RbVUrvmAkDzl@wtesd.azs8r.mongodb.net/ESDnotifs?retryWrites=true&w=majority
 
   ###################################
-  #item microservice: The Item microservice
-  ###################################
-
-  item:
-    build:
-      context: ./item
-      dockerfile: item.Dockerfile
-    image: tinggzster/item:esd
-    restart: always
-    environment:
-      dbURI: mongodb+srv://esdt4:esdt4@nodejstutoriallearning.xssjk.mongodb.net/itemdb?retryWrites=true&w=majority
-    ports:
-      - "5001:5001"
-
-  ###################################
   #profile microservice: The Profile microservice
   ###################################
 
@@ -89,29 +74,20 @@ services:
       - "5000:5000"
 
   ###################################
-  #Accept Offer: The Accept Offer complex microservice
+  #item microservice: The Item microservice
   ###################################
 
-  accept_offer:
+  item:
     build:
-      context: ./complex
-      dockerfile: accept_offer.Dockerfile
-    image: tinggzster/accept_offer:esd
+      context: ./item
+      dockerfile: item.Dockerfile
+    image: tinggzster/item:esd
     restart: always
-    depends_on:
-      - rabbitmq
-      - item
-      - profile
-      - error
-      - twilio_notifs 
     environment:
-      rabbit_host: rabbitmq
-      rabbit_port: 5672
-      PYTHONUNBUFFERED: 1
-      item_URL: http://item:5001/items/
-      profile_URL: http://profile:5000/profile/
+      dbURI: mongodb+srv://esdt4:esdt4@nodejstutoriallearning.xssjk.mongodb.net/itemdb?retryWrites=true&w=majority
     ports:
-      - "5300:5300"
+      - "5001:5001"
+
 
   ###################################
   #Create Listing: The Create Listing complex microservice
@@ -160,6 +136,52 @@ services:
 
 
   ###################################
+  #Accept Offer: The Accept Offer complex microservice
+  ###################################
+
+  accept_offer:
+    build:
+      context: ./complex
+      dockerfile: accept_offer.Dockerfile
+    image: tinggzster/accept_offer:esd
+    restart: always
+    depends_on:
+      - rabbitmq
+      - item
+      - error
+      - twilio_notifs 
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      PYTHONUNBUFFERED: 1
+      item_URL: http://item:5001/items/
+    ports:
+      - "5300:5300"
+
+  ###################################
+  #Reject Offer: The Reject Offer complex microservice
+  ###################################
+
+  reject_offer:
+    build:
+      context: ./complex
+      dockerfile: reject_offer.Dockerfile
+    image: tinggzster/reject_offer:esd
+    restart: always
+    depends_on:
+      - rabbitmq
+      - error
+      - twilio_notifs
+      - item
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      PYTHONUNBUFFERED: 1
+      item_URL: http://item:5001/items/
+    ports:
+      - "5400:5400"
+
+  ###################################
   #leave_rating: The leave rating complex microservice
   ###################################
 
@@ -180,31 +202,6 @@ services:
       - "5500:5500" 
 
   ###################################
-  #Reject Offer: The Reject Offer complex microservice
-  ###################################
-
-  reject_offer:
-    build:
-      context: ./complex
-      dockerfile: reject_offer.Dockerfile
-    image: tinggzster/reject_offer:esd
-    restart: always
-    depends_on:
-      - rabbitmq
-      - error
-      - twilio_notifs
-      - profile
-      - item
-    environment:
-      rabbit_host: rabbitmq
-      rabbit_port: 5672
-      PYTHONUNBUFFERED: 1
-      item_URL: http://item:5001/items/
-      profile_URL: http://profile:5000/profile/
-    ports:
-      - "5400:5400"
-
-  ###################################
   #Remove Offer: The RemoveOffer complex microservice
   ################################### 
 
@@ -223,9 +220,3 @@ services:
       profile_URL: http://profile:5000/profile/
     ports:
       - "5600:5600"
-
-
-
-
-  
-
