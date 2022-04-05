@@ -22,12 +22,10 @@ CORS(app)
 # } 
 
 # Make sure the following microservices are running:
-# profile.py        # load profile.sql data
 # item.js           # node installed + MongoDB database
 # error_new.py          # AMQP routing_key = 'error.*'
 # twilio_notifs.py  # AMQP routing_key = 'notify.*' 
 
-profile_URL =  "http://profile:5000/profile/" # requires :user_id
 item_URL = "http://item:5001/items/" # requires :item_id
 
 
