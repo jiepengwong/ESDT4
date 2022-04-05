@@ -1,11 +1,37 @@
-drop database if exists esdg5t4;
-create database esdg5t4;
-use esdg5t4;
+-- phpMyAdmin SQL Dump
+-- version 4.7.4
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1:3306
+-- Generation Time: Jan 14, 2019 at 06:42 AM
+-- Server version: 5.7.19
+-- PHP Version: 7.1.9
 
-create table Profile_details
-(user_id varchar(64) not null primary key,
-name varchar(64) not null,
-email varchar(64) not null,
-mobile varchar(8) not null,
-ratings float default null,
-counts int default null);
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+CREATE DATABASE IF NOT EXISTS `Profile` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `Profile`;
+
+DROP TABLE IF EXISTS `Profile`;
+CREATE TABLE IF NOT EXISTS `Profile_details` (
+  `user_id` varchar(64) NOT NULL,
+  `name` varchar(64) NOT NULL,
+  `email` varchar(64) NOT NULL,
+  `mobile` varchar(8) NOT NULL,
+  `ratings` float DEFAULT NULL,
+  `counts` int DEFAULT NULL,
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

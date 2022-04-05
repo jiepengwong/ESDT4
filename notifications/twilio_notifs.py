@@ -1,7 +1,6 @@
 import json
 import os
 import amqp_setup
-import twilio
 from twilio.rest import Client
 from dotenv import load_dotenv
 from pathlib import Path
@@ -63,6 +62,7 @@ def processNotifs(Msg):
                                         ) 
 
         print(message.sid)
+        print(message.body)
 
     except Exception as e:
         print("--NOT JSON:", e)

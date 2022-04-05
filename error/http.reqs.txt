@@ -1,0 +1,2 @@
+pymongo==4.0.2
+dnspython==2.2.1

@@ -184,7 +184,9 @@
                         <p class="mb-1 h-1">{{results.item_name}}</p>
                         <p class="mb-5">{{results.description}}</p>
                         <p class="mb-1 fs-6">Category: {{results.category}}</p>
-                        <p class="mb-1 fs-6">Pick-up location: {{results.location}}</p>
+                        <br>
+                        <p class="mb-1 fs-6"><b>Collection Details:</b></p>
+                        <p class="mb-1 fs-6">Pick-up Location: {{results.location}}</p>
                         <p class="mb-1 fs-6">Date: {{date}}</p>
                         <p class="mb-1 fs-6">Time: {{time}}</p>
 
@@ -310,16 +312,15 @@
         try {
           if (result.ok) {
             console.log(response)
-            if (response.code == 201){
               alert("Your offer has been made successfully, you will be redirected to the catalog page shortly...")
 
               window.location.href = "myoffers.html";
-            }
-            else{
-              alert("Your offer has not been made successfully, please try again later...")
-            }
+          }
+          else{
+            alert("Your offer has not been made successfully. Do note that you cannot make an offer for your own item. Please try again...")
+          }
           } 
-        }
+        
 
         catch(err){
 

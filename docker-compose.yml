@@ -2,6 +2,8 @@ version: "3.8"
 
 volumes:
   rabbitmq_data:
+  # pgdata: 
+  # kongadata:
 
 services:
   # order: 
@@ -25,7 +27,7 @@ services:
   ####################################
   twilio_notifs:
     build:
-      context: ./
+      context: ./notifications
       dockerfile: twilio_notifs.Dockerfile
     image: tinggzster/twilio_notifs:esd
     restart: always
@@ -36,39 +38,13 @@ services:
       rabbit_port: 5672
       PYTHONUNBUFFERED: 1
 
-    # hostname: esd-twilio
-    # restart: always
-    # ports:
-    #   - "80:80"
-    # volumes:
-    #   - twilio_data:/var/lib/twilio
-    # environment:
-    #   - TWILIO_ACCOUNT_SID={{.TwilioAccountSid}}
-    #   - TWILIO_AUTH_TOKEN={{.TwilioAuthToken}}
-    #   - TWILIO_NUMBER={{.TwilioNumber}}
-    #   - TWILIO_NOTIF_URL={{.TwilioNotifUrl}}
-    #   - TWILIO_NOTIF_SID={{.TwilioNotifSid}}
-    #   - TWILIO_NOTIF_TOKEN={{.TwilioNotifToken}}
-    #   - TWILIO_NOTIF_FROM={{.TwilioNotifFrom}}
-    #   - TWILIO_NOTIF_TO={{.TwilioNotifTo}}
-    #   - TWILIO_NOTIF_SUBJECT={{.TwilioNotifSubject}}
-    #   - TWILIO_NOTIF_BODY={{.TwilioNotifBody}}
-    #   - TWILIO_NOTIF_SMS_BODY={{.TwilioNotifSmsBody}}
-    #   - TWILIO_NOTIF_SMS_FROM={{.TwilioNotifSmsFrom}}
-    #   - TWILIO_NOTIF_SMS_TO={{.TwilioNotifSmsTo}}
-    #   - TWILIO_NOTIF_SMS_SID={{.TwilioNotifSmsSid}}
-    #   - TWILIO_NOTIF_SMS_TOKEN={{.TwilioNotifSmsToken}}
-    #   - TWILIO_NOTIF_SMS_FROM={{.TwilioNotifSmsFrom}}
-    #   - TWILIO_NOTIF_SMS_TO={{.TwilioNotifSmsTo}}
-    #   - TWILIO_NOTIF_SMS_SID={{.TwilioNotifSms
-
 
   ###################################
   # error: The Error microservice
   ###################################
   error:
     build:
-      context: ./
+      context: ./error
       dockerfile: error.Dockerfile
     image: tinggzster/error:esd
     restart: always
@@ -78,6 +54,7 @@ services:
       rabbit_host: rabbitmq
       rabbit_port: 5672
       PYTHONUNBUFFERED: 1
+      dbURI: mongodb+srv://tingz:C1e3RbVUrvmAkDzl@wtesd.azs8r.mongodb.net/ESDnotifs?retryWrites=true&w=majority
 
   ###################################
   #item microservice: The Item microservice
@@ -85,30 +62,30 @@ services:
 
   item:
     build:
-      context: ./
+      context: ./item
       dockerfile: item.Dockerfile
     image: tinggzster/item:esd
     restart: always
     environment:
       dbURI: mongodb+srv://esdt4:esdt4@nodejstutoriallearning.xssjk.mongodb.net/itemdb?retryWrites=true&w=majority
     ports:
-      - "5000:5000"
+      - "5001:5001"
 
   ###################################
-  #profile microservice: The Item microservice
+  #profile microservice: The Profile microservice
   ###################################
 
   profile:
     build:
-      context: ./
+      context: ./profile
       dockerfile: profile.Dockerfile
     image: tinggzster/profile:esd
     restart: always
     environment:
-      dbURL: mysql+mysqlconnector://root@localhost:3306/profile
+      dbURL: mysql+mysqlconnector://ESDT4@host.docker.internal:3306/profile
       PYTHONUNBUFFERED: 1
     ports:
-      - "5001:5001"
+      - "5000:5000"
 
   ###################################
   #Accept Offer: The Accept Offer complex microservice
@@ -116,21 +93,22 @@ services:
 
   accept_offer:
     build:
-      context: ./
+      context: ./complex
       dockerfile: accept_offer.Dockerfile
     image: tinggzster/accept_offer:esd
     restart: always
     depends_on:
       - rabbitmq
       - item
+      - profile
       - error
       - twilio_notifs 
     environment:
       rabbit_host: rabbitmq
       rabbit_port: 5672
       PYTHONUNBUFFERED: 1
-      item_URL: http://item:5001/item
-      profile_URL: http://profile:5000/profile
+      item_URL: http://item:5001/items/
+      profile_URL: http://profile:5000/profile/
     ports:
       - "5300:5300"
 
@@ -139,21 +117,17 @@ services:
   ###################################
   create_listing:
     build:
-      context: ./
+      context: ./complex
       dockerfile: create_listing.Dockerfile
     image: tinggzster/create_listing:esd
     restart: always
     depends_on:
-      - rabbitmq
       - item
-      - error
-      - twilio_notifs 
+      - profile
     environment:
-      rabbit_host: rabbitmq
-      rabbit_port: 5672
       PYTHONUNBUFFERED: 1
-      item_URL: http://item:5001/item
-      profile_URL: http://profile:5000/profile
+      create_item_URL: http://item:5001/createitem
+      profile_URL: http://profile:5000/profile/
     ports:
       - "5100:5100" 
 
@@ -164,7 +138,7 @@ services:
 
   make_offer: 
     build:
-      context: ./
+      context: ./complex
       dockerfile: make_offer.Dockerfile
     image: tinggzster/make_offer:esd
     restart: always
@@ -178,8 +152,8 @@ services:
       rabbit_host: rabbitmq
       rabbit_port: 5672
       PYTHONUNBUFFERED: 1
-      item_URL: http://item:5001/item
-      profile_URL: http://profile:5000/profile
+      item_URL: http://item:5001/items/
+      profile_URL: http://profile:5000/profile/
     ports:
       - "5200:5200" 
 
@@ -190,19 +164,17 @@ services:
 
   leave_rating:
     build:
-      context: ./
+      context: ./complex
       dockerfile: leave_rating.Dockerfile
     image: tinggzster/leave_rating:esd
     restart: always
     depends_on:
-      - rabbitmq
-      - error
       - profile
+      - item
     environment:
-      rabbit_host: rabbitmq
-      rabbit_port: 5672
       PYTHONUNBUFFERED: 1
-      profile_URL: http://profile:5000/profile
+      rate_profile_URL: http://profile:5000/profile/ratings/
+      item_URL: http://item:5001/items/
     ports:
       - "5500:5500" 
 
@@ -212,7 +184,7 @@ services:
 
   reject_offer:
     build:
-      context: ./
+      context: ./complex
       dockerfile: reject_offer.Dockerfile
     image: tinggzster/reject_offer:esd
     restart: always
@@ -226,8 +198,8 @@ services:
       rabbit_host: rabbitmq
       rabbit_port: 5672
       PYTHONUNBUFFERED: 1
-      item_URL: http://item:5001/item
-      profile_URL: http://profile:5000/profile
+      item_URL: http://item:5001/items/
+      profile_URL: http://profile:5000/profile/
     ports:
       - "5400:5400"
 
@@ -237,24 +209,101 @@ services:
 
   remove_offer:
     build:
-      context: ./
+      context: ./complex
       dockerfile: remove_offer.Dockerfile
     image: tinggzster/remove_offer:esd
     restart: always
     depends_on:
-      - rabbitmq
-      - error
-      - twilio_notifs
       - profile
       - item
     environment:
-      rabbit_host: rabbitmq
-      rabbit_port: 5672
       PYTHONUNBUFFERED: 1
-      item_URL: http://item:5001/item
-      profile_URL: http://profile:5000/profile
+      item_URL: http://item:5001/items/
+      profile_URL: http://profile:5000/profile/
     ports:
       - "5600:5600"
+
+
+  #######################################
+  # Postgres: The database used by Kong
+  #######################################
+  # kong-database:
+  #   image: postgres:9.6
+  #   restart: always
+  #   networks:
+  #     - kong-net
+  #   environment:
+  #     POSTGRES_DB: kong
+  #     POSTGRES_USER: kong
+  #     POSTGRES_PASSWORD: password
+  #   ports:
+  #     - "5432:5432"
+  #   healthcheck:
+  #     test: ["CMD", "pg_isready", "-U", "kong"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #   volumes:
+  #     - pgdata:/var/lib/postgresql/data
+
+  #######################################
+  # Kong database migration
+  #######################################
+  # kong-migration:
+  #   image: kong:2.0.4
+  #   command: "kong migrations bootstrap"
+  #   restart: on-failure
+  #   networks:
+  #     - kong-net
+  #   environment:
+  #     KONG_DATABASE: postgres
+  #     KONG_PG_HOST: kong-database
+  #     KONG_PG_USER: kong
+  #     KONG_PG_PASSWORD: password
+  #   depends_on:
+  #     - kong-database
+
+  #######################################
+  # Kong: The API Gateway
+  #######################################
+  # kong:
+  #   image: kong:2.0.4
+  #   restart: always
+  #   networks:
+  #     - kong-net
+  #   environment:
+  #     KONG_DATABASE: postgres
+  #     KONG_PG_HOST: kong-database
+  #     KONG_PG_USER: kong
+  #     KONG_PG_PASSWORD: password
+  #     KONG_PROXY_LISTEN: 0.0.0.0:8000
+  #     KONG_ADMIN_LISTEN: 0.0.0.0:8001
+  #   depends_on:
+  #     - kong-migration
+  #   ports:
+  #     - "8000:8000"
+  
+  #######################################
+  # Konga: Kong GUI
+  #######################################
+  # konga:
+  #   image: pantsel/konga
+  #   restart: always
+  #   networks:
+  #       - kong-net
+  #   environment:
+  #     DB_ADAPTER: postgres
+  #     DB_HOST: kong-database
+  #     DB_USER: kong
+  #     DB_PASSWORD: password
+  #     DB_DATABASE: konga_db
+  #   depends_on:
+  #     - kong
+  #   ports:
+  #     - "1337:1337"
+  #   volumes:
+  #     - kongadata:/app/kongadata
+
 
 
 

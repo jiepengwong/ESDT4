@@ -25,8 +25,8 @@ CORS(app)
 # error_new.py          # AMQP routing_key = 'error.*'
 # twilio_notifs.py  # AMQP routing_key = 'notify.*' 
 
-profile_URL =  "http://localhost:5000/profile/" # requires :user_id
-item_URL = "http://localhost:5001/items/" # requires :item_id
+profile_URL =  "http://profile:5000/profile/" # requires :user_id
+item_URL = "http://item:5001/items/" # requires :item_id
 
 
 @app.route("/reject_offer", methods=['POST'])
@@ -134,7 +134,7 @@ def processRejectOffer(rejected):  # process the json input of /reject_offer
         
         data = {
             "mobile": buyer_mobile,
-            "message": f"Your offer for '{item_name}' has been rejected by {seller_name}. Your previous offer was ${price}. Please make another offer for the item if it is still available." # item is placed back to catalogue
+            "message": f"Your offer for '{item_name}' has been rejected by {seller_name}. Your previous offer was ${price}.\n\nPlease make another offer for the item in Henesys if it is still available." # item is placed back to catalogue
             }
         
         message = json.dumps(data)
