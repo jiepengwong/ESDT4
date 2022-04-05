@@ -317,7 +317,7 @@
               window.location.href = "myoffers.html";
           }
           else{
-            alert("Your offer has not been made successfully. Do note that you cannot make an offer for your own item. Please try again...")
+            alert("Your offer has failed. Do note that you cannot make an offer for your own item. Please try again...")
           }
           } 
         

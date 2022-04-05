@@ -274,7 +274,7 @@
                                             })
                                             
                             if (this.isSignedIn && this.id != null) {
-                                var database_url = "http://localhost:5000/profile/" + this.id;
+                                var database_url = "http://127.0.0.1:5000/profile/" + this.id;
                                 console.log(database_url);
                                 fetch(database_url)
                                 .then(response => response.json())
@@ -286,7 +286,7 @@
                                     this.registered = false;
                                     console.log(this.registered)
                                     console.log(this.id)
-                                    var registered_url = "http://localhost:5000/profile/register/" + this.id
+                                    var registered_url = "http://127.0.0.1:5000/profile/register/" + this.id
                                     console.log(registered_url)
                                     console.log(jsondata)
                                     console.log(typeof jsondata)

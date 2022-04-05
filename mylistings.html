@@ -59,10 +59,11 @@
           <div class="container">
             <div class="row">
               <div class="col-lg-12 m-4 ">
-                <h2 v-if="headercategory == 'All'">Offers (All)</h2>
-                <h2 v-if="headercategory == 'pending'" >Offers (Pending)</h2>
-                <h2 v-if="headercategory == 'accepted'" >Offers (Accepted)</h2>
-                <h2 v-if="headercategory == 'closed'" >Offers (Closed)</h2>
+                <h2 v-if="headercategory == 'All'">My listings (All)</h2>
+                <h2 v-if="headercategory == 'open'" >My listings (Open)</h2>
+                <h2 v-if="headercategory == 'pending'" >My listings (Pending)</h2>
+                <h2 v-if="headercategory == 'accepted'" >My listings (Accepted)</h2>
+                <h2 v-if="headercategory == 'closed'" >My listings (Closed)</h2>
                 <h5 class="m-1">Filtered Results: {{results.length}}</h5>
 
 
@@ -70,68 +71,48 @@
             </div>
             <div class="row">
      
+            <!-- {{AllFilter['pending']}} -->
+            <!-- {{AllFilter}} -->
+            <div v-if="headercategory == 'All'">
+              <div>
+                <h5>Open</h5>
+                <div v-if="AllFilter['open'].length > 0" class="row">
+                  <div class="col-md-3" v-for="listing in AllFilter['open']">
+                   
+                    <div class="card-sl">
+                        <div class="card-heading">
+                            <h5 class="text-center">{{listing["item_name"]}}</h5>
+                            <hr>
+                        </div>
+                        <div class="card-text">
+                          <p v-if="listing['item_status'] == 'open'" class="text-center">There are no existing offers yet</p>
+                          <h5 v-if="listing['item_status'] == 'open'" class="text-primary font-weight-bold text-center">Open</h5>
+                        </div>
+  
+                        <div v-if="listing['item_status'] == 'accepted' || listing['item_status'] == 'pending' || listing['item_status'] == 'closed'" class="card-text">
+                          <b>Buyer:</b> {{listing["buyer_name"]}} <br>
+                          <b>Price:</b> {{listing["price"]}} <br>
+                          <h5 class="text-success font-weight-bold" v-if="listing['item_status'] == 'accepted'">Accepted</h6>
+                          <h5 class="text-warning font-weight-bold" v-if="listing['item_status'] == 'pending'">Pending</h6>
+                      </div>
 
-            <!-- <div class="col-md-3">
-              <div class="card-sl">
-                  <div class="card-heading">
-                      <h4>Audi Q8</h4>
+                      <div v-if="listing['item_status'] == 'closed'" class="card-text">
+                        <h5 class="text-danger font-weight-bold">Closed</h5>
+                      </div>
+  
+                        <button v-if="listing['item_status'] == 'open'" @click="removeListing(listing._id)" class="card-button-reject">Remove</button>
+                        <div class="d-flex">
+                          <button v-if="listing['item_status'] == 'pending'" @click="acceptOffer(listing._id)" class="card-button-accept">Accept</button>
+                          <button v-if="listing['item_status'] == 'pending'" @click="rejectOffer(listing._id)" class="card-button-reject">Reject</button>
+                        </div>
+                    
+                    </div>
                   </div>
-                  <div class="card-text">
-                      Audi Q8 is a full-size luxury crossover SUV coupé made by Audi that was launched in 2018.
-                  </div>
 
-                  <hr/>
-
-                  <div class="card-text">
-                    <b>Location:</b> asd
                 </div>
 
-                <div class="card-text">
-                  <b>Time:</b> asd
-              </div>
-
-                  <div class="card-text">
-                    <b>Price:</b> $67,400
-                  </div>
-                  <button class="card-button-reject">Reject</button>
-                  <button v-if="result.item_status == 'accepted'" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                        Leave Rating
-                      </button>
-              </div>
-
-            </div> -->
-            {{headercategory}}
-            <!-- {{AllFilter}} -->
-            <!-- <div v-if="headercategory == 'All'">
-              <div>
-                <h5>Pending</h5>
-                <div v-for="(key,value) in AllFilter['open']">
-                  <div class="card-sl">
-                      <div class="card-heading">
-                          <h4>{{value.item_name}}</h4>
-                      </div>
-                      <div class="card-text">
-                          {{value.item_description}}
-                      </div>
-
-                      <hr/>
-
-                      <div class="card-text">
-                        <b>Location:</b> {{value.item_location}}
-                    </div>
-
-                    <div class="card-text">
-                      <b>Time:</b> {{value.item_time}}
-                  </div>
-
-                      <div class="card-text">
-                        <b>Price:</b> ${{value.item_price}}
-                      </div>
-                      <button class="card-button-reject">Reject</button>
-                      <button v-if="value.item_status == 'accepted'" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                            Leave Rating
-                          </button>
-                  </div>
+                <div v-else>
+                  <h5 class="p-5">No open listings yet :(</h5>
                 </div>
 
               </div>
@@ -139,75 +120,190 @@
 
 
               <div>
-                <h5>Open</h5>
+                <h5 class="mt-2">Pending</h5>
+                <div v-if="AllFilter['pending'].length > 0" class="row">
+                  <div class="col-md-3" v-for="listing in AllFilter['pending']">
+                    <!-- {{listing}} -->
+                    <div class="card-sl">
+                        <div class="card-heading">
+                          <h5 class="text-center">{{listing["item_name"]}}</h5>
+                          <hr>
+                        </div>
+                        <div class="card-text">
+                          <p v-if="listing['item_status'] == 'open'" class="text-center">There are no existing offers yet</p>
+                          <h5 v-if="listing['item_status'] == 'open'" class="text-primary font-weight-bold text-center">Open</h6>
+                        </div>
+  
+                        <div v-if="listing['item_status'] == 'accepted' || listing['item_status'] == 'pending' || listing['item_status'] == 'closed'" class="card-text">
+                          <b>Buyer:</b> {{listing["buyer_name"]}} <br>
+                          <b>Price:</b> {{listing["price"]}} <br>
+                          <h5 class="text-success font-weight-bold" v-if="listing['item_status'] == 'accepted'">Accepted</h6>
+                          <h5 class="text-warning font-weight-bold" v-if="listing['item_status'] == 'pending'">Pending</h6>
+                      </div>
 
-                
-              </div>
-
-              <div>
-                <h5>Accepted</h5>
-
-                
-              </div>
-
-              <div>
-                <h5>Closed</h5>
-              </div>
-            </div> -->
-
-                
-            
-            
-            <div v-for="result in results" :key="result" class="col-md-3">
-
-              <div  >
-                <div class="card-sl">
-                    <div class="card-heading">
-                        <h5 class="text-center">{{result.item_name}}</h5>
-                        <hr/>
-
+                      <div v-if="listing['item_status'] == 'closed'" class="card-text">
+                        <h5 class="text-danger font-weight-bold">Closed</h5>
+                      </div>
+  
+                        <button v-if="listing['item_status'] == 'open'" @click="removeListing(listing._id)" class="card-button-reject">Remove</button>
+                        <div class="d-flex">
+                          <button v-if="listing['item_status'] == 'pending'" @click="acceptOffer(listing._id)" class="card-button-accept">Accept</button>
+                          <button v-if="listing['item_status'] == 'pending'" @click="rejectOffer(listing._id)" class="card-button-reject">Reject</button>
+                        </div>
+                    
                     </div>
-                    <div class="card-text">
-                      <p  v-if="result.buyer_name != null"class="mt-3">Buyer Name: <b>{{result.buyer_name}}</b></p>
-                      <p v-if="result.buyer_name == null">There are no existing offers yet!</p>
-                      <p v-if="result.price != null">Buyer's offer: <b><u class="text-success">{{result.price}} SGD </u></b></p>
-                      <div>
-                        <h5 class="text-primary font-weight-bold" v-if="result.item_status == 'open'">Open</h6>
-                        <h5 class="text-success font-weight-bold" v-if="result.item_status == 'accepted'">Accepted</h6>
-                        <h5 class="text-warning font-weight-bold" v-if="result.item_status == 'pending'">Pending</h6>
-                        <h5 class="text-secondary font-weight-bold" v-if="result.item_status == 'closed'">Closed</h6>
-                          
+                  </div>
+                      
+
+                </div>
+
+                <div v-else>
+                  <h5 class="p-5">No pending listings yet :(</h5>
+                </div>
+
+                
+              </div>
+
+              <div>
+                <h5 class="mt-2">Accepted</h5>
+                <div v-if="AllFilter['accepted'].length > 0" class="row">
+                  <div class="col-md-3" v-for="listing in AllFilter['accepted']">
+                    <div class="card-sl">
+                        <div class="card-heading">
+                          <h5 class="text-center">{{listing["item_name"]}}</h5>
+                          <hr>
+                        </div>
+                        <div class="card-text">
+                          <p v-if="listing['item_status'] == 'open'" class="text-center">There are no existing offers yet</p>
+                          <h5 class="text-primary font-weight-bold text-center">Open</h6>
+                        </div>
+  
+                        <div v-if="listing['item_status'] == 'accepted' || listing['item_status'] == 'pending' || listing['item_status'] == 'closed'" class="card-text">
+                          <b>Buyer:</b> {{listing["buyer_name"]}} <br>
+                          <b>Price:</b> {{listing["price"]}} <br>
+                          <h5 class="text-success font-weight-bold" v-if="listing['item_status'] == 'accepted'">Accepted</h6>
+                          <h5 class="text-warning font-weight-bold" v-if="listing['item_status'] == 'pending'">Pending</h6>
+                      </div>
+
+                      <div v-if="listing['item_status'] == 'closed'" class="card-text">
+                        <h5 class="text-danger font-weight-bold">Closed</h5>
+                      </div>
+  
+                        <button v-if="listing['item_status'] == 'open'" @click="removeListing(listing._id)" class="card-button-reject">Remove</button>
+                        <div class="d-flex">
+                          <button v-if="listing['item_status'] == 'pending'" @click="acceptOffer(listing._id)" class="card-button-accept">Accept</button>
+                          <button v-if="listing['item_status'] == 'pending'" @click="rejectOffer(listing._id)" class="card-button-reject">Reject</button>
+                        </div>
+                    
+                    </div>
+                  </div>
+                  
+                </div>
+
+                <div v-else>
+                  <h5 class="p-5">No accepted listings yet :(</h5>
+                </div>
+
+                
+              </div>
+
+              <div>
+                <h5 class="mt-2">Closed</h5>
+                <div v-if="AllFilter['closed'].length > 0" class="row">
+                  <div class="col-md-3" v-for="listing in AllFilter['closed']">
+                    <!-- {{listing}} -->
+                    <div class="card-sl">
+                        <div class="card-heading">
+                          <h5 class="text-center">{{listing["item_name"]}}</h5>
+                          <hr>
+                        </div>
+                        <div class="card-text">
+                          <p v-if="listing['item_status'] == 'open'" class="text-center">There are no existing offers yet</p>
+                          <h5 v-if="listing['item_status'] == 'open'" class="text-primary font-weight-bold text-center">Open</h6>
+                        </div>
+  
+                        <div v-if="listing['item_status'] == 'accepted' || listing['item_status'] == 'pending' || listing['item_status'] == 'closed'" class="card-text">
+                          <b>Buyer:</b> {{listing["buyer_name"]}} <br>
+                          <b>Price:</b> {{listing["price"]}} <br>
+                          <h5 class="text-success font-weight-bold text-center" v-if="listing['item_status'] == 'accepted'">Accepted</h6>
+                          <h5 class="text-warning font-weight-bold text-center" v-if="listing['item_status'] == 'pending'">Pending</h6>
+                      </div>
+
+                      <div v-if="listing['item_status'] == 'closed'" class="card-text">
+                        <h5 class="text-secondary font-weight-bold">Closed</h5>
+                      </div>
+  
+                        <button v-if="listing['item_status'] == 'open'" @click="removeListing(listing._id)" class="card-button-reject">Remove</button>
+                        <div class="d-flex">
+                          <button v-if="listing['item_status'] == 'pending'" @click="acceptOffer(listing._id)" class="card-button-accept">Accept</button>
+                          <button v-if="listing['item_status'] == 'pending'" @click="rejectOffer(listing._id)" class="card-button-reject">Reject</button>
+                        </div>
+                    
+                    </div>
+                  </div>
+
+                </div>
+
+                <div v-else>
+                  <h5 class="p-5">No past transactions yet :(</h5>
+                </div>
+
+
+              </div>
+            </div>
+
+                
+            <div v-else class="row">
+              <div v-for="result in results" :key="result" class="col-md-3">
+  
+                <div  >
+                  <div class="card-sl">
+                      <div class="card-heading">
+                          <h5 class="text-center">{{result.item_name}}</h5>
+                          <hr/>
   
                       </div>
+                      <div class="card-text">
+                        <p  v-if="result.buyer_name != null"class="mt-3">Buyer Name: <b>{{result.buyer_name}}</b></p>
+                        <p v-if="result.buyer_name == null">There are no existing offers yet!</p>
+                        <p v-if="result.price != null">Buyer's offer: <b><u class="text-success">{{result.price}} SGD </u></b></p>
+                        <div>
+                          <h5 class="text-primary font-weight-bold" v-if="result.item_status == 'open'">Open</h6>
+                          <h5 class="text-success font-weight-bold" v-if="result.item_status == 'accepted'">Accepted</h6>
+                          <h5 class="text-warning font-weight-bold" v-if="result.item_status == 'pending'">Pending</h6>
+                          <h5 class="text-secondary font-weight-bold" v-if="result.item_status == 'closed'">Closed</h6>
+                            
+    
+                        </div>
+                      </div>
+    
+                      <hr v-if="result.item_status == 'accepted'"/>
+    
+                      <div v-if="result.item_status == 'accepted'" class="card-text">
+                        <b>Location: </b> {{result.location}}
                     </div>
-  
-                    <hr v-if="result.item_status == 'accepted'"/>
-  
+    
                     <div v-if="result.item_status == 'accepted'" class="card-text">
-                      <b>Location: </b> {{result.location}}
+                      <b>Time: </b> {{result.date_time}}
+                  </div>
+    
+                    
+                      <button v-if="result.item_status == 'open'" @click="removeListing(result._id)" class="card-button-reject">Remove</button>
+  
+                      <div class="d-flex">
+                        <button v-if="result.item_status == 'pending'" type="button" class="card-button-accept" @click="acceptOffer(result._id)">
+                          Accept
+                        </button>
+                        <button v-if="result.item_status == 'pending'" type="button" class="card-button-reject" @click="rejectOffer(result._id)">
+                          Reject
+                        </button>
+                      </div>
                   </div>
   
-                  <div v-if="result.item_status == 'accepted'" class="card-text">
-                    <b>Time: </b> {{result.date_time}}
                 </div>
   
-                  
-                    <button v-if="result.item_status == 'open'" @click="removeListing(result._id)" class="card-button-reject">Remove</button>
-
-                    <div class="d-flex">
-                      <button v-if="result.item_status == 'pending'" type="button" class="card-button-accept" @click="acceptOffer(result._id)">
-                        Accept
-                      </button>
-                      <button v-if="result.item_status == 'pending'" type="button" class="card-button-reject" @click="rejectOffer(result._id)">
-                        Reject
-                      </button>
-                    </div>
-                </div>
-
-              </div>
-
-            </div>                
-                
+              </div>               
+            </div>
                 
                 <!-- Modal -->
                 <!-- ======================================================================================== -->
@@ -285,7 +381,7 @@
 
             }
             
-            console.log(results)
+            // console.log(results)
           
             console.log(this.results)
 
