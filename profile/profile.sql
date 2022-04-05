@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS `Profile_details` (
   `email` varchar(64) NOT NULL,
   `mobile` varchar(8) NOT NULL,
   `ratings` float DEFAULT NULL,
+  `counts` int DEFAULT NULL,
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
