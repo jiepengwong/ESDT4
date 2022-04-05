@@ -81,7 +81,19 @@ app.get("/items", (req,res) =>{
     Item.find().where("item_status").equals("open")
     .then((result)=>{
 
-        res.json({"code": 200,"Success": result}).status(200);
+        console.log(result)
+
+
+        if (result === []){
+            res.json({"code": 404,"Error": result}).status(404);
+
+
+        }
+
+        else{
+            res.json({"code": 200,"Success": result}).status(200);
+
+        }
 
     })
 
@@ -297,7 +309,7 @@ app.put("/items/:id",(req,res) =>{
         
             })
             .catch((err)=>{
-                res.status(404).json({"code": 404,"Error": `${err}`});
+                res.status(404).json({"code": 404,"Error": 'Unable to find the item'});
             })
         }
         // res.status(200).json({"code": 200,"Success" : result});
@@ -306,7 +318,7 @@ app.put("/items/:id",(req,res) =>{
 
     })
     .catch((error) =>{
-        res.json({"code": 404,"Error": error}).status(404);
+        res.json({"code": 404,"Error": 'Unable to find the item'}).status(404);
     })
 })
 

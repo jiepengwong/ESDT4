@@ -147,7 +147,7 @@
   
                         <button v-if="listing['item_status'] == 'open'" @click="removeListing(listing._id)" class="card-button-reject">Remove</button>
                         <div class="d-flex">
-                          <button v-if="listing['item_status'] == 'pending'" @click="acceptListing(listing._id)" class="card-button-accept">Accept</button>
+                          <button v-if="listing['item_status'] == 'pending'" @click="acceptOffer(listing._id)" class="card-button-accept">Accept</button>
                           <button v-if="listing['item_status'] == 'pending'" @click="rejectOffer(listing._id)" class="card-button-reject">Reject</button>
                         </div>
                     
