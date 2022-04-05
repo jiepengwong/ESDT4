@@ -330,7 +330,7 @@ app.delete("/items/delete/:id", (req, res) => {
             res.status(200).json({"code": 200,"Success" : `${result._id} Deleted successfully`});
         })
         .catch((err) => {
-            res.status(404).json({"code": 404,"message": `${err}`, "Message": "Has item already been deleted?"});
+            res.status(404).json({"code": 404,"message": `${err}`});
         });
 })
 
