@@ -64,7 +64,7 @@ app.post("/createitem", (req, res) => {
 
         })
         .catch((err) => {
-            res.status(404).json({"code": 404, "Error": `${err}`});
+            res.status(404).json({"code": 404, "message": `${err}`});
 
             // console.log(err.msg)
         });
@@ -85,7 +85,7 @@ app.get("/items", (req,res) =>{
 
 
         if (result === []){
-            res.json({"code": 404,"Error": result}).status(404);
+            res.json({"code": 404,"message": result}).status(404);
 
 
         }
@@ -98,7 +98,7 @@ app.get("/items", (req,res) =>{
     })
 
     .catch((err)=>{
-        res.json({"code": 404,"Error":err}).status(404);
+        res.json({"code": 404,"message":err}).status(404);
 
     })
     
@@ -110,7 +110,7 @@ app.get("/items/:id",(req,res) =>{
     console.log(req.params.id);
     Item.findOne({ "_id": req.params.id}, (err, item) => {
         if (err) {
-        res.json({"code": 404,"Error":err}).status(404);
+        res.json({"code": 404,"message":err}).status(404);
         }
         // Send json response of items
         res.json({"code": 200,"Success":item}).status(200);
@@ -140,7 +140,7 @@ app.get("/items/myoffers/buyer/:buyer_id",(req,res) =>{
         console.log(result);
 
         if (result === null){
-            res.json({"code": 404,"Error": "There is no such buyer at all"}).status(404);
+            res.json({"code": 404,"message": "There is no such buyer at all"}).status(404);
         }
 
 
@@ -152,7 +152,7 @@ app.get("/items/myoffers/buyer/:buyer_id",(req,res) =>{
                 if (result === []){
                     console.log("hi")
                     console.log(result)
-                    res.json({"code": 404,"Error": "Buyer did not make an offer"}).status(404);
+                    res.json({"code": 404,"message": "Buyer did not make an offer"}).status(404);
                 }
                 else{
                     res.json({"code": 200,"Success": result}).status(200);
@@ -162,7 +162,7 @@ app.get("/items/myoffers/buyer/:buyer_id",(req,res) =>{
             })
     
             .catch((err)=>{
-                res.json({"code": 404, "Error" : err}.status(404))
+                res.json({"code": 404, "message" : err}.status(404))
             })
 
         }
@@ -174,7 +174,7 @@ app.get("/items/myoffers/buyer/:buyer_id",(req,res) =>{
     })
 
     .catch((err) =>{
-        res.json({"code": 404,"Error": err}).status(404);
+        res.json({"code": 404,"message": err}).status(404);
 
 
 
@@ -204,7 +204,7 @@ app.get("/items/mylistings/seller/:seller_id",(req,res) =>{
         console.log(result);
 
         if (result === null){
-            res.json({"code": 404,"Error": "There is no such seller at all"}).status(404);
+            res.json({"code": 404,"message": "There is no such seller at all"}).status(404);
         }
 
         else{
@@ -215,7 +215,7 @@ app.get("/items/mylistings/seller/:seller_id",(req,res) =>{
                 console.log(result)
     
                 if (result === []){
-                    res.json({"code": 404,"Error": "Seller has no listings"}).status(404);
+                    res.json({"code": 404,"message": "Seller has no listings"}).status(404);
                 }
                 else{
                     res.json({"code": 200,"Success": result}).status(200);
@@ -226,7 +226,7 @@ app.get("/items/mylistings/seller/:seller_id",(req,res) =>{
     
             .catch((err)=>{
                 console.log(err)
-                res.json({"code": 404, "Error": err}).status(404)
+                res.json({"code": 404, "message": err}).status(404)
             })
         }
 
@@ -237,7 +237,7 @@ app.get("/items/mylistings/seller/:seller_id",(req,res) =>{
     })
 
     .catch((err) =>{
-        res.json({"code": 404,"Error": `"${req.params.seller_id} There is no such buyer at all"`}).status(404);
+        res.json({"code": 404,"message": `"${req.params.seller_id} There is no such buyer at all"`}).status(404);
 
 
 
@@ -277,7 +277,7 @@ app.put("/items/:id",(req,res) =>{
         console.log(updateDetails.buyer_id)
 
         if (result[0].seller_id == updateDetails.buyer_id){
-            res.status(404).json({"code": 404,"Error": "Not updated, buyer_id cannot be the same as seller_id. TRY again"});
+            res.status(404).json({"code": 404,"message": "Not updated, buyer_id cannot be the same as seller_id. TRY again"});
         }
         else{
 
@@ -289,7 +289,7 @@ app.put("/items/:id",(req,res) =>{
                 // Check if buyer_id == to seller_id (This is not possible)
         
                 if (result["buyer_id"] == result["seller_id"]){
-                    res.status(404).json({"code": 404,"Error": "Not updated, buyer_id cannot be the same as seller_id. TRY again"});
+                    res.status(404).json({"code": 404,"message": "Not updated, buyer_id cannot be the same as seller_id. TRY again"});
                 }
         
                 else{
@@ -298,7 +298,7 @@ app.put("/items/:id",(req,res) =>{
                         // Check if update is successful here
                         if (result[value] != updateDetails[value]){
                             console.log("Unsuccessful update")
-                            return res.status(404).json({"code": 404,"Error": "Not updated, check the data type of the parameters"});
+                            return res.status(404).json({"code": 404,"message": "Not updated, check the data type of the parameters"});
                         }
                     }
         
@@ -309,7 +309,7 @@ app.put("/items/:id",(req,res) =>{
         
             })
             .catch((err)=>{
-                res.status(404).json({"code": 404,"Error": 'Unable to find the item'});
+                res.status(404).json({"code": 404,"message": 'Unable to find the item'});
             })
         }
         // res.status(200).json({"code": 200,"Success" : result});
@@ -318,7 +318,7 @@ app.put("/items/:id",(req,res) =>{
 
     })
     .catch((error) =>{
-        res.json({"code": 404,"Error": 'Unable to find the item'}).status(404);
+        res.json({"code": 404,"message": 'Unable to find the item'}).status(404);
     })
 })
 
@@ -330,7 +330,7 @@ app.delete("/items/delete/:id", (req, res) => {
             res.status(200).json({"code": 200,"Success" : `${result._id} Deleted successfully`});
         })
         .catch((err) => {
-            res.status(404).json({"code": 404,"Error": `${err}`, "Message": "Has item already been deleted?"});
+            res.status(404).json({"code": 404,"message": `${err}`, "Message": "Has item already been deleted?"});
         });
 })
 
