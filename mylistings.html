@@ -175,7 +175,7 @@
                         </div>
                         <div class="card-text">
                           <p v-if="listing['item_status'] == 'open'" class="text-center">There are no existing offers yet</p>
-                          <h5 class="text-primary font-weight-bold text-center">Open</h6>
+                          <h5 v-if="listing['item_status'] == 'open'" class="text-primary font-weight-bold text-center">Open</h5>
                         </div>
   
                         <div v-if="listing['item_status'] == 'accepted' || listing['item_status'] == 'pending' || listing['item_status'] == 'closed'" class="card-text">

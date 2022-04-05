@@ -103,7 +103,56 @@
                       </div>
   
                           <button v-if="listing['item_status'] == 'pending'" @click="buyerReject(listing._id)" class="card-button-reject">Remove</button>
-                          <button v-if="listing['item_status'] == 'accepted'" @click="sendReview(listing._id)" class="card-button-accept" data-bs-toggle="modal" data-bs-target="#exampleModal">Leave Rating</button>
+                          <button v-if="listing['item_status'] == 'accepted'"  class="card-button-accept" data-bs-toggle="modal" data-bs-target="#exampleModal">Leave Rating</button>
+                          <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLabel">Ratings</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                  <p>Please leave your ratings for the seller: {{listing["seller_name"]}}</p>
+              
+              
+                                  <!-- <div class="stars">
+                                    <a>⭐️</a>
+                                    <a>⭐️</a>
+                                    <a>⭐️</a>
+                                    <a>⭐️</a>
+                                    <a>⭐️</a>
+                                  </div> -->
+              
+                                  <div class="ratings d-flex justify-content-around">
+                                    <input class="form-check-input" type="radio" id="one" value="1" v-model="picked">
+                                    <label class="form-check-label" for="one">1</label>
+              
+                                    <input  class="form-check-input" type="radio" id="two" value="2" v-model="picked">
+                                    <label class="form-check-label" for="two">2</label>
+              
+                                    <input class="form-check-input" type="radio" id="three" value="3" v-model="picked">
+                                    <label class="form-check-label" for="three">3</label>
+              
+                                    <input class="form-check-input" type="radio" id="four" value="4" v-model="picked">
+                                    <label class="form-check-label" for="four">4</label>
+              
+                                    <input class="form-check-input" type="radio" id="five" value="5" v-model="picked">
+                                    <label class="form-check-label" for="five">5</label>
+              
+                                    <!-- {{picked}} -->
+                                    
+                                  </div>
+              
+              
+                                  
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                  <button type="button" class="btn btn-primary"  @click="sendReview(listing['_id'])">Send Rating</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
 
                     
                     </div>
@@ -151,7 +200,56 @@
                       </div>
   
                           <button v-if="listing['item_status'] == 'pending'" @click="buyerReject(listing._id)" class="card-button-reject">Remove</button>
-                          <button v-if="listing['item_status'] == 'accepted'" @click="sendReview(listing._id)" class="card-button-accept" data-bs-toggle="modal" data-bs-target="#exampleModal">Leave Rating</button>
+                          <button v-if="listing['item_status'] == 'accepted'"  class="card-button-accept" data-bs-toggle="modal" data-bs-target="#exampleModal">Leave Rating</button>
+                          <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLabel">Ratings</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                  <p>Please leave your ratings for the seller: {{listing["seller_name"]}}</p>
+              
+              
+                                  <!-- <div class="stars">
+                                    <a>⭐️</a>
+                                    <a>⭐️</a>
+                                    <a>⭐️</a>
+                                    <a>⭐️</a>
+                                    <a>⭐️</a>
+                                  </div> -->
+              
+                                  <div class="ratings d-flex justify-content-around">
+                                    <input class="form-check-input" type="radio" id="one" value="1" v-model="picked">
+                                    <label class="form-check-label" for="one">1</label>
+              
+                                    <input  class="form-check-input" type="radio" id="two" value="2" v-model="picked">
+                                    <label class="form-check-label" for="two">2</label>
+              
+                                    <input class="form-check-input" type="radio" id="three" value="3" v-model="picked">
+                                    <label class="form-check-label" for="three">3</label>
+              
+                                    <input class="form-check-input" type="radio" id="four" value="4" v-model="picked">
+                                    <label class="form-check-label" for="four">4</label>
+              
+                                    <input class="form-check-input" type="radio" id="five" value="5" v-model="picked">
+                                    <label class="form-check-label" for="five">5</label>
+              
+                                    <!-- {{picked}} -->
+                                    
+                                  </div>
+              
+              
+                                  
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                  <button type="button" class="btn btn-primary"  @click="sendReview(listing['_id'])">Send Rating</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
 
                     
                     </div>
@@ -200,7 +298,56 @@
                       </div>
   
                           <button v-if="listing['item_status'] == 'pending'" @click="buyerReject(listing._id)" class="card-button-reject">Remove</button>
-                          <button v-if="listing['item_status'] == 'accepted'" @click="sendReview(listing._id)" class="card-button-accept" data-bs-toggle="modal" data-bs-target="#exampleModal">Leave Rating</button>
+                          <button v-if="listing['item_status'] == 'accepted'" class="card-button-accept" data-bs-toggle="modal" data-bs-target="#exampleModal">Leave Rating</button>
+                          <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLabel">Ratings</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                  <p>Please leave your ratings for the seller: {{listing["seller_name"]}}</p>
+              
+              
+                                  <!-- <div class="stars">
+                                    <a>⭐️</a>
+                                    <a>⭐️</a>
+                                    <a>⭐️</a>
+                                    <a>⭐️</a>
+                                    <a>⭐️</a>
+                                  </div> -->
+              
+                                  <div class="ratings d-flex justify-content-around">
+                                    <input class="form-check-input" type="radio" id="one" value="1" v-model="picked">
+                                    <label class="form-check-label" for="one">1</label>
+              
+                                    <input  class="form-check-input" type="radio" id="two" value="2" v-model="picked">
+                                    <label class="form-check-label" for="two">2</label>
+              
+                                    <input class="form-check-input" type="radio" id="three" value="3" v-model="picked">
+                                    <label class="form-check-label" for="three">3</label>
+              
+                                    <input class="form-check-input" type="radio" id="four" value="4" v-model="picked">
+                                    <label class="form-check-label" for="four">4</label>
+              
+                                    <input class="form-check-input" type="radio" id="five" value="5" v-model="picked">
+                                    <label class="form-check-label" for="five">5</label>
+              
+                                    <!-- {{picked}} -->
+                                    
+                                  </div>
+              
+              
+                                  
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                  <button type="button" class="btn btn-primary" @click="sendReview(listing['_id'])">Send Rating</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
 
                     
                     </div>
@@ -249,7 +396,58 @@
                   </div>
 
                       <button v-if="result.item_status == 'pending'" @click="buyerReject(result_id)" class="card-button-reject">Remove</button>
-                      <button v-if="result.item_status == 'accepted'" @click="sendReview(result_id)" class="card-button-accept" data-bs-toggle="modal" data-bs-target="#exampleModal">Leave Rating</button>
+                      <button v-if="result.item_status == 'accepted'" class="card-button-accept" data-bs-toggle="modal" data-bs-target="#exampleModal">Leave Rating</button>
+
+                      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalLabel">Ratings</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                              <p>Please leave your ratings for the seller: {{result.seller_name}}</p>
+          
+          
+                              <!-- <div class="stars">
+                                <a>⭐️</a>
+                                <a>⭐️</a>
+                                <a>⭐️</a>
+                                <a>⭐️</a>
+                                <a>⭐️</a>
+                              </div> -->
+          
+                              <div class="ratings d-flex justify-content-around">
+                                <input class="form-check-input" type="radio" id="one" value="1" v-model="picked">
+                                <label class="form-check-label" for="one">1</label>
+          
+                                <input  class="form-check-input" type="radio" id="two" value="2" v-model="picked">
+                                <label class="form-check-label" for="two">2</label>
+          
+                                <input class="form-check-input" type="radio" id="three" value="3" v-model="picked">
+                                <label class="form-check-label" for="three">3</label>
+          
+                                <input class="form-check-input" type="radio" id="four" value="4" v-model="picked">
+                                <label class="form-check-label" for="four">4</label>
+          
+                                <input class="form-check-input" type="radio" id="five" value="5" v-model="picked">
+                                <label class="form-check-label" for="five">5</label>
+          
+                                <!-- {{picked}} -->
+                                
+                              </div>
+          
+          
+                              
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                              <button type="button" class="btn btn-primary" @click="sendReview(result._id)">Send Rating</button>
+                              <!-- console.log(result._id) -->
+                            </div>
+                          </div>
+                        </div>
+                      </div>
 
                 
                 </div>
