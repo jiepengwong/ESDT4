@@ -9,14 +9,15 @@
 6. Kathy Tong
 
 ## Project Desc
-- Henesys Marketplace is a consumer-to-consumer platform for buying and selling food items that are near expiry. This reduces food waste and builds a “Kampong” spirit of sharing within the community. 
+- Henesys Marketplace is a community-driven marketplace for buying and selling food items that are near expiry. This reduces food waste and builds a “Kampong” spirit of sharing within the community. 
 - For sellers, this platform allows them to list their items and choose to approve or reject offers from buyers. 
-- For buyers, they are able to make an offer for a food item and make payment.
+- For buyers, they are able to make an offer for a food item and make payment (physically) to foster a sense of community. 
 
 ## Twilio Configurations
 - Note: We would need to add your number into the twilio account first as a verified number in order for a notification to be received 
 - send 'join wood-fought' to the number: +14155238886 
 - the above service only last around 2 days hence it is best to send "join wood-fought" everytime Henesys Marketplace is run 
+- A .env file with the following fields can be found in the ESDT4 root folder (please do configure this file if yours is missing). We are sending this file separately as well.
 
 ## User Scenarios 
     1. Seller lists a food item 
@@ -60,8 +61,9 @@ in directory 'ESDT4/docker-compose.yml'
 1. If offer is accepted, there will be an assumption that the buyer and the seller has met up and paid 
 2. Buyer will leave rating on the "My Offers" page
 
-## Fun Facts: 
-- If you realised that you made a wrong offer, you can remove your offer by...
+## Side Scenarios: 
+- If you realised that you made a wrong offer, you can remove your offer by clicking the remove offer in "My Offers" page 
+- If you want to remove your listings that you have created as a seller, you can remove it under "My Listings" page
 
 ## API Acknowlegements
 1. Google Oauth2 API
@@ -80,7 +82,6 @@ Pika
 Json
 flask_cors
 pymongo 
-
 
 ## Project/Dependencies to install 
 1. error microservice 
