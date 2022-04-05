@@ -189,9 +189,10 @@
                         <p class="mb-1 fs-6">Pick-up Location: {{results.location}}</p>
                         <p class="mb-1 fs-6">Date: {{date}}</p>
                         <p class="mb-1 fs-6">Time: {{time}}</p>
-
+                        <p v-if="ratings != ''" class="mb-1 fs-6">Seller Name: {{results.seller_name}} </p>
+                        <p v-if="ratings != ''" class="mb-1 fs-6">Seller Ratings: {{ratings}}⭐</p>
                         <div class="d-flex flex-column mt-5">
-                           Enter Your Offer Price: 
+                          Enter Your Offer Price: 
 
                             <div class="input-group">
                               <span class="input-group-text">$</span>
@@ -221,8 +222,11 @@
         results: [],
         price: 0,
         buyerid: localStorage.id, //Taken from yuxiang side
+        buyerRating: "",
         time: "",
         date:"",
+        seller_id: "",
+        ratings: ""
 
 
       };
@@ -247,6 +251,7 @@
             console.log(databaseitemsJson)
             // Get all the databases 
             this.results = databaseitemsJson.Success;
+            this.seller_id = this.results.seller_id
             var datelisting = this.results.date_time.split("T")
             this.time = datelisting[1]
             this.date = datelisting[0]
@@ -258,6 +263,33 @@
           }
         } catch (error) {
           console.log(error)
+        }
+      }
+
+      if (this.results != []){
+    
+        try{
+          const sellerDetailsUrl =  `http://localhost:5000/profile/${this.seller_id}`
+          var getSellerRatings = await fetch(sellerDetailsUrl)
+          const sellerDetails = await getSellerRatings.json()
+
+          if (getSellerRatings.status == 200){
+
+            this.ratings = sellerDetails["data"]["ratings"]
+  
+
+          } 
+
+          else{
+            console.log("Unable to retrieve the rating")
+          }
+
+
+
+        }
+
+        catch(error){
+
         }
       }
 
