@@ -37,7 +37,8 @@ services:
       rabbit_host: rabbitmq
       rabbit_port: 5672
       PYTHONUNBUFFERED: 1
-
+    env_file:
+      - .env
 
   ###################################
   # error: The Error microservice

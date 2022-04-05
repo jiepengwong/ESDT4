@@ -27,7 +27,7 @@ CORS(app)
 # twilio_notifs.py  # AMQP routing_key = 'notify.*' 
 
 profile_URL =  "http://profile:5000/profile/" # requires :user_id
-item_URL = "http://items:5001/items/" # requires :item_id
+item_URL = "http://item:5001/items/" # requires :item_id
 
 @app.route("/make_offer", methods=['POST']) # pass in offer details
 def make_offer(): # BUYER invokes this complex microservice, request = {offer} 
@@ -68,6 +68,7 @@ def processMakeOffer(offer): # process the json input of /make_offer (BUYER)
     user_id = offer['buyer_id']
     print('\n\n-----Invoking profile microservice-----')
     profile_results = invoke_http(profile_URL + user_id, method="GET")
+    print(profile_results)
     name = profile_results['data']['name']
     mobile = profile_results['data']['mobile']
     print("\nRetrieved name:", profile_results['data']['name'])

@@ -8,43 +8,15 @@
 5. Wong Jie Peng
 6. Kathy Tong
 
-
-## Project/Dependencies to install 
-
-1. error microservice 
-- pip install pymongo
-
-2. twilio_notifs microservice
-- python -m pip install pika
-- pip3 install twilio --upgrade OR easy_install twilio
-- pip install python-dotenv
-  ## to install the virtual environemnt for twilio (if need)
-- pip install --user virtualenv
-- python -m virtualenv venv
-
-3. Others 
-- npm install -g nodemon
-
-## Twilio Configurations
-- Note: ESD G5 T2 would need to add your number into the twilio account first as a verified number in order for a notification to be received 
-- send 'join wood-fought' to the number: +14155238886 
-- the above service only last around 2-3 days hence it is best to send "join wood-fought" everytime Henesys Marketplace is run 
-
-
 ## Project Desc
 - Henesys Marketplace is a consumer-to-consumer platform for buying and selling food items that are near expiry. This reduces food waste and builds a “Kampong” spirit of sharing within the community. 
 - For sellers, this platform allows them to list their items and choose to approve or reject offers from buyers. 
 - For buyers, they are able to make an offer for a food item and make payment.
 
-
-## How to start/installation
-1. Ensure that WAMP/MAMP server is up and running
-2. Open file docker-compose.yml in directory 'ESDT4/docker-compose.yml' and replace all 'tinggzster' with your docker's username
-3. Start and run all of the microservices by running command 'docker-compose up' in the 
-in directory 'ESDT4/docker-compose.yml'
-4.  Open the app by accessing <URL> (should be deployed on heroku)
-5. After the deployed application has loaded, click ........ button on the right of the page to Sign in for the start of the first user scenario.
-
+## Twilio Configurations
+- Note: We would need to add your number into the twilio account first as a verified number in order for a notification to be received 
+- send 'join wood-fought' to the number: +14155238886 
+- the above service only last around 2 days hence it is best to send "join wood-fought" everytime Henesys Marketplace is run 
 
 ## User Scenarios 
     1. Seller lists a food item 
@@ -52,9 +24,22 @@ in directory 'ESDT4/docker-compose.yml'
     3. Seller Accept or Reject offer 
     4. Buyer leaves a rating for the seller 
 
-## To start of: 
-1. Naviagte to <URL> for the deployed Henesys Markplace
-2. Login in with google account
+## How to start/installation
+1. Ensure that WAMP/MAMP server is up and running
+2. Import the 'profile.sql' SQL file in PhpMyAdmin to create necessary databases for the microservices. This file can be found in the following path: 'ESDT4/profile/profile.sql'
+3. To allow remote access to database(adding a new user): 
+  
+    i. Open phpMyAdmin and click 'User Accounts'
+    ii. Click 'Add user account' and specify the following 
+      a. User name: ESDT4
+      b. Host name: %
+      c. Password: Change to 'No Password'
+
+4. Open file docker-compose.yml in directory 'ESDT4/docker-compose.yml' and replace all 'tinggzster' with your docker's username
+5. Start and run all of the microservices by running command 'docker-compose up' in the directory 'ESDT4'
+in directory 'ESDT4/docker-compose.yml'
+6. Open the app by accessing 'localhost/ESDT4'
+7. Login using your gmail account (google authentication)
 
 ## User Scenario 1: Seller lists a food item 
 1. Seller can start selling items by clicking on 'Sell' on the UI 
@@ -69,11 +54,14 @@ in directory 'ESDT4/docker-compose.yml'
 ## User Scenario 3: Seller Accept or Reject offer 
 1. After receiving the notifications from whatsapp 
 2. Seller will proceed to "My Listings" page on Henesys Marketplace to "Accept" or "Reject" 
-3. Buyer will be notified for offer acceptance or reject
+3. Buyer will be notified for offer acceptance or rejection
 
 ## User Scenario 4: Buyer leaves a rating for the seller 
 1. If offer is accepted, there will be an assumption that the buyer and the seller has met up and paid 
 2. Buyer will leave rating on the "My Offers" page
+
+## Fun Facts: 
+- If you realised that you made a wrong offer, you can remove your offer by...
 
 ## API Acknowlegements
 1. Google Oauth2 API
@@ -94,73 +82,18 @@ flask_cors
 pymongo 
 
 
+## Project/Dependencies to install 
+1. error microservice 
+- pip install pymongo
 
-## Project setup
-```
-npm i (to retrive mode_modules)
-```
+2. twilio_notifs microservice
+- python -m pip install pika
+- pip3 install twilio OR easy_install twilio
+- pip install python-dotenv
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+3. item microservice
+- npm install -g nodemon
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
-
-test
-
-
-
-
-
-
-
-
-## Librairies/Dependencies loaded for Notifs
-
-pip install pymongo --> notifs
-docker run -d --hostname esd-rabbit --name rabbitmq-mgmt -p 5672:5672 -p 15672:15672 rabbitmq:3-management --> to run docker fo r
-
-
-python -m pip install pika
-pip3 install twilio --upgrade OR easy_install twilio
-pip install python-dotenv
-
-#to install the virtual environemnt
-
-pip install --user virtualenv
-python -m virtualenv venv
-
-#to run the virtual environment 
-venv\Scripts\activate
-
-reference links: https://www.youtube.com/watch?v=Svl_W81wUYU&t=526s 
-https://stackoverflow.com/questions/48911582/virtualenv-to-path-on-windows-10 
-https://stackoverflow.com/questions/49924636/twilio-the-requested-resource-was-not-found 
-https://stackoverflow.com/questions/44194427/virtualenv-activate-does-not-work
-
-
-## Librairies/Dependencies loaded for SellerView UI
-npm install --save axios sweetalert --> for sellerView UI
-
-
-pip install dnspython 
-**python -m pip install requests**
-
-**python -m pip install flask_cors**
-npm install -g nodemon
-
-
-
-docker-compose up
+4. Others
+- python -m pip install requests
+- python -m pip install flask_cors
