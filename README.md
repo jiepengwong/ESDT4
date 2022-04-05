@@ -17,9 +17,7 @@
 - Note: We would need to add your number into the twilio account first as a verified number in order for a notification to be received 
 - send 'join wood-fought' to the number: +14155238886 
 - the above service only last around 2 days hence it is best to send "join wood-fought" everytime Henesys Marketplace is run 
-- A .env file with the following fields can be found in the ESDT4 root folder (please do configure this file if yours is missing)
-    - TWILIO_ACCOUNT_SID=ACc2ba82a67c14ae8f185741f5aafc560a
-    - TWILIO_AUTH_TOKEN=1557d9e0c6d386f4b9a597df782a9193
+
 
 ## User Scenarios 
     1. Seller lists a food item 
