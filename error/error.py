@@ -64,7 +64,7 @@ def saveToDatabase(errorMsg):
 
     one_error = {
         "code": errorMsg["code"],
-        "Error": errorMsg["Error"]
+        "message": errorMsg["message"]
     }
 
     ##Insert "one notif' object directly into MongoDB via insert_one
